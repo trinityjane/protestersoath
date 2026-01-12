@@ -17,13 +17,13 @@ class AuthenticationBloc
       // todo: set initial login state to true if we have a token.
 
       bool hasToken = await FlutterSession().get("isAuth") as bool;
-      if (hasToken == null || !hasToken) {
+      if (!hasToken) {
         // try saved preferences:
         final prefs = await SharedPreferences.getInstance();
         hasToken = prefs.getBool('isAuth') ?? null;
       }
 
-      if (hasToken != null && hasToken) {
+      if (hasToken) {
         yield Authenticated();
       } else {
         yield Unauthenticated();

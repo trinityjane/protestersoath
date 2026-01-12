@@ -49,7 +49,7 @@ class VerifyProofOfOathPage extends StatelessWidget {
                     child: Text(
                       'OATH_VERIFIED'.tr() +
                           "\n\n Phone: " +
-                          (state as VerifyProofOfOathState).othersPhone,
+                          (state).othersPhone,
                       textScaleFactor: 1.8,
                     ),
                   ),

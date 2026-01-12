@@ -66,9 +66,9 @@ class FeedModel {
       this.postURL = item.link;
       this.isHTML = true;
       this.start = start;
-      this.end = end == null ? DateTime.now() : DateTime.parse(end);
+      this.end = DateTime.parse(end);
       this.isActive = DateTime.now().isBefore(this.end);
-      this.type = end == null ? 'Story' : 'Protest';
+      this.type = 'Protest';
     } catch (e) {
       print(e.toString());
     }

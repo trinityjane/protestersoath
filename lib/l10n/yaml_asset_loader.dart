@@ -27,14 +27,8 @@ class YamlSingleAssetLoader extends AssetLoader {
 
   @override
   Future<Map<String, dynamic>> load(String path, Locale locale) async {
-    if (yamlData == null) {
-      log('easy localization loader: load yaml file $path');
-      yamlData =
-          convertYamlMapToMap(loadYaml(await rootBundle.loadString(path)));
-    } else {
-      log('easy localization loader: Yaml already loaded, read cache');
-    }
-    return yamlData[locale.toString()];
+    log('easy localization loader: Yaml already loaded, read cache');
+      return yamlData[locale.toString()];
   }
 }
 
