@@ -1,17 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_html/style.dart';
-import 'package:link/link.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:protestersoath/stories/FeedModel.dart';
 
 Widget ProtestRSSCard(BuildContext context, FeedModel protest, openFeed) {
   void _showErrorSnackBar() {
-    Scaffold.of(context).showSnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('URL_PROBLEM'.tr()),
       ),
     );
+  }
+
+  Future<void> _launchURL(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      _showErrorSnackBar();
+    }
   }
 
   return Card(
@@ -38,14 +46,7 @@ Widget ProtestRSSCard(BuildContext context, FeedModel protest, openFeed) {
           padding: const EdgeInsets.only(
               left: 10, right: 10, top: 0, bottom: 5),
           child: protest.isHTML
-              ? Html(data: protest.body,
-              style: {
-                "body": Style(
-                  fontSize: FontSize(18.0),
-                  color: Colors.black.withOpacity(0.8),
-                  // fontWeight: FontWeight.bold,
-                ),
-              })
+              ? Html(data: protest.body)
               : Text(protest.body,style: TextStyle(
                 fontSize: 15, color: Colors.black.withOpacity(0.8)),
           ),
@@ -59,11 +60,9 @@ Widget ProtestRSSCard(BuildContext context, FeedModel protest, openFeed) {
             alignment: Alignment.centerRight,
             child: Padding(
               padding: EdgeInsets.only(top: 3, bottom: 3, right: 10),
-              child: Link(
-                child: Text(protest.referenceURL,
-                    style: TextStyle(decoration:TextDecoration.underline, fontSize: 20)),
-                url: protest.referenceURL,
-                onError: _showErrorSnackBar,
+              child: GestureDetector(
+                child: Text(protest.referenceURL, style: TextStyle(decoration:TextDecoration.underline, fontSize: 20, color: Colors.blue)),
+                onTap: () => _launchURL(protest.referenceURL),
               ),
             )),
         Align(

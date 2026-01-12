@@ -1,16 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:link/link.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:protestersoath/stories/FeedModel.dart';
 
 Widget StoryRSSCard(BuildContext context, FeedModel story, openFeed) {
   void _showErrorSnackBar() {
-    Scaffold.of(context).showSnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('URL_PROBLEM'.tr()),
       ),
     );
+  }
+
+  Future<void> _launchURL(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      _showErrorSnackBar();
+    }
   }
 
   return Card(
@@ -25,12 +34,10 @@ Widget StoryRSSCard(BuildContext context, FeedModel story, openFeed) {
         ListTile(
                 leading: Icon(Icons.arrow_drop_down_circle),
                 title: Text(story.title, style: TextStyle(fontSize: 20)),
-                subtitle: Html(data: story.summary), //Text(story.summary, style: TextStyle(fontSize: 10)),
+                subtitle: Html(data: story.summary),
                 isThreeLine: false,
                 onTap: () => openFeed(story.postURL),
               ),
-
-        // Date of the story
 
         // The story
         (story.body != '')
@@ -47,17 +54,14 @@ Widget StoryRSSCard(BuildContext context, FeedModel story, openFeed) {
               )
             : Container(),
 
-        // Credits
-
         // link to the story.
         Align(
             alignment: Alignment.centerRight,
             child: Padding(
               padding: EdgeInsets.only(top: 3, bottom: 3, right: 10),
-              child: Link(
-                child: Text(story.referenceURL, style: TextStyle(fontSize: 10)),
-                url: story.referenceURL,
-                onError: _showErrorSnackBar,
+              child: GestureDetector(
+                child: Text(story.referenceURL, style: TextStyle(fontSize: 10, color: Colors.blue, decoration: TextDecoration.underline)),
+                onTap: () => _launchURL(story.referenceURL),
               ),
             )),
         Align(

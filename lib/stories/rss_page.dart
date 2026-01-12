@@ -1,21 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_session/flutter_session.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-import 'package:preferences/preference_service.dart';
 import 'package:protestersoath/navigation/app_drawer.dart';
 import 'package:protestersoath/navigation/app_drawer/appdrawer_event.dart';
 import 'package:protestersoath/navigation/app_drawer/appdrawer_bloc.dart';
-import 'package:protestersoath/stories/FeedModel.dart';
-import 'package:protestersoath/protests/ProtestRSSCard.dart';
 
-import 'package:webfeed/webfeed.dart';
-import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
-import 'StoryRSSCard.dart';
-import 'FeedModel.dart';
 
 class RSSReader extends StatefulWidget {
   RSSReader({this.which = 'Stories', this.title = ''}) : super();
@@ -24,25 +16,16 @@ class RSSReader extends StatefulWidget {
 
   // Setting title for the action bar.
   final String title;
-  static DateTime lastFeed = DateTime.now();
-  static Duration haveFeed = new Duration();
-  static RssFeed feed;
-
-  // Feed URL being used for the app. In this case is the Hacker News job feed.
-  static const String FEED_URL = 'https://protestersoath.com?feed=rss2';
 
   @override
   RSSReaderState createState() => RSSReaderState();
 }
 
 class RSSReaderState extends State<RSSReader> {
-  final drawer = PrefService.getString('drawer', ignoreCache: true);
-
-  RssFeed _feed; // RSS Feed Object
-
-  List<FeedModel> _cards;
-  List<FeedModel> _stories;
-  List<FeedModel> _protests;
+  List<FeedModel> _cards = [];
+  List<FeedModel> _stories = [];
+  List<FeedModel> _protests = [];
+  GlobalKey<RefreshIndicatorState> _refreshKey = GlobalKey<RefreshIndicatorState>();
 
   String _title = ''; // Place holder for appbar title.
 
@@ -50,13 +33,6 @@ class RSSReaderState extends State<RSSReader> {
   static String loadingMessage = 'LOADING_FEED'.tr();
   static String feedLoadErrorMessage = 'FEED_LOAD_ERROR'.tr();
   static String feedOpenErrorMessage = 'FEED_OPEN_ERROR'.tr();
-
-  // Key for the RefreshIndicator
-  // See the documentation linked below for info on the RefreshIndicatorState
-  // class and the GloablKey class.
-  // https://api.flutter.dev/flutter/widgets/GlobalKey-class.html
-  // https://api.flutter.dev/flutter/material/RefreshIndicatorState-class.html
-  GlobalKey<RefreshIndicatorState> _refreshKey;
 
   // Method to change the title as a way to inform the user what is going on
   // while retrieving the RSS data.
@@ -69,7 +45,6 @@ class RSSReaderState extends State<RSSReader> {
   // Method to help refresh the RSS data.
   // separate out stories and protest information from other posts.
   updateFeed(feed) async {
-    _feed = feed;
     _cards = [for (var item in feed.items) FeedModel.fromRSSFeed(item)];
     setState(() {
       _stories = _cards.where((card) => card.type == 'Story').toList();

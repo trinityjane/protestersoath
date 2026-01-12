@@ -1,4 +1,3 @@
-import 'package:webfeed/domain/rss_item.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart';
 
@@ -14,20 +13,21 @@ class FeedModel {
   String postURL;
   bool isHTML;
 
-  FeedModel(
-      {this.date,
-      this.title,
-      this.summary,
-      this.body,
-      this.credit,
-      this.imageURL,
-      this.referenceURL,
-      this.postURL,
-      this.isHTML = false});
+  FeedModel({
+    this.date = '',
+    this.title = '',
+    this.summary = '',
+    this.body = '',
+    this.credit = '',
+    this.imageURL = '',
+    this.referenceURL = '',
+    this.postURL = '',
+    this.isHTML = false,
+  });
 
-  FeedModel.fromRSSFeed(RssItem item) {
+  FeedModel.fromMap(Map<String, dynamic> item) {
     try {
-      final document = parse(item.content.value.trim());
+      final document = parse(item['content'].trim());
 
       String caption = document
           .getElementsByTagName("figcaption")
@@ -54,15 +54,15 @@ class FeedModel {
       }
 
       this.date = date.toString();
-      this.title = item.title;
+      this.title = item['title'];
       this.summary = caption;
       this.body = body;
       this.credit = credit;
-      this.imageURL = item.content.images.isNotEmpty
-          ? item.content.images.elementAt(0)
+      this.imageURL = item['content']['images'].isNotEmpty
+          ? item['content']['images'].elementAt(0)
           : 'assets/img/protester.png';
       this.referenceURL = url;
-      this.postURL = item.link;
+      this.postURL = item['link'];
       this.isHTML = true;
     } catch (e) {
       print(e.toString());

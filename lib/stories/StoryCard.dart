@@ -1,16 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:link/link.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:protestersoath/stories/FeedModel.dart';
 
 Widget StoryCard(BuildContext context, FeedModel story) {
   void _showErrorSnackBar() {
-    Scaffold.of(context).showSnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('URL_PROBLEM'.tr()),
       ),
     );
+  }
+
+  Future<void> _launchURL(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      _showErrorSnackBar();
+    }
   }
 
   return Card(
@@ -84,10 +93,9 @@ Widget StoryCard(BuildContext context, FeedModel story) {
             alignment: Alignment.centerRight,
             child: Padding(
               padding: EdgeInsets.only(top: 3, bottom: 3, right: 10),
-              child: Link(
-                child: Text(story.referenceURL, style: TextStyle(fontSize: 10)),
-                url: story.referenceURL,
-                onError: _showErrorSnackBar,
+              child: GestureDetector(
+                child: Text(story.referenceURL, style: TextStyle(fontSize: 10, color: Colors.blue, decoration: TextDecoration.underline)),
+                onTap: () => _launchURL(story.referenceURL),
               ),
             )),
         Align(
