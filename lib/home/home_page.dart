@@ -16,8 +16,7 @@ class HomePage extends StatelessWidget {
     return FutureBuilder<String>(
       future: SettingsContainer.getMenuConfig(),
       builder: (context, snapshot) {
-        final menuConfig = snapshot.data ?? 'homeOnly';
-        final bool showDrawer = menuConfig == 'homeOnly' || menuConfig == 'allScreens';
+        final menuConfig = snapshot.data ?? 'allScreens';
         final bool showAllButtons = menuConfig == 'buttonsOnly';
         return BlocBuilder<AppDrawerBloc, AppDrawerState>(
           builder: (BuildContext context, AppDrawerState state) {

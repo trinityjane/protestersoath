@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../res.dart';
-
 class SplashPage extends StatefulWidget {
   @override
   _SplashPageState createState() => _SplashPageState();
@@ -19,7 +17,7 @@ class _SplashPageState extends State<SplashPage> {
       backgroundColor: Colors.grey,
       body: Center(
         child: Image.asset(
-          Res.protester,
+          'assets/img/protester.png',
           width: 350,
           height: 350,
         ),

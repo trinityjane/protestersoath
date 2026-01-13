@@ -5,7 +5,6 @@ import 'package:protestersoath/navigation/app_drawer.dart';
 import 'package:protestersoath/navigation/app_drawer/appdrawer_bloc.dart';
 import 'package:protestersoath/navigation/app_drawer/appdrawer_event.dart';
 import 'package:protestersoath/oath/OathContainer.dart';
-import 'OathContainer.dart';
 import 'package:protestersoath/l10n/app_localizations.dart';
 import '../settings/SettingsContainer.dart';
 

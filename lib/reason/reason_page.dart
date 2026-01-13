@@ -3,9 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:protestersoath/navigation/app_drawer.dart';
 import 'package:protestersoath/navigation/app_drawer/appdrawer_bloc.dart';
 import 'package:protestersoath/navigation/app_drawer/appdrawer_event.dart';
-import 'package:protestersoath/authentication/authentication.dart';
+import 'package:protestersoath/navigation/app_drawer/appdrawer_state.dart';
 import 'package:protestersoath/l10n/app_localizations.dart';
-import '../navigation/app_drawer/appdrawer_state.dart';
+
 import 'ReasonContainer.dart';
 import '../settings/SettingsContainer.dart';
 

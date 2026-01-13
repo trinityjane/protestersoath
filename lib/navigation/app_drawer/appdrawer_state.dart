@@ -12,11 +12,6 @@ class LoadingState extends AppDrawerState {
   List<Object> get props => [];
 }
 
-class DrawerEventState extends AppDrawerState {
-  @override
-  List<Object> get props => [];
-}
-
 class HomePageState extends AppDrawerState {
   final Token token;
   HomePageState(this.token);

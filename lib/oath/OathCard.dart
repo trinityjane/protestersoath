@@ -43,14 +43,7 @@ class OathCard extends StatelessWidget {
 
     if (fontSize < 12) { fontSize = 12; }
     if (minFontSize < 10) { minFontSize = 10; }
-    // if (this.index==0) {
-    //   print("height: " + height.toString() + " width: " + width.toString());
-    //   print("aspect: " + aspect.toString());
-    //   print("heightPart1: " + heightPart1.toString() + " aspectPart1: " + aspectPart1.toString());
-    //   print("heightPart2: " + heightPart2.toString() + " aspectPart2: " + aspectPart2.toString());
-    //   print("Font Size: " + fontSize.toString());
-    //   print("Min Font Size: " + minFontSize.toString());
-    // }
+
     return Center(
       child: Card(
           elevation: 0,

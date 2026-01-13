@@ -7,16 +7,12 @@ import 'package:protestersoath/navigation/app_drawer/appdrawer_event.dart';
 import '../navigation/app_drawer/appdrawer.dart';
 
 class VerifyProofOfOathPage extends StatelessWidget {
-  // static Route route() {
-  //   return MaterialPageRoute<void>(builder: (_) => HomePage());
-  // }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AppDrawerBloc, AppDrawerState>(
         builder: (BuildContext context, AppDrawerState state) {
       return Scaffold(
-          // drawer: AppDrawer(),
           appBar: AppBar(
               backgroundColor: Colors.grey,
               title: Text(

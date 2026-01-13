@@ -5,17 +5,12 @@ import 'package:protestersoath/l10n/app_localizations.dart';
 import '../navigation/app_drawer.dart';
 import '../navigation/app_drawer/appdrawer_bloc.dart';
 import '../navigation/app_drawer/appdrawer_event.dart';
-import '../navigation/app_drawer/appdrawer_state.dart';
 import '../settings/SettingsContainer.dart';
 import 'VerifyContainer.dart';
 
 class VerifyPage extends StatelessWidget {
   VerifyPage();
 
-  // static Route route() {
-  //   return MaterialPageRoute(builder: (_) => VerifyPage(this.isLogin));
-  // }
-  // final drawer = PrefService.getString('drawer', ignoreCache: true);
 
   @override
   Widget build(BuildContext context) {

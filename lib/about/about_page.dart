@@ -4,14 +4,9 @@ import 'package:protestersoath/l10n/app_localizations.dart';
 import 'package:protestersoath/navigation/app_drawer.dart';
 import 'package:protestersoath/navigation/app_drawer/appdrawer_bloc.dart';
 import 'package:protestersoath/navigation/app_drawer/appdrawer_event.dart';
-
-import '../res.dart';
 import '../settings/SettingsContainer.dart';
 
 class AboutPage extends StatelessWidget {
-  // static Route route() {
-  //   return MaterialPageRoute(builder: (_) => AboutPage());
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +79,7 @@ class AboutPage extends StatelessWidget {
                                 shape: BoxShape.circle,
                                 image: DecorationImage(
                                   fit: BoxFit.fill,
-                                  image: AssetImage(Res.trinity),
+                                  image: AssetImage('assets/img/trinityjane.jpg'),
                                 )))),
                     Padding(
                         padding: EdgeInsets.all(15.0),
@@ -93,7 +88,7 @@ class AboutPage extends StatelessWidget {
                                 shape: BoxShape.rectangle,
                                 image: DecorationImage(
                                   fit: BoxFit.fitHeight,
-                                  image: AssetImage(Res.logo_flutter_transparent),
+                                  image: AssetImage('assets/img/logo_flutter_transparent.png'),
                                 )))),
                   ],
                 ),
