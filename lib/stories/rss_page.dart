@@ -84,10 +84,7 @@ class RSSReaderState extends State<RSSReader> {
       // For web, use a CORS proxy
       if (kIsWeb) {
         feedUrl = 'https://corsproxy.io/?${Uri.encodeComponent(feedUrl)}';
-        print('Using CORS proxy for web: $feedUrl');
       }
-
-      print('Attempting to fetch RSS feed from: $feedUrl');
 
       final response = await http.get(
         Uri.parse(feedUrl),
@@ -99,16 +96,8 @@ class RSSReaderState extends State<RSSReader> {
         Duration(seconds: 30),
       );
 
-      print('Response status code: ${response.statusCode}');
-      print('Response content type: ${response.headers['content-type']}');
-
       if (response.statusCode == 200) {
-        print('Feed content length: ${response.body.length}');
-        print(
-            'First 500 chars: ${response.body.substring(0, response.body.length > 500 ? 500 : response.body.length)}');
-
         final feed = RssFeed.parse(response.body);
-        print('Successfully parsed ${feed.items?.length ?? 0} items');
         updateFeed(feed);
         updateTitle(widget.title);
       } else {

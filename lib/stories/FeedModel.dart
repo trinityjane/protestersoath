@@ -56,32 +56,12 @@ class FeedModel {
       this.date = _parsePubDate(item.pubDate);
 
       // Parse description HTML content
-      // final descriptionHtml = item.description ?? '';
-      // final document = parse(descriptionHtml, generateSpans: true);
-
-      // Parse description HTML content
       final descriptionHtml = item.content?.value ?? item.description ?? '';
-      print('Content source: ${item.content?.value != null ? 'content:encoded' : 'description'}');
-      print('Raw content length: ${descriptionHtml.length}');
-      print('Raw content: ${descriptionHtml}');
-
       final decodedHtml = _decodeHtmlEntities(descriptionHtml);
-      print('Decoded HTML: ${decodedHtml}');
-
-      final document = parse(decodedHtml, generateSpans: true);      print('Parsed document body HTML:');
-      print(document.body?.outerHtml);
-
-// Check all elements
-      print('All elements in document:');
-      final allElements = document.body?.querySelectorAll('*') ?? [];
-      print('Total elements found: ${allElements.length}');
-      for (var element in allElements.take(10)) {
-        print('  - ${element.localName}: ${element.text.substring(0, element.text.length > 50 ? 50 : element.text.length)}');
-      }
+      final document = parse(decodedHtml, generateSpans: true);
 
       // Extract structured data from custom meta tags
       final metadata = _extractMetadata(document);
-      print('Extracted metadata: $metadata' + metadata.toString());
       this.credit = metadata['credit'] ?? '';
       this.referenceURL = metadata['url']?.trim() ?? this.postURL;
       this.start = metadata['start'] ?? '';
@@ -94,14 +74,10 @@ class FeedModel {
 
       // Extract caption from figcaption
       String caption = '';
-      print('Looking for figcaption...');
       final figcaptions = document.getElementsByTagName('figcaption');
-      print('Found ${figcaptions.length} figcaption elements');
 
       if (figcaptions.isNotEmpty) {
         caption = figcaptions.first.text.trim();
-        print('Caption text: "$caption"');
-        print('Caption outerHtml: ${figcaptions.first.outerHtml}');
       }
 
       if (caption.isEmpty) {
@@ -173,7 +149,6 @@ class FeedModel {
       final enclosureType = item.enclosure!.type?.toLowerCase() ?? '';
       if (enclosureType.startsWith('image/')) {
         imageUrl = item.enclosure!.url!;
-        print('Image from enclosure: $imageUrl');
         return imageUrl;
       }
     }
@@ -183,7 +158,6 @@ class FeedModel {
       final mediaContent = item.media!.contents!.first;
       if (mediaContent.url != null) {
         imageUrl = mediaContent.url!;
-        print('Image from media:content: $imageUrl');
         return imageUrl;
       }
     }
@@ -194,7 +168,6 @@ class FeedModel {
       final src = imgTags.first.attributes['src'];
       if (src != null && src.isNotEmpty) {
         imageUrl = Uri.encodeFull(src.trim()); // Add this encoding
-        print('Image from img tag (encoded): $imageUrl');
         return imageUrl;
       }
     }
