@@ -823,13 +823,13 @@ abstract class AppLocalizations {
   /// No description provided for @protests.
   ///
   /// In en, this message translates to:
-  /// **'Protests'**
+  /// **'Upcoming Protests'**
   String get protests;
 
   /// No description provided for @stories.
   ///
   /// In en, this message translates to:
-  /// **'Stories'**
+  /// **'Stories of Protest'**
   String get stories;
 
   /// No description provided for @verifyButton.

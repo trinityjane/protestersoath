@@ -427,10 +427,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'https://en.wikipedia.org/wiki/Selma_to_Montgomery_marches';
 
   @override
-  String get protests => 'Protests';
+  String get protests => 'Upcoming Protests';
 
   @override
-  String get stories => 'Stories';
+  String get stories => 'Stories of Protest';
 
   @override
   String get verifyButton => 'Verify';
