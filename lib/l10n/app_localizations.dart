@@ -115,49 +115,49 @@ abstract class AppLocalizations {
   /// No description provided for @point01.
   ///
   /// In en, this message translates to:
-  /// **'I will not bring a weapon, defensive or offensive, to a protest.'**
+  /// **'I will not bring a weapon to a protest.'**
   String get point01;
+
+  /// No description provided for @point06.
+  ///
+  /// In en, this message translates to:
+  /// **'I will stop violence, crime and vandalism, or record it, if I am able.'**
+  String get point06;
 
   /// No description provided for @point02.
   ///
   /// In en, this message translates to:
-  /// **'I will stop violence, crime and vandalism, or record it, if I feel it is safe to do so.'**
+  /// **'I will bear witness and record peaceful and nonviolent acts of protest.'**
   String get point02;
 
   /// No description provided for @point03.
   ///
   /// In en, this message translates to:
-  /// **'I will bear witness and record peaceful and nonviolent acts of protest.'**
+  /// **'I will help those who are hurt when I am able.'**
   String get point03;
 
   /// No description provided for @point04.
   ///
   /// In en, this message translates to:
-  /// **'I will help those who are hurt when I am able.'**
+  /// **'I will listen to the direction of protest leaders and report problems I see.'**
   String get point04;
 
   /// No description provided for @point05.
   ///
   /// In en, this message translates to:
-  /// **'I will listen to the direction of protest leaders and report problems I see.'**
-  String get point05;
-
-  /// No description provided for @point06.
-  ///
-  /// In en, this message translates to:
   /// **'I will eat and sleep beforehand so that I can control my emotions.'**
-  String get point06;
+  String get point05;
 
   /// No description provided for @point07.
   ///
   /// In en, this message translates to:
-  /// **'I will recognize when I am out of control and remove myself to calm down.'**
+  /// **'I will see when I am out of control and remove myself to calm down.'**
   String get point07;
 
   /// No description provided for @point08.
   ///
   /// In en, this message translates to:
-  /// **'I will not protest at night during a riot or a curfew ordered to quell violence.'**
+  /// **'I will not protest during a riot.'**
   String get point08;
 
   /// No description provided for @shortPoint00.

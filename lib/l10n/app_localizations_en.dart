@@ -18,35 +18,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get point00 => 'I will not be violent.';
 
   @override
-  String get point01 =>
-      'I will not bring a weapon, defensive or offensive, to a protest.';
-
-  @override
-  String get point02 =>
-      'I will stop violence, crime and vandalism, or record it, if I feel it is safe to do so.';
-
-  @override
-  String get point03 =>
-      'I will bear witness and record peaceful and nonviolent acts of protest.';
-
-  @override
-  String get point04 => 'I will help those who are hurt when I am able.';
-
-  @override
-  String get point05 =>
-      'I will listen to the direction of protest leaders and report problems I see.';
+  String get point01 => 'I will not bring a weapon to a protest.';
 
   @override
   String get point06 =>
+      'I will stop violence, crime and vandalism, or record it, if I am able.';
+
+  @override
+  String get point02 =>
+      'I will bear witness and record peaceful and nonviolent acts of protest.';
+
+  @override
+  String get point03 => 'I will help those who are hurt when I am able.';
+
+  @override
+  String get point04 =>
+      'I will listen to the direction of protest leaders and report problems I see.';
+
+  @override
+  String get point05 =>
       'I will eat and sleep beforehand so that I can control my emotions.';
 
   @override
   String get point07 =>
-      'I will recognize when I am out of control and remove myself to calm down.';
+      'I will see when I am out of control and remove myself to calm down.';
 
   @override
-  String get point08 =>
-      'I will not protest at night during a riot or a curfew ordered to quell violence.';
+  String get point08 => 'I will not protest during a riot.';
 
   @override
   String get shortPoint00 => 'I will not be violent,';
