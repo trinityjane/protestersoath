@@ -15,8 +15,10 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 class RSSReader extends StatefulWidget {
   RSSReader({this.which = 'Stories', this.title = ''});
+
   final String which;
   final String title;
+
   @override
   RSSReaderState createState() => RSSReaderState();
 }
@@ -25,16 +27,20 @@ class RSSReaderState extends State<RSSReader> {
   List<FeedModel> _cards = <FeedModel>[];
   List<FeedModel> _stories = <FeedModel>[];
   List<FeedModel> _protests = <FeedModel>[];
-  final GlobalKey<RefreshIndicatorState> _refreshKey = GlobalKey<RefreshIndicatorState>();
+  final GlobalKey<RefreshIndicatorState> _refreshKey =
+      GlobalKey<RefreshIndicatorState>();
   String _title = '';
   bool _isLoading = false;
   String? _errorMessage;
 
   static const String STORIES_RSS_URL = 'https://protestersoath.com/?feed=rss2';
-  static const String PROTESTS_RSS_URL = 'https://protestersoath.com/?feed=rss2';
+  static const String PROTESTS_RSS_URL =
+      'https://protestersoath.com/?feed=rss2';
 
   String get loadingMessage => 'Loading feed...';
+
   String get feedLoadErrorMessage => 'Error loading feed. Pull down to retry.';
+
   String get feedOpenErrorMessage => 'Feed open error.';
 
   void updateTitle(String title) {
@@ -44,21 +50,9 @@ class RSSReaderState extends State<RSSReader> {
   }
 
   void updateFeed(RssFeed feed) {
-    // Debug: Print first item to see structure
-    if (feed.items != null && feed.items!.isNotEmpty) {
-      final firstItem = feed.items![1];
-      print("Feed has ${feed.items!.length} items.");
-      print('First item: ${firstItem.toString()}');
-      print('First item title: ${firstItem.title}');
-      print('First item link: ${firstItem.link}');
-      print('First item description: ${firstItem.description}');
-      print('First item content: ${firstItem.content?.value}');
-      print('First item media: ${firstItem.media?.contents}');
-      print('First item enclosure: ${firstItem.enclosure?.url}');
-    }
-
     setState(() {
-      _cards = feed.items?.map((item) => FeedModel.fromRSSFeed(item)).toList() ?? [];
+      _cards =
+          feed.items?.map((item) => FeedModel.fromRSSFeed(item)).toList() ?? [];
       _stories = _cards.where((card) => card.type == 'Story').toList();
       _protests = _cards.where((card) => card.type == 'Protest').toList();
       _isLoading = false;
@@ -84,7 +78,8 @@ class RSSReaderState extends State<RSSReader> {
     updateTitle(loadingMessage);
 
     try {
-      String feedUrl = widget.which == 'Stories' ? STORIES_RSS_URL : PROTESTS_RSS_URL;
+      String feedUrl =
+          widget.which == 'Stories' ? STORIES_RSS_URL : PROTESTS_RSS_URL;
 
       // For web, use a CORS proxy
       if (kIsWeb) {
@@ -109,14 +104,16 @@ class RSSReaderState extends State<RSSReader> {
 
       if (response.statusCode == 200) {
         print('Feed content length: ${response.body.length}');
-        print('First 500 chars: ${response.body.substring(0, response.body.length > 500 ? 500 : response.body.length)}');
+        print(
+            'First 500 chars: ${response.body.substring(0, response.body.length > 500 ? 500 : response.body.length)}');
 
         final feed = RssFeed.parse(response.body);
         print('Successfully parsed ${feed.items?.length ?? 0} items');
         updateFeed(feed);
         updateTitle(widget.title);
       } else {
-        throw Exception('HTTP ${response.statusCode}: ${response.reasonPhrase}');
+        throw Exception(
+            'HTTP ${response.statusCode}: ${response.reasonPhrase}');
       }
     } catch (e, stackTrace) {
       print('Error loading RSS feed: $e');
@@ -128,7 +125,6 @@ class RSSReaderState extends State<RSSReader> {
       updateTitle(feedLoadErrorMessage);
     }
   }
-
 
   @override
   void initState() {
@@ -206,7 +202,8 @@ class RSSReaderState extends State<RSSReader> {
       builder: (context, snapshot) {
         final menuConfig = snapshot.data ?? 'homeOnly';
         final bool showDrawer = menuConfig == 'allScreens';
-        final bool showBack = (menuConfig == 'homeOnly' || menuConfig == 'buttonsOnly');
+        final bool showBack =
+            (menuConfig == 'homeOnly' || menuConfig == 'buttonsOnly');
 
         return SafeArea(
           child: Scaffold(
@@ -218,12 +215,13 @@ class RSSReaderState extends State<RSSReader> {
                 style: TextStyle(color: Colors.white),
               ),
               leading: showBack
-                  ? IconButton(icon: Icon(Icons.arrow_back),
-                onPressed: () {
-                  BlocProvider.of<AppDrawerBloc>(context)
-                      .add(HomePageEvent());
-                },
-              )
+                  ? IconButton(
+                      icon: Icon(Icons.arrow_back),
+                      onPressed: () {
+                        BlocProvider.of<AppDrawerBloc>(context)
+                            .add(HomePageEvent());
+                      },
+                    )
                   : null,
             ),
             body: body(),
@@ -249,7 +247,9 @@ class RSSReaderState extends State<RSSReader> {
                   SizedBox(height: 16),
                   Text(
                     'Nothing to show',
-                    style: TextStyle(fontSize: 25, color: const Color.fromRGBO(0, 0, 0, 0.8)),
+                    style: TextStyle(
+                        fontSize: 25,
+                        color: const Color.fromRGBO(0, 0, 0, 0.8)),
                   ),
                 ],
               ),
@@ -264,7 +264,7 @@ class RSSReaderState extends State<RSSReader> {
       child: CustomScrollView(slivers: <Widget>[
         SliverList(
           delegate: SliverChildBuilderDelegate(
-                (BuildContext context, int index) {
+            (BuildContext context, int index) {
               if (widget.which == 'Stories') {
                 final FeedModel story = listToShow[index];
                 return Container(
@@ -276,10 +276,10 @@ class RSSReaderState extends State<RSSReader> {
                 final FeedModel protest = listToShow[index];
                 return protest.isActive
                     ? Container(
-                  margin: EdgeInsets.only(bottom: 10.0),
-                  decoration: customBoxDecoration(),
-                  child: ProtestRSSCard(context, protest, openFeed),
-                )
+                        margin: EdgeInsets.only(bottom: 10.0),
+                        decoration: customBoxDecoration(),
+                        child: ProtestRSSCard(context, protest, openFeed),
+                      )
                     : Container();
               }
             },
