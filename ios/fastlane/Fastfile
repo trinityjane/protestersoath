@@ -71,15 +71,15 @@ platform :ios do
 #      )
     end
 
-    def toFirebase
-      firebase_app_distribution(
-        ipa_path: IPA_INPUT,
-        app: FIREBASE_APP_ID,
-        testers: "robblovell@gmail.com",  # "/path/to/testers.txt"
-        release_notes: RELEASE_NOTES_FILE,
-        firebase_cli_token: $FIREBASE_TOKEN
-      )
-    end
+#     def toFirebase
+#       firebase_app_distribution(
+#         ipa_path: IPA_INPUT,
+#         app: FIREBASE_APP_ID,
+#         testers: "robblovell@gmail.com",  # "/path/to/testers.txt"
+#         release_notes: RELEASE_NOTES_FILE,
+#         firebase_cli_token: $FIREBASE_TOKEN
+#       )
+#     end
 
     def toTestFlight
         upload_to_testflight()
@@ -118,12 +118,12 @@ platform :ios do
         notifySlack("A new build complete. #{commit[:rev]} - #{commit[:sha]}", commit, true)
       end
 
-    desc "tofirebase"
-      lane :tofirebase do |options|
-        toFirebase()
-        commit = getInfo()
-        notifySlack("A new build is available for testing. #{commit[:rev]} - #{commit[:sha]}", commit, true)
-      end
+#     desc "tofirebase"
+#       lane :tofirebase do |options|
+#         toFirebase()
+#         commit = getInfo()
+#         notifySlack("A new build is available for testing. #{commit[:rev]} - #{commit[:sha]}", commit, true)
+#       end
 
     desc "totestflight"
       lane :totestflight do |options|

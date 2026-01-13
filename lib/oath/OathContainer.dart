@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:protestersoath/authentication/authentication.dart';
 import 'package:protestersoath/navigation/app_drawer/appdrawer_bloc.dart';
 import 'package:protestersoath/navigation/app_drawer/appdrawer_event.dart';
-import 'package:easy_localization/easy_localization.dart';
+import 'package:protestersoath/l10n/app_localizations.dart';
 import 'package:protestersoath/oath/OathCard.dart';
 import 'package:protestersoath/utils/sizing.dart';
 
@@ -24,7 +24,7 @@ class TheOath extends StatelessWidget {
         actions: [
           IconButton(
               icon: Icon(Icons.info, size: 40),
-              tooltip: 'THEREASON'.tr(),
+              tooltip: AppLocalizations.of(context)!.thereason,
               onPressed: () {
                 if (this.isLogin) {
                   BlocProvider.of<AuthenticationBloc>(context)
@@ -39,7 +39,7 @@ class TheOath extends StatelessWidget {
         flexibleSpace: FlexibleSpaceBar(
           titlePadding: EdgeInsets.only(left:12, bottom:10),
           centerTitle: false,
-          title: Text("LOGIN_TITLE".tr()),
+          title: Text(AppLocalizations.of(context)!.loginTitle),
         ),
         leading: Container()
       ),

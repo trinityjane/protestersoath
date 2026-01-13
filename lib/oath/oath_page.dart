@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:preferences/preference_service.dart';
 import 'package:protestersoath/navigation/app_drawer.dart';
 import 'package:protestersoath/navigation/app_drawer/appdrawer_bloc.dart';
 import 'package:protestersoath/navigation/app_drawer/appdrawer_event.dart';
 import 'package:protestersoath/oath/OathContainer.dart';
 import 'OathContainer.dart';
+import 'package:protestersoath/l10n/app_localizations.dart';
 
 class OathPage extends StatelessWidget {
-  final drawer = PrefService.getString('drawer', ignoreCache: true);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: this.drawer=='all' ? AppDrawer() : null,
+      // Removed: final drawer = PrefService.getString('drawer', ignoreCache: true);
+      // Use null for drawer if not needed, or implement another way if required
       appBar: AppBar(
           title: Text(
-            "THEOATH".tr(),
+            AppLocalizations.of(context)!.theoath,
             style: TextStyle(color: Colors.white),
           ),
           // actions: [
@@ -27,13 +26,7 @@ class OathPage extends StatelessWidget {
           //         BlocProvider.of<AppDrawerBloc>(context).add(StoryPageEvent()),
           //   ),
           // ],
-          leading: this.drawer=='all' ? null : IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              BlocProvider.of<AppDrawerBloc>(context)
-                  .add(BackButtonEvent("OathPage"));
-            },
-          ),
+          leading: null, // this.drawer=='all' ? null :
         ),
         body: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints viewportConstraints) {

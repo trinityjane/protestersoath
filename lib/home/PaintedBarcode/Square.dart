@@ -5,99 +5,77 @@ import 'Triangle.dart';
 import 'Shape.dart';
 
 class Square extends Shape {
-  Rect rect;
+  final Rect rect;
 
   Square(Rect rect, [Color color = Colors.blueAccent])
-      : super(SHAPES.square, color) {
-    this.rect = rect;
-  }
+      : rect = rect,
+        super(SHAPES.square, color);
 
-  Point midpoint(Point p0, Point p1) {
+  Point<double> midpoint(Point<double> p0, Point<double> p1) {
     return Point((p0.x + p1.x) / 2, (p0.y + p1.y) / 2);
   }
 
-  double width() {
-    return this.rect.width;
-  }
-
-  double height() {
-    return this.rect.height;
-  }
+  double width() => rect.width;
+  double height() => rect.height;
 
   @override
-  Offset center() {
-    return this.rect.center;
-  }
+  Offset center() => rect.center;
 
-  double incircleRadius () {
-    return minSize()/2;
-  }
+  @override
+  double incircleRadius() => minSize() / 2;
 
-  @override double minSize() {
-    return width() < height() ? width() : height();
-  }
+  @override
+  double minSize() => width() < height() ? width() : height();
 
   Square.fromLTRB(double left, double top, double right, double bottom,
       [Color color = Colors.blueAccent])
-      : super(SHAPES.square, color) {
-    this.rect = Rect.fromLTRB(left, top, right, bottom);
-  }
+      : rect = Rect.fromLTRB(left, top, right, bottom),
+        super(SHAPES.square, color);
 
-  List<Shape> splitRect(int direction, [Color color = Colors.transparent]) {
-    if (color == Colors.transparent) {
-      color = this.color;
-    }
+  List<Shape> splitRect(int direction, [Color? color]) {
+    final splitColor = (color == null || color == Colors.transparent) ? this.color : color;
     switch (direction) {
       case 0: // horizontal
         double center = (rect.top + rect.bottom) / 2;
         return [
-          Square.fromLTRB(this.rect.left, this.rect.top, this.rect.right,
-              center, this.color),
-          Square.fromLTRB(
-              this.rect.left, center, this.rect.right, this.rect.bottom, color)
+          Square.fromLTRB(rect.left, rect.top, rect.right, center, this.color),
+          Square.fromLTRB(rect.left, center, rect.right, rect.bottom, splitColor)
         ];
-
-      case 1: // veritical
+      case 1: // vertical
         double center = (rect.left + rect.right) / 2;
         return [
-          Square.fromLTRB(center, this.rect.top, this.rect.right,
-              this.rect.bottom, this.color),
-          Square.fromLTRB(
-              this.rect.left, this.rect.top, center, this.rect.bottom, color)
+          Square.fromLTRB(center, rect.top, rect.right, rect.bottom, this.color),
+          Square.fromLTRB(rect.left, rect.top, center, rect.bottom, splitColor)
         ];
-
       case 2: // up diagonal
-        Point LT = Point(this.rect.left, this.rect.top);
-        Point RT = Point(this.rect.right, this.rect.top);
-        Point RB = Point(this.rect.right, this.rect.bottom);
-        Point LB = Point(this.rect.left, this.rect.bottom);
+        Point<double> LT = Point(rect.left, rect.top);
+        Point<double> RT = Point(rect.right, rect.top);
+        Point<double> RB = Point(rect.right, rect.bottom);
+        Point<double> LB = Point(rect.left, rect.bottom);
         return [
           Triangle.fromPoints(LT, RT, RB, this.color),
-          Triangle.fromPoints(RB, LB, LT, color)
+          Triangle.fromPoints(RB, LB, LT, splitColor)
         ];
-
       case 3:
       default: // down diagonal
-        Point LT = Point(this.rect.left, this.rect.top);
-        Point RT = Point(this.rect.right, this.rect.top);
-        Point RB = Point(this.rect.right, this.rect.bottom);
-        Point LB = Point(this.rect.left, this.rect.bottom);
-
+        Point<double> LT = Point(rect.left, rect.top);
+        Point<double> RT = Point(rect.right, rect.top);
+        Point<double> RB = Point(rect.right, rect.bottom);
+        Point<double> LB = Point(rect.left, rect.bottom);
         return [
           Triangle.fromPoints(RB, LB, RT, this.color),
-          Triangle.fromPoints(RT, LT, LB, color)
+          Triangle.fromPoints(RT, LT, LB, splitColor)
         ];
     }
   }
 
-  String toString() {
-    return "Square[ " + this.rect.toString() + " ]\n";
-  }
+  @override
+  String toString() => "Square[ $rect ]\n";
 
   @override
-  draw(Canvas canvas) {
+  void draw(Canvas canvas) {
     final paint = Paint();
-    paint.color = this.color;
-    canvas.drawRect(this.rect, paint);
+    paint.color = color;
+    canvas.drawRect(rect, paint);
   }
 }

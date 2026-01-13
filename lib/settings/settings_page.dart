@@ -1,47 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:preferences/preference_service.dart';
 import 'package:protestersoath/navigation/app_drawer.dart';
 import 'package:protestersoath/navigation/app_drawer/appdrawer_bloc.dart';
 import 'package:protestersoath/navigation/app_drawer/appdrawer_event.dart';
-import '../navigation/app_drawer/appdrawer.dart';
-import '../navigation/app_drawer/appdrawer_state.dart';
+import 'package:protestersoath/navigation/app_drawer/appdrawer_state.dart';
+import 'package:protestersoath/l10n/app_localizations.dart';
 import 'SettingsContainer.dart';
 
 class SettingsPage extends StatelessWidget {
   SettingsPage();
 
-  final drawer = PrefService.getString('drawer', ignoreCache: true);
-
-  // static Route route() {
-  //   return MaterialPageRoute(builder: (_) => ReasonPage(this.isLogin));
-  // }
+  // Drawer visibility logic can be managed via state or passed as a parameter if needed.
+  final bool showDrawer = true; // Always show drawer for now.
 
   @override
   Widget build(BuildContext context) {
-
-      return BlocBuilder<AppDrawerBloc, AppDrawerState>(
-          builder: (BuildContext context, AppDrawerState state) {
-            return Scaffold(
-              drawer:this.drawer=='all' ? AppDrawer() : null,
-              appBar: AppBar(
-                  title: Text(
-                    "SETTINGS_TITLE".tr(),
-                    style: TextStyle(color: Colors.white),
+    return BlocBuilder<AppDrawerBloc, AppDrawerState>(
+      builder: (context, state) {
+        return Scaffold(
+          drawer: showDrawer ? AppDrawer() : null,
+          appBar: AppBar(
+            title: Text(
+              AppLocalizations.of(context)!.settings,
+              style: TextStyle(color: Colors.white),
+            ),
+            leading: showDrawer
+                ? null
+                : IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    onPressed: () {
+                      BlocProvider.of<AppDrawerBloc>(context)
+                          .add(BackButtonEvent("SettingsPage"));
+                    },
                   ),
-                  leading: (() {
-                    return this.drawer=='all' ? null : IconButton(
-                      icon: Icon(Icons.arrow_back),
-                      onPressed: () {
-                        BlocProvider.of<AppDrawerBloc>(context)
-                            .add(BackButtonEvent("SettingsPage"));
-                      },
-                    );
-                  })()
-              ),
-              body: SettingsContainer(), //TheReason(),
-            );
-          });
+          ),
+          body: SettingsContainer(),
+        );
+      },
+    );
   }
 }

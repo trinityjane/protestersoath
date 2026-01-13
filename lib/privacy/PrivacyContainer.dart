@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
+import 'package:protestersoath/l10n/app_localizations.dart';
 
 class PrivacyContainer extends StatelessWidget {
   // App Bar for the Login/Oath.
@@ -24,9 +24,9 @@ class PrivacyContainer extends StatelessWidget {
                         fontSize: 20,
                         color: Colors.black,
                       ),
-                      text: 'PRIVACY_TITLE'.tr() + '\n\n'),
-                  TextSpan(text: 'PRIVACY1'.tr() + '\n\n'),
-                  TextSpan(text: 'PRIVACY2'.tr() + '\n\n'),
+                      text: AppLocalizations.of(context)!.privacyTitle + '\n\n'),
+                  TextSpan(text: AppLocalizations.of(context)!.privacy1 + '\n\n'),
+                  TextSpan(text: AppLocalizations.of(context)!.privacy2 + '\n\n'),
                 ]),
           ),
         ),

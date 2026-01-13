@@ -28,20 +28,17 @@ dependencies:
   auto_size_text: ^3.0.0
   bloc: ^8.1.0
   bloc_test: ^9.1.0
-  cloud_firestore: ^4.13.0
   cupertino_icons: ^1.0.6
-  easy_localization: ^3.0.1
+  flutter_localizations:
+    sdk: flutter
   equatable: ^2.0.5
-  firebase_analytics: ^10.8.0
-  firebase_core: ^2.24.2
-  firebase_crashlytics: ^3.4.9
   flutter_bloc: ^8.1.3
   flutter_svg: ^2.0.9
   fluttertoast: ^8.2.4
   font_awesome_flutter: ^10.7.0
   html: ^0.15.4
+  intl: ^0.20.2
   json_annotation: ^4.8.1
-  # link: ^2.1.0 # Discontinued, replaced with url_launcher
   url_launcher: ^6.2.5
   lottie: ^2.7.0
   material_design_icons_flutter: ^7.0.7296
@@ -49,7 +46,6 @@ dependencies:
   shared_preferences: ^2.2.2
   simple_animations: ^5.0.2
   flutter_html: ^3.0.0
-  # dart_rss: ^2.0.0 # Incompatible with easy_localization and Flutter 3, remove for now
 
 dev_dependencies:
   flutter_launcher_icons: ^0.13.1
@@ -67,6 +63,7 @@ flutter_icons:
 
 flutter:
   uses-material-design: true
+  generate: true
 
   # Asset Directories
   assets:

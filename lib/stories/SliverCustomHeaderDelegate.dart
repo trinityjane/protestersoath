@@ -9,34 +9,34 @@ class SliverCustomHeaderDelegate extends SliverPersistentHeaderDelegate {
   final String title;
 
   SliverCustomHeaderDelegate({
-    this.collapsedHeight,
-    this.expandedHeight,
-    this.paddingTop,
-    this.coverImgUrl,
-    this.title,
+    required this.collapsedHeight,
+    required this.expandedHeight,
+    required this.paddingTop,
+    required this.coverImgUrl,
+    required this.title,
   });
 
   @override
-  double get minExtent => this.collapsedHeight + this.paddingTop;
+  double get minExtent => collapsedHeight + paddingTop;
 
   @override
-  double get maxExtent => this.expandedHeight;
+  double get maxExtent => expandedHeight;
 
   @override
   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
     return true;
   }
 
-  Color makeStickyHeaderBgColor(shrinkOffset) {
-    final int alpha = (shrinkOffset / (this.maxExtent - this.minExtent) * 255).clamp(0, 255).toInt();
+  Color makeStickyHeaderBgColor(double shrinkOffset) {
+    final int alpha = (shrinkOffset / (maxExtent - minExtent) * 255).clamp(0, 255).toInt();
     return Color.fromARGB(alpha, 255, 255, 255);
   }
 
-  Color makeStickyHeaderTextColor(shrinkOffset, isIcon) {
-    if(shrinkOffset <= 50) {
+  Color makeStickyHeaderTextColor(double shrinkOffset, bool isIcon) {
+    if (shrinkOffset <= 50) {
       return isIcon ? Colors.white : Colors.transparent;
     } else {
-      final int alpha = (shrinkOffset / (this.maxExtent - this.minExtent) * 255).clamp(0, 255).toInt();
+      final int alpha = (shrinkOffset / (maxExtent - minExtent) * 255).clamp(0, 255).toInt();
       return Color.fromARGB(alpha, 0, 0, 0);
     }
   }
@@ -44,57 +44,61 @@ class SliverCustomHeaderDelegate extends SliverPersistentHeaderDelegate {
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
-      height: this.maxExtent,
+      height: maxExtent,
       width: MediaQuery.of(context).size.width,
       child: Stack(
         fit: StackFit.expand,
         children: <Widget>[
           // Background image
-          Container(child: Image.network(this.coverImgUrl, fit: BoxFit.cover)),
-          // Put your head back
+          Image.network(coverImgUrl, fit: BoxFit.cover),
+          // Sticky header
           Positioned(
             left: 0,
             right: 0,
             top: 0,
             child: Container(
-             color: this.makeStickyHeaderBgColor(shrinkOffset), // Background color
-            child: SafeArea(
-              bottom: false,
-              child: Container(
-                height: this.collapsedHeight,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                IconButton(
-                icon: Icon(
-                  Icons.arrow_back_ios,
-                  color: this.makeStickyHeaderTextColor(shrinkOffset, true), // Return icon color
+              color: makeStickyHeaderBgColor(shrinkOffset),
+              child: SafeArea(
+                bottom: false,
+                child: Container(
+                  height: collapsedHeight,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      IconButton(
+                        icon: Icon(
+                          Icons.arrow_back_ios,
+                          color: makeStickyHeaderTextColor(shrinkOffset, true),
+                        ),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                      Expanded(
+                        child: Text(
+                          title,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                            color: makeStickyHeaderTextColor(shrinkOffset, false),
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(
+                          Icons.share,
+                          color: makeStickyHeaderTextColor(shrinkOffset, true),
+                        ),
+                        onPressed: () {},
+                      ),
+                    ],
+                  ),
                 ),
-                onPressed: () => Navigator.pop(context),
-              ),
-              Text(
-                this.title,
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                    color: this.makeStickyHeaderTextColor(shrinkOffset, false), // Title color
               ),
             ),
-            IconButton(
-              icon: Icon(
-                  Icons.share,
-                  color: this.makeStickyHeaderTextColor(shrinkOffset, true), // Share icon color
-            ),
-            onPressed: () {},
           ),
         ],
       ),
-    ),
-    ),
-    ),
-    ),
-    ],
-    ),
     );
   }
 }

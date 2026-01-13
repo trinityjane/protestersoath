@@ -1,5 +1,4 @@
-import 'package:easy_localization/easy_localization.dart';
-import 'package:cubit/cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'FeedModel.dart';
 import 'stories_state.dart';
 
@@ -8,37 +7,38 @@ class StoriesCubit extends Cubit<StoriesState> {
     getNextStory();
   }
 
-  final stories = 6;
+  final int stories = 6;
   static int which = -1;
 
-  fn(string) {
-    return string == null || string.startsWith("STORY_")? '' : string;
+  String fn(String? string) {
+    return string == null || string.startsWith("STORY_") ? '' : string;
   }
 
   void getNextStory() async {
     try {
       emit(LoadingState());
-      which = (which + 1) % this.stories;
-      var f = NumberFormat("00", "en_US");
-      var index = f.format(which);
-      var title = 'STORY_TITLE_' + index;
-      var summary = 'STORY_SUMMARY_' + index;
-      var body = 'STORY_' + index;
-      var date = 'STORY_DATE_' + index;
-      var credit = 'STORY_CREDIT_' + index;
-      var image = 'STORY_IMAGE_' + index;
-      var postURL = 'STORY_URL_' + index;
-      var referenceURL = 'STORY_URL_' + index;
+      which = (which + 1) % stories;
+      // TODO: Replace with actual localization logic
+      var index = which.toString().padLeft(2, '0');
+      var title = 'Story Title $index';
+      var summary = 'Story Summary $index';
+      var body = 'Story Body $index';
+      var date = 'Story Date $index';
+      var credit = 'Story Credit $index';
+      var image = 'assets/img/stories/story_$index.png';
+      var postURL = 'https://example.com/story_$index';
+      var referenceURL = 'https://example.com/story_$index';
       final story = FeedModel(
-          date: fn(date.tr()),
-          title: fn(title.tr()),
-          summary: fn(summary.tr()),
-          body: fn(body.tr()),
-          credit: fn(credit.tr()),
-          imageURL: fn(image.tr()),
-          referenceURL: fn(referenceURL.tr()),
-          postURL: fn(postURL.tr()),
-          isHTML: false,);
+        date: fn(date),
+        title: fn(title),
+        summary: fn(summary),
+        body: fn(body),
+        credit: fn(credit),
+        imageURL: fn(image),
+        referenceURL: fn(referenceURL),
+        postURL: fn(postURL),
+        isHTML: false,
+      );
       emit(LoadedState(story));
     } catch (e) {
       emit(ErrorState());

@@ -1,27 +1,26 @@
 import 'package:flutter/material.dart';
 
 class PhoneTextFormField {
-  Container getCustomEditTextArea({
+  Widget getCustomEditTextArea({
     String labelValue = "",
     String hintValue = "",
     double fontLabelSize = 15,
-    Function validator,
-    IconData icon,
-    bool validation,
-    TextEditingController controller,
+    String? Function(String?)? validator,
+    IconData? icon,
+    bool validation = false,
+    required TextEditingController controller,
     TextInputType keyboardType = TextInputType.text,
-    String validationErrorMsg,
-    FocusNode focusNode,
+    String? validationErrorMsg,
+    FocusNode? focusNode,
   }) {
-    return Container(
-        child: TextFormField(
+    return TextFormField(
       controller: controller,
       focusNode: focusNode,
       keyboardType: keyboardType,
       decoration: InputDecoration(
-        prefixIcon: Icon(icon),
-        prefixStyle: TextStyle(color: Colors.black45),
-        fillColor: Colors.white.withOpacity(0.6),
+        prefixIcon: icon != null ? Icon(icon) : null,
+        prefixStyle: const TextStyle(color: Colors.black45),
+        fillColor: const Color.fromRGBO(255, 255, 255, 0.6),
         filled: true,
         isDense: true,
         labelStyle: TextStyle(color: Colors.grey[800], fontSize: fontLabelSize),
@@ -29,12 +28,12 @@ class PhoneTextFormField {
         errorStyle: TextStyle(
           color: Colors.white,
           wordSpacing: 5.0,
-          fontSize: fontLabelSize+2,
+          fontSize: fontLabelSize + 2,
         ),
         hintText: hintValue,
         labelText: labelValue,
       ),
       validator: validator,
-    ));
+    );
   }
 }

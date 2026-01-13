@@ -1,68 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:protestersoath/authentication/authentication.dart';
-import 'package:easy_localization/easy_localization.dart';
+import 'package:protestersoath/l10n/app_localizations.dart';
 
 import 'MenuItem.dart';
 import 'app_drawer/appdrawer_bloc.dart';
 import 'app_drawer/appdrawer_event.dart';
 
 class AppDrawer extends StatelessWidget {
+  const AppDrawer({Key? key}) : super(key: key);
+
   @override
-  Widget build(BuildContext theContext) {
-    // final double paddingTop = MediaQuery.of(context).padding.top;
+  Widget build(BuildContext context) {
     return Drawer(
       child: Column(
         children: <Widget>[
           MediaQuery.removePadding(
-            context: theContext,
+            context: context,
             removeTop: true,
             child: Expanded(
               child: ListView(
                 padding: const EdgeInsets.only(top: 52),
                 children: <Widget>[
-                  MenuItem('HOME'.tr(), Icons.turned_in, () {
-                    BlocProvider.of<AppDrawerBloc>(theContext)
-                        .add(HomePageEvent());
-                    Navigator.pop(theContext);
+                  MenuItem(AppLocalizations.of(context)!.home, Icons.turned_in, () {
+                    BlocProvider.of<AppDrawerBloc>(context).add(HomePageEvent());
+                    Navigator.pop(context);
                   }),
-                  MenuItem('VERIFY_OTHER'.tr(), Icons.open_in_full, () {
-                    BlocProvider.of<AppDrawerBloc>(theContext)
-                        .add(VerifyPageEvent());
-                    Navigator.pop(theContext);
+                  MenuItem(AppLocalizations.of(context)!.verifyOther, Icons.open_in_full, () {
+                    BlocProvider.of<AppDrawerBloc>(context).add(VerifyPageEvent());
+                    Navigator.pop(context);
                   }),
-                  MenuItem('THEOATH'.tr(), Icons.list, () {
-                    BlocProvider.of<AppDrawerBloc>(theContext)
-                        .add(OathPageEvent());
-                    Navigator.pop(theContext);
+                  MenuItem(AppLocalizations.of(context)!.theOath, Icons.list, () {
+                    BlocProvider.of<AppDrawerBloc>(context).add(OathPageEvent());
+                    Navigator.pop(context);
                   }),
-                  MenuItem('THEREASON'.tr(), Icons.info, () {
-                    BlocProvider.of<AppDrawerBloc>(theContext)
-                        .add(ReasonPageEvent());
-                    Navigator.pop(theContext);
+                  MenuItem(AppLocalizations.of(context)!.theReason, Icons.info, () {
+                    BlocProvider.of<AppDrawerBloc>(context).add(ReasonPageEvent());
+                    Navigator.pop(context);
                   }),
-                  MenuItem('STORIES'.tr(), Icons.art_track, () {
-                    BlocProvider.of<AppDrawerBloc>(theContext)
-                        .add(StoryPageEvent());
-                    Navigator.pop(theContext);
+                  MenuItem(AppLocalizations.of(context)!.stories, Icons.art_track, () {
+                    BlocProvider.of<AppDrawerBloc>(context).add(StoryPageEvent());
+                    Navigator.pop(context);
                   }),
-                  MenuItem('PROTESTS'.tr(), Icons.announcement, () {
-                    BlocProvider.of<AppDrawerBloc>(theContext)
-                        .add(ProtestPageEvent());
-                    Navigator.pop(theContext);
+                  MenuItem(AppLocalizations.of(context)!.protests, Icons.announcement, () {
+                    BlocProvider.of<AppDrawerBloc>(context).add(ProtestPageEvent());
+                    Navigator.pop(context);
                   }),
-                  MenuItem('SETTINGS'.tr(), Icons.settings, () {
-                    BlocProvider.of<AppDrawerBloc>(theContext)
-                        .add(SettingsPageEvent());
-                    Navigator.pop(theContext);
+                  MenuItem(AppLocalizations.of(context)!.settings, Icons.settings, () {
+                    BlocProvider.of<AppDrawerBloc>(context).add(SettingsPageEvent());
+                    Navigator.pop(context);
                   }),
-                  MenuItem('ABOUT'.tr(), Icons.group, () {
-                    BlocProvider.of<AppDrawerBloc>(theContext)
-                        .add(AboutPageEvent());
-                    Navigator.pop(theContext);
+                  MenuItem(AppLocalizations.of(context)!.about, Icons.group, () {
+                    BlocProvider.of<AppDrawerBloc>(context).add(AboutPageEvent());
+                    Navigator.pop(context);
                   }),
-                  MenuItem('LOGOUT'.tr(), Icons.exit_to_app, () {
-                    theContext.bloc<AuthenticationBloc>().add(LoggedOut());
+                  MenuItem(AppLocalizations.of(context)!.logout, Icons.exit_to_app, () {
+                    BlocProvider.of<AuthenticationBloc>(context).add(LoggedOut());
+                    Navigator.pop(context);
                   }),
                 ],
               ),

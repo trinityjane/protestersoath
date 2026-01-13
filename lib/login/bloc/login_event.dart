@@ -10,8 +10,7 @@ class LoginEvent extends Equatable {
 
 class SendOtpEvent extends LoginEvent {
   final String phoNo;
-  final BuildContext context;
-  SendOtpEvent({this.phoNo, this.context});
+  SendOtpEvent({required this.phoNo});
 }
 
 class AppStartEvent extends LoginEvent {}

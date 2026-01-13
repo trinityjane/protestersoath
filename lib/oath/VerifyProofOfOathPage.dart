@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:protestersoath/home/ShapesPainter.dart';
-import 'package:easy_localization/easy_localization.dart';
+import 'package:protestersoath/l10n/app_localizations.dart';
 import 'package:protestersoath/navigation/app_drawer/appdrawer_bloc.dart';
 import 'package:protestersoath/navigation/app_drawer/appdrawer_event.dart';
 import '../navigation/app_drawer/appdrawer.dart';
@@ -19,7 +19,7 @@ class VerifyProofOfOathPage extends StatelessWidget {
           // drawer: AppDrawer(),
           appBar: AppBar(
               title: Text(
-                "VERIFY_TITLE".tr(),
+                AppLocalizations.of(context)!.verifyTitle,
                 style: TextStyle(color: Colors.white),
               ),
               leading: (() {
@@ -47,7 +47,7 @@ class VerifyProofOfOathPage extends StatelessWidget {
                   child: Container(
                     alignment: Alignment(0.0, 0.76),
                     child: Text(
-                      'OATH_VERIFIED'.tr() +
+                      AppLocalizations.of(context)!.oathVerified +
                           "\n\n Phone: " +
                           (state).othersPhone,
                       textScaleFactor: 1.8,

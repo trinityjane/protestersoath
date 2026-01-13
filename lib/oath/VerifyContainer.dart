@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
+import 'package:protestersoath/l10n/app_localizations.dart';
 import 'package:protestersoath/login/NumberInputVerify.dart';
 
 class VerifyContainer extends StatelessWidget {
@@ -18,8 +18,8 @@ class VerifyContainer extends StatelessWidget {
                       fontSize: 20,
                       color: Colors.black),
                   children: <TextSpan>[
-                    TextSpan(text: 'VERIFY1'.tr() + '\n\n'),
-                    TextSpan(text: 'VERIFY2'.tr() ),
+                    TextSpan(text: AppLocalizations.of(context)!.verify1 + '\n\n'),
+                    TextSpan(text: AppLocalizations.of(context)!.verify2 ),
                   ]),
             ),
           ),

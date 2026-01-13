@@ -28,8 +28,7 @@ class LoginCompleteState extends LoginState {
 
 class ExceptionState extends LoginState {
   final String message;
-  ExceptionState({this.message});
+  ExceptionState({required this.message});
   @override
   List<Object> get props => [message];
 }
-

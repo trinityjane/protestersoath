@@ -2,17 +2,18 @@ import 'package:json_annotation/json_annotation.dart';
 
 @JsonSerializable()
 class Token {
-  String uid;
-  String phoneNumber;
+  final String uid;
+  final String phoneNumber;
 
-  Token({this.uid, this.phoneNumber});
+  Token({required this.uid, required this.phoneNumber});
 
-  Token.fromJson(Map<String, dynamic> json)
-      : uid = json['uid'],
-        phoneNumber = json['phoneNumber'];
+  factory Token.fromJson(Map<String, dynamic> json) => Token(
+        uid: json['uid'] as String? ?? '',
+        phoneNumber: json['phoneNumber'] as String? ?? '',
+      );
 
   Map<String, dynamic> toJson() => {
         'uid': uid,
-        "phoneNumber": phoneNumber,
+        'phoneNumber': phoneNumber,
       };
 }

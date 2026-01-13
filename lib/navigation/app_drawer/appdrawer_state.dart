@@ -18,10 +18,8 @@ class DrawerEventState extends AppDrawerState {
 }
 
 class HomePageState extends AppDrawerState {
-  Token token;
-  HomePageState(Token token) {
-    this.token = token;
-  }
+  final Token token;
+  HomePageState(this.token);
   @override
   List<Object> get props => [token];
 }
@@ -47,20 +45,14 @@ class VerifyPageState extends AppDrawerState {
 }
 
 class ReasonPageState extends AppDrawerState {
-  AppDrawerEvent lastPage;
-  ReasonPageState(lastPage) {
-    this.lastPage = lastPage;
-  }
-
+  final AppDrawerEvent lastPage;
+  ReasonPageState(this.lastPage);
   @override
   List<Object> get props => [lastPage];
 }
 class PrivacyPageState extends AppDrawerState {
-  AppDrawerEvent lastPage;
-  PrivacyPageState(lastPage) {
-    this.lastPage = lastPage;
-  }
-
+  final AppDrawerEvent lastPage;
+  PrivacyPageState(this.lastPage);
   @override
   List<Object> get props => [lastPage];
 }
@@ -73,10 +65,8 @@ class SettingsPageState extends AppDrawerState {
   List<Object> get props => [];
 }
 class VerifyProofOfOathState extends AppDrawerState {
-  String othersPhone;
-  VerifyProofOfOathState(othersPhone) {
-    this.othersPhone = othersPhone;
-  }
+  final String othersPhone;
+  VerifyProofOfOathState(this.othersPhone);
   @override
   List<Object> get props => [othersPhone];
 }

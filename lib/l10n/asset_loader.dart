@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-// show AssetLoader;
+// This file is now obsolete. easy_localization and YAML asset loader are no longer used.
 
 abstract class AssetLoader {
   const AssetLoader();

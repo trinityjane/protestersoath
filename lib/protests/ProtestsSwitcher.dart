@@ -1,15 +1,15 @@
 import 'package:flutter/cupertino.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:preferences/preference_service.dart';
 import 'package:protestersoath/stories/rss_page.dart';
+import 'package:protestersoath/l10n/app_localizations.dart';
 
 class ProtestsSwitcher extends StatelessWidget {
-  ProtestsSwitcher();
-
-  final protests = PrefService.getString('protests', ignoreCache: true);
+  const ProtestsSwitcher({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return RSSReader(which: "Protests", title: 'PROTESTS'.tr());
+    return RSSReader(
+      which: "Protests",
+      title: AppLocalizations.of(context)?.protests ?? 'Protests',
+    );
   }
 }

@@ -1,25 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:protestersoath/utils/stripCorrectPhone.dart';
 import 'PaintedBarcode/PaintedBarcode.dart';
-
+import 'PaintedBarcode/Shape.dart';
 
 class ShapesPainter extends CustomPainter {
-  String phoneNumber;
-  ShapesPainter(String phone) {
-    this.phoneNumber = phone;
-  }
+  final String phoneNumber;
+  ShapesPainter(this.phoneNumber);
+
   @override
   void paint(Canvas canvas, Size size) {
-    // Create a rectangle with size and width same as the canvas
-
-    List<Object> shapes = List<Object>();
-
-    // this.token.phoneNumber = "+16047621034";
+    // Use List<Shape> for type safety
+    final List<Shape> shapes = <Shape>[];
     PaintedBarcode painting = PaintedBarcode(shapes);
-    painting.makePainting(stripPlusOnePhone(this.phoneNumber), size.width, size.height);
+    painting.makePainting(stripPlusOnePhone(phoneNumber), size.width, size.height);
     painting.draw(canvas);
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

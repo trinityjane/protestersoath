@@ -1,6 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
+import 'package:protestersoath/l10n/app_localizations.dart';
 import 'package:protestersoath/utils/sizing.dart';
 
 class OathCard extends StatelessWidget {
@@ -60,7 +60,7 @@ class OathCard extends StatelessWidget {
               child: Align(
                   alignment: Alignment.topLeft,
                   child: AutoSizeText(
-                    this.text.tr(),
+                    AppLocalizations.of(context)!.theoath,
                     textAlign: TextAlign.left,
                     overflow: TextOverflow.visible,
                     stepGranularity: 1,

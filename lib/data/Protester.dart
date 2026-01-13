@@ -2,14 +2,15 @@ import 'package:json_annotation/json_annotation.dart';
 
 @JsonSerializable()
 class Protester {
-  String phoneNumber;
+  final String phoneNumber;
 
-  Protester({this.phoneNumber});
+  Protester({required this.phoneNumber});
 
-  Protester.fromJson(Map<String, dynamic> json)
-      : phoneNumber = json['phoneNumber'];
+  factory Protester.fromJson(Map<String, dynamic> json) => Protester(
+        phoneNumber: json['phoneNumber'] as String? ?? '',
+      );
 
   Map<String, dynamic> toJson() => {
-    "phoneNumber": phoneNumber,
-  };
+        'phoneNumber': phoneNumber,
+      };
 }

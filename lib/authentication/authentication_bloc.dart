@@ -1,55 +1,22 @@
-import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:flutter_session/flutter_session.dart';
 import './authentication.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-class AuthenticationBloc
-    extends Bloc<AuthenticationEvent, AuthenticationState> {
-  AuthenticationBloc() : super(InitialAuthenticationState());
-
-  // @override
-  @override
-  Stream<AuthenticationState> mapEventToState(
-    AuthenticationEvent event,
-  ) async* {
-    if (event is AppStarted) {
-      // todo: set initial login state to true if we have a token.
-
-      bool hasToken = await FlutterSession().get("isAuth") as bool;
-      if (!hasToken) {
-        // try saved preferences:
-        final prefs = await SharedPreferences.getInstance();
-        hasToken = prefs.getBool('isAuth') ?? null;
-      }
-
-      if (hasToken) {
-        yield Authenticated();
-      } else {
-        yield Unauthenticated();
-      }
-    }
-
-    if (event is LoggedIn) {
-      await FlutterSession().set("isAuth", true);
-      final prefs = await SharedPreferences.getInstance();
-      prefs.setBool('isAuth', true);
-      yield Loading();
-      yield Authenticated();
-    }
-
-    if (event is LoggedOut) {
-      await FlutterSession().set("isAuth", false);
-      final prefs = await SharedPreferences.getInstance();
-      prefs.setBool('isAuth', false);
-      yield Loading();
-      yield Unauthenticated();
-    }
-    if (event is LoginReasonPageEvent) {
-      yield LoginReasonPageState();
-    }
-    if (event is LoginPrivacyPageEvent) {
-      yield LoginPrivacyPageState();
-    }
+class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
+  AuthenticationBloc() : super(InitialAuthenticationState()) {
+    on<AppStarted>((event, emit) async {
+      // TODO: Replace with secure storage or another persistence solution if needed.
+      // For now, always start unauthenticated for stateless Flutter 3 compatibility.
+      emit(Unauthenticated());
+    });
+    on<LoggedIn>((event, emit) async {
+      emit(Loading());
+      emit(Authenticated());
+    });
+    on<LoggedOut>((event, emit) async {
+      emit(Loading());
+      emit(Unauthenticated());
+    });
+    on<LoginReasonPageEvent>((event, emit) => emit(LoginReasonPageState()));
+    on<LoginPrivacyPageEvent>((event, emit) => emit(LoginPrivacyPageState()));
   }
 }

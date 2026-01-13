@@ -1,5 +1,4 @@
-import 'package:easy_localization/easy_localization.dart';
-import 'package:cubit/cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../stories/FeedModel.dart';
 import './protests_state.dart';
 
@@ -8,37 +7,38 @@ class ProtestsCubit extends Cubit<ProtestsState> {
     getNextProtest();
   }
 
-  final protests = 6;
+  final int protests = 6;
   static int which = -1;
 
-  fn(string) {
-    return string == null || string.startsWith("STORY_")? '' : string;
+  String fn(String? string) {
+    return string == null || string.startsWith("STORY_") ? '' : string;
   }
 
   void getNextProtest() async {
     try {
       emit(LoadingState());
-      which = (which + 1) % this.protests;
-      var f = NumberFormat("00", "en_US");
-      var index = f.format(which);
-      var title = 'STORY_TITLE_' + index;
-      var summary = 'STORY_SUMMARY_' + index;
-      var body = 'STORY_' + index;
-      var date = 'STORY_DATE_' + index;
-      var credit = 'STORY_CREDIT_' + index;
-      var image = 'STORY_IMAGE_' + index;
-      var postURL = 'STORY_URL_' + index;
-      var referenceURL = 'STORY_URL_' + index;
+      which = (which + 1) % protests;
+      // TODO: Replace with actual localization logic
+      var index = which.toString().padLeft(2, '0');
+      var title = 'Protest Title $index';
+      var summary = 'Protest Summary $index';
+      var body = 'Protest Body $index';
+      var date = 'Protest Date $index';
+      var credit = 'Protest Credit $index';
+      var image = 'assets/img/protester.png';
+      var postURL = 'https://example.com/protest_$index';
+      var referenceURL = 'https://example.com/protest_$index';
       final protest = FeedModel(
-          date: fn(date.tr()),
-          title: fn(title.tr()),
-          summary: fn(summary.tr()),
-          body: fn(body.tr()),
-          credit: fn(credit.tr()),
-          imageURL: fn(image.tr()),
-          referenceURL: fn(referenceURL.tr()),
-          postURL: fn(postURL.tr()),
-          isHTML: false,);
+        date: fn(date),
+        title: fn(title),
+        summary: fn(summary),
+        body: fn(body),
+        credit: fn(credit),
+        imageURL: fn(image),
+        referenceURL: fn(referenceURL),
+        postURL: fn(postURL),
+        isHTML: false,
+      );
       emit(LoadedState(protest));
     } catch (e) {
       emit(ErrorState());

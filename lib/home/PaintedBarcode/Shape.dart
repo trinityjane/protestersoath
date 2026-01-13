@@ -2,40 +2,21 @@ import 'package:flutter/material.dart';
 
 enum SHAPES { circle, triangle, square }
 
-class Shape {
-  SHAPES type;
-  Color color = Colors.blueAccent;
+abstract class Shape {
+  final SHAPES type;
+  final Color color;
 
-  Shape(SHAPES type, [Color color = Colors.blueAccent]) {
-    this.type = type;
-    this.color = color;
-  }
+  const Shape(this.type, [this.color = Colors.blueAccent]);
 
-  double width() {
-    return 10;
-  }
+  double width() => 10;
+  double height() => 10;
+  double minSize() => 100;
+  double maxSize() => 10;
+  double incircleRadius() => 10;
+  Offset center() => const Offset(0, 0);
 
-  double height() {
-    return 10;
-  }
+  @override
+  String toString() => 'Color: [34m${color.toString()}\u001b[0m';
 
-  double minSize() {
-    return 100;
-  }
-
-  double maxSize() {
-    return 10;
-  }
-
-  double incircleRadius() {
-    return 10;
-  }
-
-  Offset center() {
-    return Offset(0,0);
-  }
-  String toString() {
-    return  "Color: "+this.color.value.toString();
-  }
-  draw(Canvas canvas) {}
+  void draw(Canvas canvas) {}
 }

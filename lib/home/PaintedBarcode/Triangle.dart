@@ -4,88 +4,73 @@ import 'package:flutter/material.dart';
 import 'Shape.dart';
 
 class Triangle extends Shape {
-  List<Point> points = List<Point>(3);
+  final List<Point<double>> points;
 
-  Triangle(List<Point> point, [Color color = Colors.pinkAccent])
-      : super(SHAPES.triangle, color) {
-    this.points = point;
-  }
+  Triangle(List<Point<double>> points, [Color color = Colors.pinkAccent])
+      : points = List<Point<double>>.from(points),
+        super(SHAPES.triangle, color);
 
-  Triangle.fromPoints(Point p0, Point p1, Point p2,
+  Triangle.fromPoints(Point<double> p0, Point<double> p1, Point<double> p2,
       [Color color = Colors.pinkAccent])
-      : super(SHAPES.triangle, color) {
-    this.points[0] = p0;
-    this.points[1] = p1;
-    this.points[2] = p2;
-  }
+      : points = [p0, p1, p2],
+        super(SHAPES.triangle, color);
 
   List<Shape> split() {
     return [this, this];
   }
 
-  double length(Point a, Point b) {
+  double length(Point<double> a, Point<double> b) {
     return sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y));
   }
 
+  @override
   double minSize() {
-    Point A = this.points[0];
-    Point B = this.points[1];
-    Point C = this.points[2];
-    double c = length(A, B);
-    double a = length(B, C);
-    double b = length(C, A);
-    double perimeter = a+b+c;
-    double p = perimeter/2;
-
-    double area = sqrt(p*(p-a)*(p-b)*(p-c));
-    return 2*area/perimeter;
+    final A = points[0];
+    final B = points[1];
+    final C = points[2];
+    final c = length(A, B);
+    final a = length(B, C);
+    final b = length(C, A);
+    final perimeter = a + b + c;
+    final p = perimeter / 2;
+    final area = sqrt(p * (p - a) * (p - b) * (p - c));
+    return 2 * area / perimeter;
   }
 
-  double incircleRadius() {
-    Point A = this.points[0];
-    Point B = this.points[1];
-    Point C = this.points[2];
-    double c = length(A, B);
-    double a = length(B, C);
-    double b = length(C, A);
-    double perimeter = a+b+c;
-    double p = perimeter/2;
+  @override
+  double incircleRadius() => minSize();
 
-    double area = sqrt(p*(p-a)*(p-b)*(p-c));
-    return 2*area/perimeter;
+  Point<double> inCenter() {
+    final A = points[0];
+    final B = points[1];
+    final C = points[2];
+    final c = length(A, B);
+    final a = length(B, C);
+    final b = length(C, A);
+    final divisor = a + b + c;
+    return Point<double>(
+        (A.x * a + B.x * b + C.x * c) / divisor, (A.y * a + B.y * b + C.y * c) / divisor);
   }
 
-  Point inCenter() {
-    Point A = this.points[0];
-    Point B = this.points[1];
-    Point C = this.points[2];
-    double c = length(A, B);
-    double a = length(B, C);
-    double b = length(C, A);
-    double divisor = a + b + c;
-    return Point(
-        (A.x*a + B.x*b + C.x*c) / divisor, (A.y*a + B.y*b + C.y*c) / divisor);
-  }
-
+  @override
   Offset center() {
-    Point center = this.inCenter();
+    final center = inCenter();
     return Offset(center.x, center.y);
   }
 
-  Point naturalCenter() {
-    return Point((points[0].x + points[1] .x + points[2].x)/3,
-        (points[0].y + points[1] .y + points[2].y)/3);
+  Point<double> naturalCenter() {
+    return Point<double>(
+        (points[0].x + points[1].x + points[2].x) / 3,
+        (points[0].y + points[1].y + points[2].y) / 3);
   }
 
-  Point midpoint(Point p0, Point p1) {
-    return Point((p0.x + p1.x) / 2, (p0.y + p1.y) / 2);
+  Point<double> midpoint(Point<double> p0, Point<double> p1) {
+    return Point<double>((p0.x + p1.x) / 2, (p0.y + p1.y) / 2);
   }
 
-  List<Shape> splitTriangle(direction, [Color color = Colors.transparent]) {
+  List<Shape> splitTriangle(int direction, [Color? color]) {
     int p1, p2, p0;
-    if (color == Colors.transparent) {
-      color = this.color;
-    }
+    final splitColor = color ?? this.color;
     switch (direction) {
       case 0:
         p0 = 0;
@@ -104,35 +89,33 @@ class Triangle extends Shape {
         p2 = 0;
         break;
     }
-    Point center = this.midpoint(this.points[p1], this.points[p2]);
+    final center = midpoint(points[p1], points[p2]);
     return [
-      Triangle.fromPoints(this.points[p0], center, this.points[p1], this.color),
-      Triangle.fromPoints(this.points[p0], center, this.points[p2], color)
+      Triangle.fromPoints(points[p0], center, points[p1], this.color),
+      Triangle.fromPoints(points[p0], center, points[p2], splitColor)
     ];
   }
 
+  @override
   String toString() {
     return "Triangle[ " +
-        this.points[0].toString() +
+        points[0].toString() +
         ", " +
-        this.points[1].toString() +
+        points[1].toString() +
         ", " +
-        this.points[2].toString() +
+        points[2].toString() +
         " ]\n";
   }
 
   @override
-  draw(Canvas canvas) {
+  void draw(Canvas canvas) {
     final paint = Paint();
     paint.color = this.color;
-
-    // create a path
     final Path path = Path();
-    path.moveTo(this.points[0].x, this.points[0].y);
-    path.lineTo(this.points[1].x, this.points[1].y);
-    path.lineTo(this.points[2].x, this.points[2].y);
+    path.moveTo(points[0].x, points[0].y);
+    path.lineTo(points[1].x, points[1].y);
+    path.lineTo(points[2].x, points[2].y);
     path.close();
-
     canvas.drawPath(path, paint);
   }
 }

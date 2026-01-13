@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_cubit/flutter_cubit.dart';
-import 'package:easy_localization/easy_localization.dart';
-
 import 'package:protestersoath/authentication/authentication.dart';
 import 'package:protestersoath/home/home_page.dart';
 import 'package:protestersoath/login/LoginPage.dart';
@@ -16,17 +13,16 @@ import 'package:protestersoath/stories/StoriesSwitcher.dart';
 import 'package:protestersoath/stories/stories_cubit.dart';
 import 'package:protestersoath/protests/ProtestsSwitcher.dart';
 import 'package:protestersoath/protests/old/protests_cubit.dart';
-
 import 'package:protestersoath/settings/settings_page.dart';
 import 'package:protestersoath/utils/onBackPressed.dart';
-
 import '../about/about_page.dart';
 import '../navigation/app_drawer/appdrawer_state.dart';
 import '../navigation/app_drawer/appdrawer_event.dart';
 import '../oath/oath_page.dart';
+import 'package:protestersoath/l10n/app_localizations.dart';
 
 class App extends StatefulWidget {
-  App({Key key}) : super(key: key);
+  const App({Key? key}) : super(key: key);
 
   @override
   _AppState createState() => _AppState();
@@ -34,22 +30,18 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      localizationsDelegates: context.localizationDelegates,
-      supportedLocales: context.supportedLocales,
-      locale: context.locale,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: Localizations.localeOf(context),
       theme: ThemeData(
         primaryColor: Colors.grey,
-        accentColor: Colors.grey[300],
-        accentColorBrightness: Brightness.light,
-        primarySwatch: Colors.blueGrey,
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blueGrey).copyWith(
+          secondary: Colors.grey[300],
+          brightness: Brightness.light,
+        ),
       ),
       home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
         builder: (context, state) {
@@ -73,73 +65,73 @@ class _AppState extends State<App> {
 class AppView extends StatefulWidget {
   @override
   _AppViewState createState() => _AppViewState();
-
 }
 
 class _AppViewState extends State<AppView> {
-
-  @override
-  void initState() {
-
-    super.initState();
-  }
-
   AppDrawerState state = LoadingState();
 
   Future<bool> _onBackPressed() {
-    return onBackPressed(context, false, this.state);
+    return onBackPressed(context, false, state);
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<AppDrawerBloc>(
-        create: (context) => AppDrawerBloc(),
-        child: WillPopScope(
-            onWillPop: _onBackPressed,
-            child: MaterialApp(
-              title: 'APP_TITLE'.tr(),
-              debugShowCheckedModeBanner: false,
-              theme: ThemeData(
-                  primarySwatch: Colors.grey,
-                  appBarTheme: AppBarTheme(color: Colors.grey)),
-              home: BlocBuilder<AppDrawerBloc, AppDrawerState>(
-                builder: (context, state) {
-                  this.state = state;
-                  if (state is LoadingState) {
-                    BlocProvider.of<AppDrawerBloc>(context).add(LoadingEvent());
-                    return SplashPage();
-                  }
-                  if (state is AboutPageState) {
-                    return AboutPage();
-                  } else if (state is HomePageState) {
-                    return HomePage();
-                  } else if (state is SettingsPageState) {
-                    return SettingsPage();
-                  } else if (state is StoryPageState) {
-                    return CubitProvider<StoriesCubit>(
-                      create: (context) => StoriesCubit(),
-                      child: StoriesSwitcher(),
-                    );
-                  } else if (state is ProtestPageState) {
-                    return CubitProvider<ProtestsCubit>(
-                      create: (context) => ProtestsCubit(),
-                      child: ProtestsSwitcher(),
-                    );
-                  } else if (state is OathPageState) {
-                    return OathPage();
-                  } else if (state is ReasonPageState) {
-                    return ReasonPage(false);
-                  } else if (state is PrivacyPageState) {
-                    return PrivacyPage(false);
-                  } else if (state is VerifyPageState) {
-                    return VerifyPage();
-                  } else if (state is VerifyProofOfOathState) {
-                    return VerifyProofOfOathPage();
-                  } else {
-                    return SplashPage();
-                  }
-                },
-              ),
-            )));
+      create: (context) => AppDrawerBloc(),
+      child: PopScope(
+        canPop: true,
+        onPopInvoked: (didPop) async {
+          if (!didPop) {
+            await _onBackPressed();
+          }
+        },
+        child: MaterialApp(
+          title: AppLocalizations.of(context)?.appTitle ?? 'Protesters Oath',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            primarySwatch: Colors.grey,
+            appBarTheme: const AppBarTheme(backgroundColor: Colors.grey),
+          ),
+          home: BlocBuilder<AppDrawerBloc, AppDrawerState>(
+            builder: (context, state) {
+              this.state = state;
+              if (state is LoadingState) {
+                BlocProvider.of<AppDrawerBloc>(context).add(LoadingEvent());
+                return SplashPage();
+              }
+              if (state is AboutPageState) {
+                return AboutPage();
+              } else if (state is HomePageState) {
+                return HomePage();
+              } else if (state is SettingsPageState) {
+                return SettingsPage();
+              } else if (state is StoryPageState) {
+                return BlocProvider<StoriesCubit>(
+                  create: (context) => StoriesCubit(),
+                  child: StoriesSwitcher(),
+                );
+              } else if (state is ProtestPageState) {
+                return BlocProvider<ProtestsCubit>(
+                  create: (context) => ProtestsCubit(),
+                  child: ProtestsSwitcher(),
+                );
+              } else if (state is OathPageState) {
+                return OathPage();
+              } else if (state is ReasonPageState) {
+                return ReasonPage(false);
+              } else if (state is PrivacyPageState) {
+                return PrivacyPage(false);
+              } else if (state is VerifyPageState) {
+                return VerifyPage();
+              } else if (state is VerifyProofOfOathState) {
+                return VerifyProofOfOathPage();
+              } else {
+                return SplashPage();
+              }
+            },
+          ),
+        ),
+      ),
+    );
   }
 }

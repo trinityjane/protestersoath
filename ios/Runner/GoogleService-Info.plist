@@ -32,7 +32,5 @@
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
 	<string>1:1087855424394:ios:73d498fc25bf7891fa8e73</string>
-	<key>DATABASE_URL</key>
-	<string>https://protesters-oath.firebaseio.com</string>
 </dict>
 </plist>

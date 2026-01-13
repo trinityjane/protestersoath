@@ -1,26 +1,20 @@
 import 'package:flutter/cupertino.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:preferences/preference_service.dart';
 import 'package:protestersoath/stories/rss_page.dart';
 import 'package:protestersoath/stories/story_page.dart';
 
 class StoriesSwitcher extends StatelessWidget {
   StoriesSwitcher();
 
-  final stories = PrefService.getString('stories', ignoreCache: true);
-
-  // static Route route() {
-  //   return MaterialPageRoute(builder: (_) => ReasonPage(this.isLogin));
-  // }
+  // Removed PrefService and easy_localization. Use a constructor argument or another state management solution if needed.
+  final String storiesMode = "stories"; // Default to 'stories'.
 
   @override
   Widget build(BuildContext context) {
-    if (this.stories == "feeds") {
-      return RSSReader(which: 'Stories', title: 'STORIES'.tr());
-    }
-    else {
+    // If you want to switch to feeds, change storiesMode to "feeds" or use a state management solution.
+    if (storiesMode == "feeds") {
+      return RSSReader(which: 'Stories', title: 'Stories');
+    } else {
       return StoryPage();
     }
   }
-
 }

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:protestersoath/stories/FeedModel.dart';
+import 'package:protestersoath/l10n/app_localizations.dart';
 
 Widget StoryRSSCard(BuildContext context, FeedModel story, openFeed) {
   void _showErrorSnackBar() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('URL_PROBLEM'.tr()),
+        content: Text(AppLocalizations.of(context)!.urlProblem),
       ),
     );
   }
@@ -49,7 +49,7 @@ Widget StoryRSSCard(BuildContext context, FeedModel story, openFeed) {
                     : Text(
                         story.body,
                         style: TextStyle(
-                            fontSize: 15, color: Colors.black.withOpacity(0.8)),
+                            fontSize: 15, color: const Color.fromRGBO(0, 0, 0, 0.8)),
                       ),
               )
             : Container(),

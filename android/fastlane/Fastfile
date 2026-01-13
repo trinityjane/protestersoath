@@ -51,16 +51,12 @@ platform :android do
     )
   end
 
-  def toFirebase
-    puts $FIREBASE_TOKEN
-    firebase_app_distribution(
-      apk_path: "../build/app/outputs/apk/release/app-release.apk",
-      app: "1:1087855424394:android:3a568bcd5f12c731fa8e73",
-      testers: "robblovell@gmail.com",  # "/path/to/testers.txt"
-      release_notes: "",  # "/path/to/release-notes.txt"
-      firebase_cli_token: $FIREBASE_TOKEN
-    )
-  end
+#  def toFirebase
+#    puts $FIREBASE_TOKEN
+#    firebase_app_distribution(
+#      firebase_cli_token: $FIREBASE_TOKEN
+#    )
+#  end
 
   def notifySlack(message, commit, result)
     slack(
@@ -97,12 +93,12 @@ platform :android do
       notifySlack("Successfully bundled android version.", commit, true)
     end
 
-  desc "tofirebase"
-    lane :tofirebase do
-      toFirebase()
-      commit = getInfo()
-      notifySlack("A new build is available for testing", commit, true)
-    end
+#  desc "tofirebase"
+#    lane :tofirebase do
+#      toFirebase()
+#      commit = getInfo()
+#      notifySlack("A new build is available for testing", commit, true)
+#    end
 
   # Experimental:
   desc "beta"

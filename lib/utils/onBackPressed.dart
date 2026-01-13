@@ -1,28 +1,24 @@
 import 'package:flutter/material.dart';
-// import 'package:protestersoath/navigation/app_drawer/appdrawer.dart';
+import 'package:protestersoath/l10n/app_localizations.dart';
 
-Future<bool> onBackPressed(BuildContext context, isLogin, state) {
-  // if (isLogin || state is HomePageState) {
-  return showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Are you sure?'),
-          content: Text('Do you want to exit an App'),
-          actions: <Widget>[
-            GestureDetector(
-              onTap: () => Navigator.pop(context),
-              child: Text("NO"),
-            ),
-            SizedBox(height: 16),
-            GestureDetector(
-              onTap: () => Navigator.of(context).pop(true),
-              child: Text("YES"),
-              // Keep app in background? SystemChannels.platform.invokeMethod('SystemNavigator.pop')
-            ),
-          ],
+Future<bool> onBackPressed(BuildContext context, bool isLogin, dynamic state) async {
+  final result = await showDialog<bool>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(AppLocalizations.of(context)!.areYouSure),
+      content: Text(AppLocalizations.of(context)!.exitAppPrompt),
+      actions: <Widget>[
+        GestureDetector(
+          onTap: () => Navigator.pop(context, false),
+          child: Text(AppLocalizations.of(context)!.no),
         ),
-      ) ??
-      Future<bool>.value(false);
-  // }
-  // return Future<bool>.value(false);
+        SizedBox(height: 16),
+        GestureDetector(
+          onTap: () => Navigator.of(context).pop(true),
+          child: Text(AppLocalizations.of(context)!.yes),
+        ),
+      ],
+    ),
+  );
+  return result ?? false;
 }

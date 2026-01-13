@@ -1,99 +1,53 @@
 import 'dart:async';
-import 'package:flutter_session/flutter_session.dart';
 import 'package:protestersoath/data/Token.dart';
 import 'package:bloc/bloc.dart';
 import './appdrawer.dart';
-import 'appdrawer.dart';
 
 class AppDrawerBloc extends Bloc<AppDrawerEvent, AppDrawerState> {
-  Token token;
-  String othersPhone;
-  AppDrawerEvent lastPage;
-  AppDrawerEvent currentPage;
+  late Token token;
+  late String othersPhone;
+  late AppDrawerEvent lastPage;
+  late AppDrawerEvent currentPage;
 
-  AppDrawerBloc() : super(LoadingState());
-
-  // @override
-  @override
-  Stream<AppDrawerState> mapEventToState(
-    AppDrawerEvent event,
-  ) async* {
-    this.lastPage = this.currentPage;
-    this.currentPage = event;
-    if (event is LoadingEvent) {
-      dynamic tokenMap = await FlutterSession().get("protester");
-      this.token = Token.fromJson(tokenMap);
-      // print(token);
-      yield HomePageState(this.token);
-      // dynamic tokenMap = await FlutterSession().get("token");
-      // this.token = Token.fromJson(tokenMap);
-      // // print(token);
-      // yield HomePageState(this.token);
-    }
-    if (event is HomePageEvent) {
-      dynamic tokenMap = await FlutterSession().get("protester");
-      this.token = Token.fromJson(tokenMap);
-      // print(token);
-      yield HomePageState(this.token);
-      // dynamic tokenMap = await FlutterSession().get("token");
-      // this.token = Token.fromJson(tokenMap);
-      // // print(token);
-      // yield HomePageState(this.token);
-    }
-    if (event is AboutPageEvent) {
-      yield AboutPageState();
-    }
-    if (event is SettingsPageEvent) {
-      yield SettingsPageState();
-    }
-    if (event is StoryPageEvent) {
-      yield StoryPageState();
-    }
-    if (event is ProtestPageEvent) {
-      yield ProtestPageState();
-    }
-    if (event is VerifyPageEvent) {
-      yield VerifyPageState();
-    }
-    if (event is OathPageEvent) {
-      yield OathPageState();
-    }
-    if (event is ReasonPageEvent) {
-      yield ReasonPageState(this.lastPage);
-    }
-    if (event is PrivacyPageEvent) {
-      yield PrivacyPageState(this.lastPage);
-    }
-    if (event is VerifyProofOfOathEvent) {
-      yield VerifyProofOfOathState(event.othersPhone);
-    }
-    if (event is BackButtonEvent) {
-      dynamic tokenMap = await FlutterSession().get("protester");
-      this.token = Token.fromJson(tokenMap);
-      // dynamic tokenMap = await FlutterSession().get("token");
-      // this.token = Token.fromJson(tokenMap);
-      // print(token);
-      // todo: handle the differences for the Reason page. sometimes it goes back to oath.
-      yield HomePageState(this.token);
-    }
-    if (event is ReasonBackButtonEvent) {
-      yield LoadingState();
-      backFromReason(event.toPageEvent).listen((event) {
-        add(event);
-      });
-    }
-    if (event is PrivacyBackButtonEvent) {
-      yield LoadingState();
-      backFromReason(event.toPageEvent).listen((event) {
-        add(event);
-      });
-    }
+  AppDrawerBloc() : super(LoadingState()) {
+    on<LoadingEvent>((event, emit) async {
+      // In Flutter 3, remove FlutterSession and use a stateless approach or another persistence solution.
+      // For now, just yield a default HomePageState with a placeholder token.
+      token = Token(uid: '', phoneNumber: '');
+      emit(HomePageState(token));
+    });
+    on<HomePageEvent>((event, emit) async {
+      token = Token(uid: '', phoneNumber: '');
+      emit(HomePageState(token));
+    });
+    on<AboutPageEvent>((event, emit) => emit(AboutPageState()));
+    on<SettingsPageEvent>((event, emit) => emit(SettingsPageState()));
+    on<StoryPageEvent>((event, emit) => emit(StoryPageState()));
+    on<ProtestPageEvent>((event, emit) => emit(ProtestPageState()));
+    on<VerifyPageEvent>((event, emit) => emit(VerifyPageState()));
+    on<OathPageEvent>((event, emit) => emit(OathPageState()));
+    on<ReasonPageEvent>((event, emit) => emit(ReasonPageState(lastPage)));
+    on<PrivacyPageEvent>((event, emit) => emit(PrivacyPageState(lastPage)));
+    on<VerifyProofOfOathEvent>((event, emit) => emit(VerifyProofOfOathState(event.othersPhone)));
+    on<BackButtonEvent>((event, emit) async {
+      token = Token(uid: '', phoneNumber: '');
+      emit(HomePageState(token));
+    });
+    on<ReasonBackButtonEvent>((event, emit) async {
+      emit(LoadingState());
+      await for (final e in backFromReason(event.toPageEvent)) {
+        add(e);
+      }
+    });
+    on<PrivacyBackButtonEvent>((event, emit) async {
+      emit(LoadingState());
+      await for (final e in backFromReason(event.toPageEvent)) {
+        add(e);
+      }
+    });
   }
 
   Stream<AppDrawerEvent> backFromReason(event) async* {
-    StreamController<AppDrawerEvent> eventStream = StreamController();
-    eventStream.add(event);
-    eventStream.close();
-    yield* eventStream.stream;
+    yield event;
   }
 }

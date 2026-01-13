@@ -3,141 +3,121 @@ import 'package:flutter/cupertino.dart';
 
 @immutable
 class AppDrawerEvent extends Equatable {
+  const AppDrawerEvent();
   @override
   List<Object> get props => [];
 }
 
 class LoadingEvent extends AppDrawerEvent {
+  const LoadingEvent() : super();
   @override
   List<Object> get props => [];
 }
 
 class HomePageEvent extends AppDrawerEvent {
-  HomePageEvent() : super();
-
+  const HomePageEvent() : super();
   @override
   String toString() => 'HomePage';
-
   @override
   List<Object> get props => [];
 }
 
 class AboutPageEvent extends AppDrawerEvent {
-  AboutPageEvent() : super();
-
+  const AboutPageEvent() : super();
   @override
   String toString() => 'AboutPage';
-
   @override
   List<Object> get props => [];
 }
 
 class SettingsPageEvent extends AppDrawerEvent {
-  SettingsPageEvent() : super();
-
+  const SettingsPageEvent() : super();
   @override
   String toString() => 'SettingsPage';
-
   @override
   List<Object> get props => [];
 }
 
 class StoryPageEvent extends AppDrawerEvent {
-  StoryPageEvent() : super();
-
+  const StoryPageEvent() : super();
   @override
   String toString() => 'StoryPage';
-
   @override
   List<Object> get props => [];
 }
 
 class ProtestPageEvent extends AppDrawerEvent {
-  ProtestPageEvent() : super();
-
+  const ProtestPageEvent() : super();
   @override
   String toString() => 'ProtestPage';
-
   @override
   List<Object> get props => [];
 }
 
 class OathPageEvent extends AppDrawerEvent {
-  OathPageEvent() : super();
-
+  const OathPageEvent() : super();
   @override
   String toString() => 'OathPage';
-
   @override
   List<Object> get props => [];
 }
 
 class ReasonPageEvent extends AppDrawerEvent {
-  ReasonPageEvent() : super();
-
+  const ReasonPageEvent() : super();
   @override
   String toString() => 'ReasonPage';
-
   @override
   List<Object> get props => [];
 }
-class VerifyPageEvent extends AppDrawerEvent {
-  VerifyPageEvent() : super();
 
+class VerifyPageEvent extends AppDrawerEvent {
+  const VerifyPageEvent() : super();
   @override
   String toString() => 'VerifyPage';
-
   @override
   List<Object> get props => [];
 }
 
 class PrivacyPageEvent extends AppDrawerEvent {
-  PrivacyPageEvent() : super();
-
+  const PrivacyPageEvent() : super();
   @override
   String toString() => 'PrivacyPage';
-
   @override
   List<Object> get props => [];
 }
-class ReasonBackButtonEvent extends AppDrawerEvent {
-  AppDrawerEvent toPageEvent;
-  ReasonBackButtonEvent(this.toPageEvent) : super();
 
+class ReasonBackButtonEvent extends AppDrawerEvent {
+  final AppDrawerEvent toPageEvent;
+  const ReasonBackButtonEvent(this.toPageEvent) : super();
   @override
   String toString() => 'ReasonBackButton';
-
   @override
-  List<Object> get props => [this.toPageEvent];
+  List<Object> get props => [toPageEvent];
 }
-class PrivacyBackButtonEvent extends AppDrawerEvent {
-  AppDrawerEvent toPageEvent;
-  PrivacyBackButtonEvent(this.toPageEvent) : super();
 
+class PrivacyBackButtonEvent extends AppDrawerEvent {
+  final AppDrawerEvent toPageEvent;
+  const PrivacyBackButtonEvent(this.toPageEvent) : super();
   @override
   String toString() => 'PrivacyBackButton';
-
   @override
-  List<Object> get props => [this.toPageEvent];
+  List<Object> get props => [toPageEvent];
 }
-class BackButtonEvent extends AppDrawerEvent {
-  String fromPage;
-  BackButtonEvent(this.fromPage) : super();
 
+class BackButtonEvent extends AppDrawerEvent {
+  final String fromPage;
+  const BackButtonEvent(this.fromPage) : super();
   @override
   String toString() => 'BackButton';
-
   @override
-  List<Object> get props => [this.fromPage];
+  List<Object> get props => [fromPage];
 }
 
 class VerifyProofOfOathEvent extends AppDrawerEvent {
-  VerifyProofOfOathEvent({@required this.othersPhone}) : super();
   final String othersPhone;
-
+  const VerifyProofOfOathEvent({required this.othersPhone}) : super();
   @override
   String toString() => 'VerifyProofOfOath { othersPhone: $othersPhone }';
-
   @override
   List<Object> get props => [othersPhone];
 }

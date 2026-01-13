@@ -31,6 +31,23 @@ class FeedModel {
     this.isActive = false,
   }) : end = end ?? DateTime.now();
 
+  FeedModel.fromRSSFeed(dynamic item) {
+    // Minimal stub for demo/testing
+    title = item.title ?? '';
+    summary = item.summary ?? '';
+    body = item.body ?? '';
+    credit = item.credit ?? '';
+    imageURL = item.imageURL ?? 'assets/img/protester.png';
+    referenceURL = item.referenceURL ?? '';
+    postURL = item.postURL ?? '';
+    isHTML = item.isHTML ?? false;
+    start = item.start ?? '';
+    end = item.end ?? DateTime.now();
+    isActive = item.isActive ?? true;
+    type = item.type ?? 'Story';
+    date = item.date ?? '';
+  }
+
   // FeedModel.fromRSSFeed(RssItem item) {
   //   try {
   //     final document = parse(item.content.value.trim());
