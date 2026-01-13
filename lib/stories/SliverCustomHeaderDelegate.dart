@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:cached_network_image/cached_network_image.dart';
 
 class SliverCustomHeaderDelegate extends SliverPersistentHeaderDelegate {
   final double collapsedHeight;
@@ -41,6 +43,14 @@ class SliverCustomHeaderDelegate extends SliverPersistentHeaderDelegate {
     }
   }
 
+  // Use CORS proxy for web
+  String getImageUrl(String imageUrl) {
+    if (kIsWeb && !imageUrl.startsWith('assets')) {
+      return 'https://corsproxy.io/?${Uri.encodeComponent(imageUrl)}';
+    }
+    return imageUrl;
+  }
+
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
@@ -50,7 +60,16 @@ class SliverCustomHeaderDelegate extends SliverPersistentHeaderDelegate {
         fit: StackFit.expand,
         children: <Widget>[
           // Background image
-          Image.network(coverImgUrl, fit: BoxFit.cover),
+          CachedNetworkImage(
+            imageUrl: getImageUrl(coverImgUrl),
+            fit: BoxFit.cover,
+            placeholder: (context, url) => Container(color: Colors.grey),
+            errorWidget: (context, url, error) => Container(color: Colors.grey),
+            httpHeaders: {
+              'User-Agent': 'Mozilla/5.0 (compatible; ProtestersOath/1.0)',
+              'Accept': 'image/webp,image/apng,image/*,*/*;q=0.8',
+            },
+          ),
           // Sticky header
           Positioned(
             left: 0,

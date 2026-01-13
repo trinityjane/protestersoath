@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_html/flutter_html.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:protestersoath/stories/FeedModel.dart';
 import 'package:protestersoath/l10n/app_localizations.dart';
 
@@ -22,6 +24,14 @@ Widget ProtestRSSCard(BuildContext context, FeedModel protest, openFeed) {
     }
   }
 
+  // Use CORS proxy for web
+  String getImageUrl(String imageUrl) {
+    if (kIsWeb && !imageUrl.startsWith('assets')) {
+      return 'https://corsproxy.io/?${Uri.encodeComponent(imageUrl)}';
+    }
+    return imageUrl;
+  }
+
   return Card(
     clipBehavior: Clip.antiAlias,
     color: Colors.grey[400],
@@ -29,8 +39,25 @@ Widget ProtestRSSCard(BuildContext context, FeedModel protest, openFeed) {
       children: [
         protest.imageURL.startsWith("assets")
             ? Image.asset(protest.imageURL)
-            : Image.network(protest.imageURL),
-        // Title and Summary
+            : CachedNetworkImage(
+                imageUrl: getImageUrl(protest.imageURL),
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Center(
+                  child: CircularProgressIndicator(),
+                ),
+                errorWidget: (context, url, error) {
+                  print('Image load error for $url: $error');
+                  return Image.asset(
+                    'assets/img/protester.png',
+                    fit: BoxFit.cover,
+                  );
+                },
+                httpHeaders: {
+                  'User-Agent': 'Mozilla/5.0 (compatible; ProtestersOath/1.0)',
+                  'Accept': 'image/webp,image/apng,image/*,*/*;q=0.8',
+                },
+              ),
+        // ...existing code...
         ListTile(
           leading: Icon(Icons.arrow_drop_down_circle),
           title: Text(protest.title, style: TextStyle(fontSize: 22)),

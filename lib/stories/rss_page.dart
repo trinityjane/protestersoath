@@ -1,10 +1,9 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:protestersoath/navigation/app_drawer.dart';
 import 'package:protestersoath/navigation/app_drawer/appdrawer_event.dart';
 import 'package:protestersoath/navigation/app_drawer/appdrawer_bloc.dart';
-import 'package:protestersoath/l10n/app_localizations.dart';
 import 'package:protestersoath/settings/SettingsContainer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:protestersoath/stories/FeedModel.dart';
@@ -12,6 +11,7 @@ import 'package:protestersoath/stories/StoryRSSCard.dart';
 import 'package:protestersoath/stories/ProtestRSSCard.dart';
 import 'package:http/http.dart' as http;
 import 'package:webfeed_revised/webfeed_revised.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class RSSReader extends StatefulWidget {
   RSSReader({this.which = 'Stories', this.title = ''});
@@ -30,8 +30,8 @@ class RSSReaderState extends State<RSSReader> {
   bool _isLoading = false;
   String? _errorMessage;
 
-  static const String STORIES_RSS_URL = 'https://protestersoath.com/stories.rss';
-  static const String PROTESTS_RSS_URL = 'https://protestersoath.com/protests.rss';
+  static const String STORIES_RSS_URL = 'https://protestersoath.com/?feed=rss2';
+  static const String PROTESTS_RSS_URL = 'https://protestersoath.com/?feed=rss2';
 
   String get loadingMessage => 'Loading feed...';
   String get feedLoadErrorMessage => 'Error loading feed. Pull down to retry.';
@@ -44,6 +44,19 @@ class RSSReaderState extends State<RSSReader> {
   }
 
   void updateFeed(RssFeed feed) {
+    // Debug: Print first item to see structure
+    if (feed.items != null && feed.items!.isNotEmpty) {
+      final firstItem = feed.items![1];
+      print("Feed has ${feed.items!.length} items.");
+      print('First item: ${firstItem.toString()}');
+      print('First item title: ${firstItem.title}');
+      print('First item link: ${firstItem.link}');
+      print('First item description: ${firstItem.description}');
+      print('First item content: ${firstItem.content?.value}');
+      print('First item media: ${firstItem.media?.contents}');
+      print('First item enclosure: ${firstItem.enclosure?.url}');
+    }
+
     setState(() {
       _cards = feed.items?.map((item) => FeedModel.fromRSSFeed(item)).toList() ?? [];
       _stories = _cards.where((card) => card.type == 'Story').toList();
@@ -71,29 +84,51 @@ class RSSReaderState extends State<RSSReader> {
     updateTitle(loadingMessage);
 
     try {
-      final String feedUrl = widget.which == 'Stories' ? STORIES_RSS_URL : PROTESTS_RSS_URL;
-      final response = await http.get(Uri.parse(feedUrl));
+      String feedUrl = widget.which == 'Stories' ? STORIES_RSS_URL : PROTESTS_RSS_URL;
+
+      // For web, use a CORS proxy
+      if (kIsWeb) {
+        feedUrl = 'https://corsproxy.io/?${Uri.encodeComponent(feedUrl)}';
+        print('Using CORS proxy for web: $feedUrl');
+      }
+
+      print('Attempting to fetch RSS feed from: $feedUrl');
+
+      final response = await http.get(
+        Uri.parse(feedUrl),
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; ProtestersOath/1.0)',
+          'Accept': 'application/rss+xml, application/xml, text/xml, */*',
+        },
+      ).timeout(
+        Duration(seconds: 30),
+      );
+
+      print('Response status code: ${response.statusCode}');
+      print('Response content type: ${response.headers['content-type']}');
 
       if (response.statusCode == 200) {
+        print('Feed content length: ${response.body.length}');
+        print('First 500 chars: ${response.body.substring(0, response.body.length > 500 ? 500 : response.body.length)}');
+
         final feed = RssFeed.parse(response.body);
+        print('Successfully parsed ${feed.items?.length ?? 0} items');
         updateFeed(feed);
         updateTitle(widget.title);
       } else {
-        setState(() {
-          _isLoading = false;
-          _errorMessage = 'Error: HTTP ${response.statusCode}';
-        });
-        updateTitle(feedLoadErrorMessage);
+        throw Exception('HTTP ${response.statusCode}: ${response.reasonPhrase}');
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
       print('Error loading RSS feed: $e');
+      print('Stack trace: $stackTrace');
       setState(() {
         _isLoading = false;
-        _errorMessage = e.toString();
+        _errorMessage = 'Failed to load feed: $e';
       });
       updateTitle(feedLoadErrorMessage);
     }
   }
+
 
   @override
   void initState() {
@@ -140,6 +175,12 @@ class RSSReaderState extends State<RSSReader> {
                   ),
                   SizedBox(height: 8),
                   Text(
+                    _errorMessage ?? '',
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 8),
+                  Text(
                     'Pull down to retry',
                     style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                   ),
@@ -177,8 +218,7 @@ class RSSReaderState extends State<RSSReader> {
                 style: TextStyle(color: Colors.white),
               ),
               leading: showBack
-                  ? IconButton(
-                icon: Icon(Icons.arrow_back),
+                  ? IconButton(icon: Icon(Icons.arrow_back),
                 onPressed: () {
                   BlocProvider.of<AppDrawerBloc>(context)
                       .add(HomePageEvent());
