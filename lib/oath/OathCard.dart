@@ -5,9 +5,9 @@ import 'package:protestersoath/utils/sizing.dart';
 
 class OathCard extends StatelessWidget {
   final String text;
-  bool isLogin = false;
-  bool shortCard = false;
-  int index = -1;
+  final bool isLogin;
+  final bool shortCard;
+  final int index;
 
   OathCard(this.text, this.isLogin, this.index, this.shortCard);
 
@@ -60,7 +60,7 @@ class OathCard extends StatelessWidget {
               child: Align(
                   alignment: Alignment.topLeft,
                   child: AutoSizeText(
-                    AppLocalizations.of(context)!.theoath,
+                    _getOathText(context),
                     textAlign: TextAlign.left,
                     overflow: TextOverflow.visible,
                     stepGranularity: 1,
@@ -73,5 +73,56 @@ class OathCard extends StatelessWidget {
                   )),
           ))),
     );
+  }
+
+  String _getOathText(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    if (shortCard) {
+      switch (index) {
+        case 0:
+          return l10n.shortPoint00;
+        case 1:
+          return l10n.shortPoint01;
+        case 2:
+          return l10n.shortPoint02;
+        case 3:
+          return l10n.shortPoint03;
+        case 4:
+          return l10n.shortPoint04;
+        case 5:
+          return l10n.shortPoint05;
+        case 6:
+          return l10n.shortPoint06;
+        case 7:
+          return l10n.shortPoint07;
+        case 8:
+          return l10n.shortPoint08;
+        default:
+          return '';
+      }
+    } else {
+      switch (index) {
+        case 0:
+          return l10n.point00;
+        case 1:
+          return l10n.point01;
+        case 2:
+          return l10n.point02;
+        case 3:
+          return l10n.point03;
+        case 4:
+          return l10n.point04;
+        case 5:
+          return l10n.point05;
+        case 6:
+          return l10n.point06;
+        case 7:
+          return l10n.point07;
+        case 8:
+          return l10n.point08;
+        default:
+          return '';
+      }
+    }
   }
 }
