@@ -43,8 +43,9 @@ class AboutPage extends StatelessWidget {
             drawer: showDrawer && menuConfig != 'buttonsOnly' ? AppDrawer() : null,
             backgroundColor: Colors.grey,
             appBar: AppBar(
+              backgroundColor: Colors.grey,
               title: Text(
-                "About",
+                AppLocalizations.of(context)!.about,
                 style: TextStyle(color: Colors.white),
               ),
               leading: (showBack && menuConfig != 'allScreens')

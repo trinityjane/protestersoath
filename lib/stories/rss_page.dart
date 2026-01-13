@@ -210,6 +210,7 @@ class RSSReaderState extends State<RSSReader> {
             drawer: showDrawer ? AppDrawer() : null,
             backgroundColor: Colors.grey,
             appBar: AppBar(
+              backgroundColor: Colors.grey,
               title: Text(
                 _title,
                 style: TextStyle(color: Colors.white),

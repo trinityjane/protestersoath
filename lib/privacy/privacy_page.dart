@@ -18,6 +18,7 @@ class PrivacyPage extends StatelessWidget {
     if (isLogin) {
       return Scaffold(
         appBar: AppBar(
+            backgroundColor: Colors.grey,
             title: Text(
               AppLocalizations.of(context)!.privacyTitle,
               style: TextStyle(color: Colors.white),
@@ -35,6 +36,7 @@ class PrivacyPage extends StatelessWidget {
           builder: (BuildContext context, AppDrawerState state) {
         return Scaffold(
           appBar: AppBar(
+              backgroundColor: Colors.grey,
               title: Text(
                 AppLocalizations.of(context)!.privacyTitle,
                 style: TextStyle(color: Colors.white),

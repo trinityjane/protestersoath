@@ -29,6 +29,7 @@ class OathPage extends StatelessWidget {
           child: Scaffold(
             drawer: showDrawer && menuConfig != 'buttonsOnly' ? AppDrawer() : null,
             appBar: AppBar(
+              backgroundColor: Colors.grey,
               title: Text(
                 AppLocalizations.of(context)!.theoath,
                 style: TextStyle(color: Colors.white),

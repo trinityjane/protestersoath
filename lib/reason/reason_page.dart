@@ -28,6 +28,7 @@ class ReasonPage extends StatelessWidget {
             return Scaffold(
               drawer: showDrawer && menuConfig != 'buttonsOnly' ? AppDrawer() : null,
               appBar: AppBar(
+                backgroundColor: Colors.grey,
                 title: Text(
                   AppLocalizations.of(context)!.thereason,
                   style: TextStyle(color: Colors.white),

@@ -9,7 +9,7 @@ class ProtestsSwitcher extends StatelessWidget {
   Widget build(BuildContext context) {
     return RSSReader(
       which: "Protests",
-      title: AppLocalizations.of(context)?.protests ?? 'Protests',
+      title: AppLocalizations.of(context)?.protests ?? 'Upcoming Protests',
     );
   }
 }

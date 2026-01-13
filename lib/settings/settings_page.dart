@@ -30,6 +30,7 @@ class SettingsPage extends StatelessWidget {
           child: Scaffold(
             drawer: showDrawer && menuConfig != 'buttonsOnly' ? AppDrawer() : null,
             appBar: AppBar(
+              backgroundColor: Colors.grey,
               title: Text(
                 AppLocalizations.of(context)!.settings,
                 style: TextStyle(color: Colors.white),

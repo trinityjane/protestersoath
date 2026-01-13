@@ -37,6 +37,7 @@ class VerifyPage extends StatelessWidget {
             drawer: showDrawer && menuConfig != 'buttonsOnly' ? AppDrawer() : null,
             backgroundColor: Colors.grey,
             appBar: AppBar(
+              backgroundColor: Colors.grey,
               title: Text(
                 AppLocalizations.of(context)!.verifyAnOath,
                 style: TextStyle(color: Colors.white),

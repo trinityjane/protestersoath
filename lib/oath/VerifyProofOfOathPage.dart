@@ -18,6 +18,7 @@ class VerifyProofOfOathPage extends StatelessWidget {
       return Scaffold(
           // drawer: AppDrawer(),
           appBar: AppBar(
+              backgroundColor: Colors.grey,
               title: Text(
                 AppLocalizations.of(context)!.verifyTitle,
                 style: TextStyle(color: Colors.white),

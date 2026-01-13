@@ -52,6 +52,7 @@ class _StoryPageState extends State<StoryPage> {
                   child: CustomScrollView(
                     slivers: <Widget>[
                       SliverAppBar(
+                        backgroundColor: Colors.grey,
                         pinned: true,
                         title: Text(
                           AppLocalizations.of(context)!.stories,
