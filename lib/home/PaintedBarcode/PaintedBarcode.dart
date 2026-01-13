@@ -61,16 +61,18 @@ class PaintedBarcode {
   List<Shape> spread(List<Shape> thisList) {
     List<Shape> value = [];
     for (var element in thisList) {
-      if (element is Shape) {
-        value.add(element);
-      }
+      // ignore: avoid_print
+      print('Element added: ' + element.toString());
+      value.add(element);
     }
     return value;
   }
 
   List<Shape> split(List<Shape> shapeList, int which, int direction, Color color, int repeat) {
+    if (shapeList.isEmpty) return [];
+    int safeIndex = which % shapeList.length;
     List<Shape> shapes = List<Shape>.from(shapeList);
-    Shape toSplit = shapes.removeAt(which) as Shape;
+    Shape toSplit = shapes.removeAt(safeIndex);
     return [...shapes, ...shapeShape(toSplit, direction, color, repeat)];
   }
 
@@ -78,11 +80,15 @@ class PaintedBarcode {
     List<String> digits = phone.split('');
     RegExp digitChars = RegExp(r'[0-9]');
     digits = digits.where((digit) => digitChars.hasMatch(digit)).toList();
+    print("Digits: " + digits.toString());
+    if (digits.isEmpty) return; // Defensive: do not proceed if no digits
     List<int> digitInts = digits.map((d) => int.parse(d)).toList();
     int length = digitInts.length;
     final Rect rect = Rect.fromLTWH(0, 0, width, height);
     int colorIndex = digitInts[(digitInts[0]) % length] % alt_alt_colors.length;
     Color colorBase = alt_alt_colors[colorIndex];
+    print("Base color: " + colorBase.toString());
+    print("Initial rect: " + rect.toString());
     shapes.add(Square(rect, colorBase));
     List<int> used = [];
     List<int> used2 = [];
@@ -97,6 +103,7 @@ class PaintedBarcode {
                   : 3;
       int colorIndex = digitInts[(index + 2) % length] % colors.length;
       Color color = colors[colorIndex];
+      print("Index: $index, Digit: $digitOb, Direction: $direction, ColorIndex: $colorIndex, Color: $color");
       if (used.contains(colorIndex)) {
         int colorIndex2 = index % alt_colors.length;
         color = alt_colors[colorIndex2];
@@ -104,8 +111,10 @@ class PaintedBarcode {
           int colorIndex3 = (index + 1) % alt_alt_colors.length;
           color = alt_alt_colors[colorIndex3];
         }
+        print("Add Color: $colorIndex2");
         used2.add(colorIndex2);
       }
+      print("Add Color: $colorIndex");
       used.add(colorIndex);
       int repeat = digitInts[(index + 2) % length] % 2;
       int which = digitInts[(index + 3) % length] % shapes.length;
@@ -125,10 +134,12 @@ class PaintedBarcode {
             int colorIndex3 = (index + 4) % alt_alt_colors.length;
             color = alt_alt_colors[colorIndex3];
           }
+          print("Adding Alt Color from second set: $colorIndex2");
           used2.add(colorIndex2);
         }
         used.add(colorIndex);
         if (index < shapes.length) {
+          print("Adding Circle from shape at index $index with color $color");
           shapes.add(Circle.fromShape(shapes[index], color));
         }
       }

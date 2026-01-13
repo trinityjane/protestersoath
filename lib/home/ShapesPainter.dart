@@ -9,11 +9,33 @@ class ShapesPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    // Print the phone number for debugging
+    // ignore: avoid_print
+    print('ShapesPainter phoneNumber: '
+        '"' + phoneNumber + '"');
     // Use List<Shape> for type safety
     final List<Shape> shapes = <Shape>[];
+    final String normalizedPhone = stripPlusOnePhone(phoneNumber);
+    print('ShapesPainter phoneNumber: '
+        '"' + normalizedPhone + '"');
     PaintedBarcode painting = PaintedBarcode(shapes);
-    painting.makePainting(stripPlusOnePhone(phoneNumber), size.width, size.height);
-    painting.draw(canvas);
+    painting.makePainting(normalizedPhone, size.width, size.height);
+    // Always draw at least one shape if nothing is generated
+    if (shapes.isEmpty) {
+      final paint = Paint()..color = Colors.grey.withOpacity(0.3);
+      canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
+      final textPainter = TextPainter(
+        text: TextSpan(
+          text: 'No code',
+          style: TextStyle(color: Colors.black45, fontSize: 32),
+        ),
+        textDirection: TextDirection.ltr,
+      );
+      textPainter.layout(minWidth: 0, maxWidth: size.width);
+      textPainter.paint(canvas, Offset(size.width/2 - textPainter.width/2, size.height/2 - textPainter.height/2));
+    } else {
+      painting.draw(canvas);
+    }
   }
 
   @override

@@ -31,12 +31,12 @@ class LoginPrivacyPageEvent extends AuthenticationEvent {
 }
 
 class LoggedIn extends AuthenticationEvent {
-  final String token;
-  const LoggedIn({required this.token});
+  final String phoneNumber;
+  const LoggedIn({required this.phoneNumber});
   @override
-  String toString() => 'LoggedIn { token: $token }';
+  String toString() => 'LoggedIn { phoneNumber: $phoneNumber }';
   @override
-  List<Object> get props => [token];
+  List<Object> get props => [phoneNumber];
 }
 
 class LoggedOut extends AuthenticationEvent {

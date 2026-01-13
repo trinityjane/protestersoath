@@ -1,8 +1,6 @@
 import 'package:protestersoath/authentication/authentication.dart';
 import 'package:protestersoath/oath/OathContainer.dart';
 import 'package:protestersoath/login/bloc/login.dart';
-import 'package:protestersoath/login/bloc/login_bloc.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:protestersoath/utils/onBackPressed.dart';
@@ -111,7 +109,7 @@ class _LoginFormState extends State<LoginForm> {
       return LoadingIndicator();
     } else if (state is LoginCompleteState) {
       BlocProvider.of<AuthenticationBloc>(context).add(LoggedIn(
-        token: state.getUser().phoneNumber,
+        phoneNumber: state.getUser().phoneNumber,
       ));
       return LoadingIndicator();
     } else {

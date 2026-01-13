@@ -8,16 +8,16 @@ class AppDrawerBloc extends Bloc<AppDrawerEvent, AppDrawerState> {
   late String othersPhone;
   late AppDrawerEvent lastPage;
   late AppDrawerEvent currentPage;
+  final String? hardcodedPhone;
 
-  AppDrawerBloc() : super(LoadingState()) {
+  AppDrawerBloc({this.hardcodedPhone}) : super(LoadingState()) {
     on<LoadingEvent>((event, emit) async {
-      // In Flutter 3, remove FlutterSession and use a stateless approach or another persistence solution.
-      // For now, just yield a default HomePageState with a placeholder token.
-      token = Token(uid: '', phoneNumber: '');
+      // Use hardcoded phone if provided
+      token = Token(uid: '', phoneNumber: hardcodedPhone ?? '');
       emit(HomePageState(token));
     });
     on<HomePageEvent>((event, emit) async {
-      token = Token(uid: '', phoneNumber: '');
+      token = Token(uid: '', phoneNumber: hardcodedPhone ?? '');
       emit(HomePageState(token));
     });
     on<AboutPageEvent>((event, emit) => emit(AboutPageState()));

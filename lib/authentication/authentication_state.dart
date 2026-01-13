@@ -7,7 +7,10 @@ class InitialAuthenticationState extends AuthenticationState {}
 
 class Uninitialized extends AuthenticationState {}
 
-class Authenticated extends AuthenticationState {}
+class Authenticated extends AuthenticationState {
+  final String phoneNumber;
+  Authenticated(this.phoneNumber);
+}
 
 class Unauthenticated extends AuthenticationState {}
 

@@ -10,7 +10,7 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
     });
     on<LoggedIn>((event, emit) async {
       emit(Loading());
-      emit(Authenticated());
+      emit(Authenticated(event.phoneNumber));
     });
     on<LoggedOut>((event, emit) async {
       emit(Loading());

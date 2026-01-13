@@ -31,38 +31,30 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      locale: Localizations.localeOf(context),
-      theme: ThemeData(
-        primaryColor: Colors.grey,
-        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blueGrey).copyWith(
-          secondary: Colors.grey[300],
-          brightness: Brightness.light,
-        ),
-      ),
-      home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
-        builder: (context, state) {
-          if (state is Unauthenticated) {
-            return LoginPage();
-          } else if (state is LoginReasonPageState) {
-            return ReasonPage(true);
-          } else if (state is LoginPrivacyPageState) {
-            return PrivacyPage(true);
-          } else if (state is Authenticated) {
-            return AppView();
-          } else {
-            return SplashPage();
-          }
-        },
-      ),
+    // Restore normal login flow, but pass hardcodedPhone to AppView if authenticated
+    return BlocBuilder<AuthenticationBloc, AuthenticationState>(
+      builder: (context, state) {
+        if (state is Unauthenticated) {
+          return LoginPage();
+        } else if (state is LoginReasonPageState) {
+          return ReasonPage(true);
+        } else if (state is LoginPrivacyPageState) {
+          return PrivacyPage(true);
+        } else if (state is Authenticated) {
+          // Pass the authenticated phone number to AppView
+          final phone = state.phoneNumber;
+          return AppView(hardcodedPhone: phone);
+        } else {
+          return SplashPage();
+        }
+      },
     );
   }
 }
 
 class AppView extends StatefulWidget {
+  final String? hardcodedPhone;
+  AppView({this.hardcodedPhone});
   @override
   _AppViewState createState() => _AppViewState();
 }
@@ -77,59 +69,53 @@ class _AppViewState extends State<AppView> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<AppDrawerBloc>(
-      create: (context) => AppDrawerBloc(),
+      create: (context) => AppDrawerBloc(
+        hardcodedPhone: widget.hardcodedPhone,
+      ),
       child: PopScope(
         canPop: true,
-        onPopInvoked: (didPop) async {
+        onPopInvokedWithResult: (didPop, result) async {
           if (!didPop) {
             await _onBackPressed();
           }
         },
-        child: MaterialApp(
-          title: AppLocalizations.of(context)?.appTitle ?? 'Protesters Oath',
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            primarySwatch: Colors.grey,
-            appBarTheme: const AppBarTheme(backgroundColor: Colors.grey),
-          ),
-          home: BlocBuilder<AppDrawerBloc, AppDrawerState>(
-            builder: (context, state) {
-              this.state = state;
-              if (state is LoadingState) {
-                BlocProvider.of<AppDrawerBloc>(context).add(LoadingEvent());
-                return SplashPage();
-              }
-              if (state is AboutPageState) {
-                return AboutPage();
-              } else if (state is HomePageState) {
-                return HomePage();
-              } else if (state is SettingsPageState) {
-                return SettingsPage();
-              } else if (state is StoryPageState) {
-                return BlocProvider<StoriesCubit>(
-                  create: (context) => StoriesCubit(),
-                  child: StoriesSwitcher(),
-                );
-              } else if (state is ProtestPageState) {
-                return BlocProvider<ProtestsCubit>(
-                  create: (context) => ProtestsCubit(),
-                  child: ProtestsSwitcher(),
-                );
-              } else if (state is OathPageState) {
-                return OathPage();
-              } else if (state is ReasonPageState) {
-                return ReasonPage(false);
-              } else if (state is PrivacyPageState) {
-                return PrivacyPage(false);
-              } else if (state is VerifyPageState) {
-                return VerifyPage();
-              } else if (state is VerifyProofOfOathState) {
-                return VerifyProofOfOathPage();
-              } else {
-                return SplashPage();
-              }
-            },
-          ),
+        child: BlocBuilder<AppDrawerBloc, AppDrawerState>(
+          builder: (context, state) {
+            this.state = state;
+            if (state is LoadingState) {
+              BlocProvider.of<AppDrawerBloc>(context).add(LoadingEvent());
+              return SplashPage();
+            }
+            if (state is AboutPageState) {
+              return AboutPage();
+            } else if (state is HomePageState) {
+              return HomePage();
+            } else if (state is SettingsPageState) {
+              return SettingsPage();
+            } else if (state is StoryPageState) {
+              return BlocProvider<StoriesCubit>(
+                create: (context) => StoriesCubit(),
+                child: StoriesSwitcher(),
+              );
+            } else if (state is ProtestPageState) {
+              return BlocProvider<ProtestsCubit>(
+                create: (context) => ProtestsCubit(),
+                child: ProtestsSwitcher(),
+              );
+            } else if (state is OathPageState) {
+              return OathPage();
+            } else if (state is ReasonPageState) {
+              return ReasonPage(false);
+            } else if (state is PrivacyPageState) {
+              return PrivacyPage(false);
+            } else if (state is VerifyPageState) {
+              return VerifyPage();
+            } else if (state is VerifyProofOfOathState) {
+              return VerifyProofOfOathPage();
+            } else {
+              return SplashPage();
+            }
+          },
         ),
       ),
     );
