@@ -18,6 +18,15 @@ class _StoryPageState extends State<StoryPage> {
   final bool showDrawer = true; // Always show drawer for now.
 
   @override
+  void initState() {
+    super.initState();
+    // Load the first story with context
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<StoriesCubit>().getNextStory(context);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<StoriesCubit, StoriesState>(
       builder: (context, state) {
@@ -46,7 +55,7 @@ class _StoryPageState extends State<StoryPage> {
                       IconButton(
                         icon: Icon(Icons.art_track, size: 40),
                         onPressed: () =>
-                            context.read<StoriesCubit>().getNextStory(),
+                            context.read<StoriesCubit>().getNextStory(context),
                       ),
                     ],
                     leading: showDrawer

@@ -571,44 +571,266 @@ abstract class AppLocalizations {
   /// No description provided for @privacy1.
   ///
   /// In en, this message translates to:
-  /// **'Privacy section 1.'**
+  /// **'This application dose not collect personal data. All phone numbers are stored locally on your phone and not on any remote servers.'**
   String get privacy1;
 
   /// No description provided for @privacy2.
   ///
   /// In en, this message translates to:
-  /// **'Privacy section 2.'**
+  /// **'We do collect anonymized data about how the application is performing for the purpose of fixing problems and improving the app.'**
   String get privacy2;
 
-  /// No description provided for @verifyOther.
+  /// No description provided for @storyTitle00.
   ///
   /// In en, this message translates to:
-  /// **'Verify Other'**
-  String get verifyOther;
+  /// **'Protests against Hitler'**
+  String get storyTitle00;
 
-  /// No description provided for @theOath.
+  /// No description provided for @story00.
   ///
   /// In en, this message translates to:
-  /// **'The Oath'**
-  String get theOath;
+  /// **'One month before Hitler rose to power, a Jewish family living in Germany defiantly displayed a Hanukkah menorah in their window across from a Nazi flag.'**
+  String get story00;
 
-  /// No description provided for @theReason.
+  /// No description provided for @storyDate00.
   ///
   /// In en, this message translates to:
-  /// **'The Reason'**
-  String get theReason;
+  /// **'1932'**
+  String get storyDate00;
 
-  /// No description provided for @stories.
+  /// No description provided for @storyCredit00.
   ///
   /// In en, this message translates to:
-  /// **'Stories'**
-  String get stories;
+  /// **'Photo 12/Universal Images Group via Getty Images'**
+  String get storyCredit00;
+
+  /// No description provided for @storyImage00.
+  ///
+  /// In en, this message translates to:
+  /// **'assets/img/stories/story000.jpg'**
+  String get storyImage00;
+
+  /// No description provided for @storyUrl00.
+  ///
+  /// In en, this message translates to:
+  /// **'https://en.wikipedia.org/wiki/The_Holocaust'**
+  String get storyUrl00;
+
+  /// No description provided for @storyTitle01.
+  ///
+  /// In en, this message translates to:
+  /// **'Tank Man'**
+  String get storyTitle01;
+
+  /// No description provided for @storySummary01.
+  ///
+  /// In en, this message translates to:
+  /// **'A lone man stands up to a line of tanks in Tiananmen Square in 1989.'**
+  String get storySummary01;
+
+  /// No description provided for @story01.
+  ///
+  /// In en, this message translates to:
+  /// **''**
+  String get story01;
+
+  /// No description provided for @storyDate01.
+  ///
+  /// In en, this message translates to:
+  /// **'June 5, 1989'**
+  String get storyDate01;
+
+  /// No description provided for @storyCredit01.
+  ///
+  /// In en, this message translates to:
+  /// **'AP Photo/Jeff Widener'**
+  String get storyCredit01;
+
+  /// No description provided for @storyImage01.
+  ///
+  /// In en, this message translates to:
+  /// **'assets/img/stories/story001.jpg'**
+  String get storyImage01;
+
+  /// No description provided for @storyUrl01.
+  ///
+  /// In en, this message translates to:
+  /// **'https://en.wikipedia.org/wiki/Tank_Man'**
+  String get storyUrl01;
+
+  /// No description provided for @storyTitle02.
+  ///
+  /// In en, this message translates to:
+  /// **'Rosa Parks'**
+  String get storyTitle02;
+
+  /// No description provided for @storySummary02.
+  ///
+  /// In en, this message translates to:
+  /// **'Rosa Parks defies immoral laws targeting the color of her skin.'**
+  String get storySummary02;
+
+  /// No description provided for @story02.
+  ///
+  /// In en, this message translates to:
+  /// **'This photo of Rosa Parks sitting in the front of a bus was actually taken after the Supreme Court disbanded Montgomery\'s segregated bus system, but it remains a classic symbol.'**
+  String get story02;
+
+  /// No description provided for @storyDate02.
+  ///
+  /// In en, this message translates to:
+  /// **'December 21, 1956.'**
+  String get storyDate02;
+
+  /// No description provided for @storyCredit02.
+  ///
+  /// In en, this message translates to:
+  /// **'Underwood Archives/Getty Images'**
+  String get storyCredit02;
+
+  /// No description provided for @storyImage02.
+  ///
+  /// In en, this message translates to:
+  /// **'assets/img/stories/story002.jpg'**
+  String get storyImage02;
+
+  /// No description provided for @storyUrl02.
+  ///
+  /// In en, this message translates to:
+  /// **'https://en.wikipedia.org/wiki/Montgomery_bus_boycott'**
+  String get storyUrl02;
+
+  /// No description provided for @storyTitle03.
+  ///
+  /// In en, this message translates to:
+  /// **'Civil Rights Movement'**
+  String get storyTitle03;
+
+  /// No description provided for @storySummary03.
+  ///
+  /// In en, this message translates to:
+  /// **'Martin Luther King waves to a crowd on the steps of the Lincoln Memorial.'**
+  String get storySummary03;
+
+  /// No description provided for @story03.
+  ///
+  /// In en, this message translates to:
+  /// **'The civil rights movement, which began in 1954, aimed to end racial inequality, segregation, and discrimination.'**
+  String get story03;
+
+  /// No description provided for @storyDate03.
+  ///
+  /// In en, this message translates to:
+  /// **'1954-1968'**
+  String get storyDate03;
+
+  /// No description provided for @storyCredit03.
+  ///
+  /// In en, this message translates to:
+  /// **'Martin Luther King Jr. AP'**
+  String get storyCredit03;
+
+  /// No description provided for @storyImage03.
+  ///
+  /// In en, this message translates to:
+  /// **'assets/img/stories/story003.jpg'**
+  String get storyImage03;
+
+  /// No description provided for @storyUrl03.
+  ///
+  /// In en, this message translates to:
+  /// **'https://en.wikipedia.org/wiki/Civil_rights_movement'**
+  String get storyUrl03;
+
+  /// No description provided for @storyTitle04.
+  ///
+  /// In en, this message translates to:
+  /// **'Kent State Shootings'**
+  String get storyTitle04;
+
+  /// No description provided for @story04.
+  ///
+  /// In en, this message translates to:
+  /// **'John Filo\'s photo of the aftermath of the Kent State shootings is credited with helping turn public opinion against the Vietnam War.'**
+  String get story04;
+
+  /// No description provided for @storyDate04.
+  ///
+  /// In en, this message translates to:
+  /// **'May 1, 1970'**
+  String get storyDate04;
+
+  /// No description provided for @storyCredit04.
+  ///
+  /// In en, this message translates to:
+  /// **'John Filo/Valley News-Dispatch'**
+  String get storyCredit04;
+
+  /// No description provided for @storyImage04.
+  ///
+  /// In en, this message translates to:
+  /// **'assets/img/stories/story004.jpg'**
+  String get storyImage04;
+
+  /// No description provided for @storyUrl04.
+  ///
+  /// In en, this message translates to:
+  /// **'https://en.wikipedia.org/wiki/Kent_State_shootings'**
+  String get storyUrl04;
+
+  /// No description provided for @storyTitle05.
+  ///
+  /// In en, this message translates to:
+  /// **'John Lewis'**
+  String get storyTitle05;
+
+  /// No description provided for @storySummary05.
+  ///
+  /// In en, this message translates to:
+  /// **'John Lewis, in the foreground, is beaten by a state trooper during a civil rights voting march in Selma, Ala.'**
+  String get storySummary05;
+
+  /// No description provided for @story05.
+  ///
+  /// In en, this message translates to:
+  /// **''**
+  String get story05;
+
+  /// No description provided for @storyDate05.
+  ///
+  /// In en, this message translates to:
+  /// **'March 7, 1965'**
+  String get storyDate05;
+
+  /// No description provided for @storyCredit05.
+  ///
+  /// In en, this message translates to:
+  /// **'AP Photo'**
+  String get storyCredit05;
+
+  /// No description provided for @storyImage05.
+  ///
+  /// In en, this message translates to:
+  /// **'assets/img/stories/story005.jpg'**
+  String get storyImage05;
+
+  /// No description provided for @storyUrl05.
+  ///
+  /// In en, this message translates to:
+  /// **'https://en.wikipedia.org/wiki/Selma_to_Montgomery_marches'**
+  String get storyUrl05;
 
   /// No description provided for @protests.
   ///
   /// In en, this message translates to:
   /// **'Protests'**
   String get protests;
+
+  /// No description provided for @stories.
+  ///
+  /// In en, this message translates to:
+  /// **'Stories'**
+  String get stories;
 
   /// No description provided for @verifyButton.
   ///
@@ -628,17 +850,29 @@ abstract class AppLocalizations {
   /// **'Do you want to exit the app?'**
   String get exitAppPrompt;
 
+  /// No description provided for @no.
+  ///
+  /// In en, this message translates to:
+  /// **'NO'**
+  String get no;
+
   /// No description provided for @yes.
   ///
   /// In en, this message translates to:
   /// **'YES'**
   String get yes;
 
-  /// No description provided for @no.
+  /// No description provided for @theOath.
   ///
   /// In en, this message translates to:
-  /// **'NO'**
-  String get no;
+  /// **'The Oath'**
+  String get theOath;
+
+  /// No description provided for @theReason.
+  ///
+  /// In en, this message translates to:
+  /// **'The Reason'**
+  String get theReason;
 }
 
 class _AppLocalizationsDelegate

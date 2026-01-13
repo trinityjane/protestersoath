@@ -287,25 +287,150 @@ class AppLocalizationsEn extends AppLocalizations {
   String get privacyTitle => 'Privacy Policy';
 
   @override
-  String get privacy1 => 'Privacy section 1.';
+  String get privacy1 =>
+      'This application dose not collect personal data. All phone numbers are stored locally on your phone and not on any remote servers.';
 
   @override
-  String get privacy2 => 'Privacy section 2.';
+  String get privacy2 =>
+      'We do collect anonymized data about how the application is performing for the purpose of fixing problems and improving the app.';
 
   @override
-  String get verifyOther => 'Verify Other';
+  String get storyTitle00 => 'Protests against Hitler';
 
   @override
-  String get theOath => 'The Oath';
+  String get story00 =>
+      'One month before Hitler rose to power, a Jewish family living in Germany defiantly displayed a Hanukkah menorah in their window across from a Nazi flag.';
 
   @override
-  String get theReason => 'The Reason';
+  String get storyDate00 => '1932';
 
   @override
-  String get stories => 'Stories';
+  String get storyCredit00 =>
+      'Photo 12/Universal Images Group via Getty Images';
+
+  @override
+  String get storyImage00 => 'assets/img/stories/story000.jpg';
+
+  @override
+  String get storyUrl00 => 'https://en.wikipedia.org/wiki/The_Holocaust';
+
+  @override
+  String get storyTitle01 => 'Tank Man';
+
+  @override
+  String get storySummary01 =>
+      'A lone man stands up to a line of tanks in Tiananmen Square in 1989.';
+
+  @override
+  String get story01 => '';
+
+  @override
+  String get storyDate01 => 'June 5, 1989';
+
+  @override
+  String get storyCredit01 => 'AP Photo/Jeff Widener';
+
+  @override
+  String get storyImage01 => 'assets/img/stories/story001.jpg';
+
+  @override
+  String get storyUrl01 => 'https://en.wikipedia.org/wiki/Tank_Man';
+
+  @override
+  String get storyTitle02 => 'Rosa Parks';
+
+  @override
+  String get storySummary02 =>
+      'Rosa Parks defies immoral laws targeting the color of her skin.';
+
+  @override
+  String get story02 =>
+      'This photo of Rosa Parks sitting in the front of a bus was actually taken after the Supreme Court disbanded Montgomery\'s segregated bus system, but it remains a classic symbol.';
+
+  @override
+  String get storyDate02 => 'December 21, 1956.';
+
+  @override
+  String get storyCredit02 => 'Underwood Archives/Getty Images';
+
+  @override
+  String get storyImage02 => 'assets/img/stories/story002.jpg';
+
+  @override
+  String get storyUrl02 =>
+      'https://en.wikipedia.org/wiki/Montgomery_bus_boycott';
+
+  @override
+  String get storyTitle03 => 'Civil Rights Movement';
+
+  @override
+  String get storySummary03 =>
+      'Martin Luther King waves to a crowd on the steps of the Lincoln Memorial.';
+
+  @override
+  String get story03 =>
+      'The civil rights movement, which began in 1954, aimed to end racial inequality, segregation, and discrimination.';
+
+  @override
+  String get storyDate03 => '1954-1968';
+
+  @override
+  String get storyCredit03 => 'Martin Luther King Jr. AP';
+
+  @override
+  String get storyImage03 => 'assets/img/stories/story003.jpg';
+
+  @override
+  String get storyUrl03 =>
+      'https://en.wikipedia.org/wiki/Civil_rights_movement';
+
+  @override
+  String get storyTitle04 => 'Kent State Shootings';
+
+  @override
+  String get story04 =>
+      'John Filo\'s photo of the aftermath of the Kent State shootings is credited with helping turn public opinion against the Vietnam War.';
+
+  @override
+  String get storyDate04 => 'May 1, 1970';
+
+  @override
+  String get storyCredit04 => 'John Filo/Valley News-Dispatch';
+
+  @override
+  String get storyImage04 => 'assets/img/stories/story004.jpg';
+
+  @override
+  String get storyUrl04 => 'https://en.wikipedia.org/wiki/Kent_State_shootings';
+
+  @override
+  String get storyTitle05 => 'John Lewis';
+
+  @override
+  String get storySummary05 =>
+      'John Lewis, in the foreground, is beaten by a state trooper during a civil rights voting march in Selma, Ala.';
+
+  @override
+  String get story05 => '';
+
+  @override
+  String get storyDate05 => 'March 7, 1965';
+
+  @override
+  String get storyCredit05 => 'AP Photo';
+
+  @override
+  String get storyImage05 => 'assets/img/stories/story005.jpg';
+
+  @override
+  String get storyUrl05 =>
+      'https://en.wikipedia.org/wiki/Selma_to_Montgomery_marches';
 
   @override
   String get protests => 'Protests';
+
+  @override
+  String get stories => 'Stories';
 
   @override
   String get verifyButton => 'Verify';
@@ -317,8 +442,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exitAppPrompt => 'Do you want to exit the app?';
 
   @override
+  String get no => 'NO';
+
+  @override
   String get yes => 'YES';
 
   @override
-  String get no => 'NO';
+  String get theOath => 'The Oath';
+
+  @override
+  String get theReason => 'The Reason';
 }
