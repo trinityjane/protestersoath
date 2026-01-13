@@ -26,7 +26,7 @@ class AppDrawer extends StatelessWidget {
                     BlocProvider.of<AppDrawerBloc>(context).add(HomePageEvent());
                     Navigator.pop(context);
                   }),
-                  MenuItem(AppLocalizations.of(context)!.verifyOther, Icons.open_in_full, () {
+                  MenuItem(AppLocalizations.of(context)!.verifyAnOath, Icons.open_in_full, () {
                     BlocProvider.of<AppDrawerBloc>(context).add(VerifyPageEvent());
                     Navigator.pop(context);
                   }),

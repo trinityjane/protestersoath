@@ -1,51 +1,84 @@
 import 'package:flutter/material.dart';
 import 'package:protestersoath/l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsContainer extends StatefulWidget {
+  static Future<String> getMenuConfig() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('menuConfig') ?? 'homeOnly';
+  }
+
+  static Future<String> getStoriesConfig() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('storiesConfig') ?? 'installed';
+  }
+
   @override
   State<SettingsContainer> createState() => _SettingsContainerState();
 }
 
 class _SettingsContainerState extends State<SettingsContainer> {
-  String _drawerValue = 'home';
-  String _storiesValue = 'pages';
+  String _menuConfig = 'homeOnly';
+  String _storiesConfig = 'installed';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPrefs();
+  }
+
+  Future<void> _loadPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _menuConfig = prefs.getString('menuConfig') ?? 'homeOnly';
+      _storiesConfig = prefs.getString('storiesConfig') ?? 'installed';
+    });
+  }
+
+  Future<void> _saveMenuConfig(String value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('menuConfig', value);
+  }
+
+  Future<void> _saveStoriesConfig(String value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('storiesConfig', value);
+  }
 
   @override
   Widget build(BuildContext context) {
     return ListView(
       children: [
-        ListTile(
-          title: Text(AppLocalizations.of(context)!.settings),
-          tileColor: Colors.grey[200],
-        ),
-        ListTile(
-          title: Text(AppLocalizations.of(context)!.about),
-        ),
-        Divider(),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: Text('Menu Drawer', style: TextStyle(fontWeight: FontWeight.bold)),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+          child: Text('Menu Configuration', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
         ),
         _buildRadioGroup(
-          groupValue: _drawerValue,
-          onChanged: (value) => setState(() => _drawerValue = value),
+          groupValue: _menuConfig,
+          onChanged: (value) {
+            setState(() => _menuConfig = value);
+            _saveMenuConfig(value);
+          },
           options: const [
-            {'label': 'Home', 'value': 'home'},
-            {'label': 'All', 'value': 'all'},
-            {'label': 'None', 'value': 'none'},
+            {'label': "Menu on 'Proof of Oath' screen only", 'value': 'homeOnly'},
+            {'label': "Menu on all screens", 'value': 'allScreens'},
+            {'label': "Buttons only on 'Proof of Oath' screen", 'value': 'buttonsOnly'},
           ],
         ),
         Divider(),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: Text('Stories View', style: TextStyle(fontWeight: FontWeight.bold)),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+          child: Text('Stories Configuration', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
         ),
         _buildRadioGroup(
-          groupValue: _storiesValue,
-          onChanged: (value) => setState(() => _storiesValue = value),
+          groupValue: _storiesConfig,
+          onChanged: (value) {
+            setState(() => _storiesConfig = value);
+            _saveStoriesConfig(value);
+          },
           options: const [
-            {'label': 'Pages', 'value': 'pages'},
-            {'label': 'Feeds', 'value': 'feeds'},
+            {'label': "Stories installed with app", 'value': 'installed'},
+            {'label': "Stories from RSS feed", 'value': 'rss'},
           ],
         ),
       ],

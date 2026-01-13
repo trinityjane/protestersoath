@@ -6,7 +6,7 @@ import './appdrawer.dart';
 class AppDrawerBloc extends Bloc<AppDrawerEvent, AppDrawerState> {
   late Token token;
   late String othersPhone;
-  late AppDrawerEvent lastPage;
+  late AppDrawerEvent lastPage = HomePageEvent();
   late AppDrawerEvent currentPage;
   final String? hardcodedPhone;
 
@@ -26,7 +26,13 @@ class AppDrawerBloc extends Bloc<AppDrawerEvent, AppDrawerState> {
     on<ProtestPageEvent>((event, emit) => emit(ProtestPageState()));
     on<VerifyPageEvent>((event, emit) => emit(VerifyPageState()));
     on<OathPageEvent>((event, emit) => emit(OathPageState()));
-    on<ReasonPageEvent>((event, emit) => emit(ReasonPageState(lastPage)));
+    on<ReasonPageEvent>((event, emit) {
+      // If lastPage is not set, default to HomePageEvent
+      if (!isSet(lastPage)) {
+        lastPage = HomePageEvent();
+      }
+      emit(ReasonPageState(lastPage));
+    });
     on<PrivacyPageEvent>((event, emit) => emit(PrivacyPageState(lastPage)));
     on<VerifyProofOfOathEvent>((event, emit) => emit(VerifyProofOfOathState(event.othersPhone)));
     on<BackButtonEvent>((event, emit) async {
@@ -49,5 +55,14 @@ class AppDrawerBloc extends Bloc<AppDrawerEvent, AppDrawerState> {
 
   Stream<AppDrawerEvent> backFromReason(event) async* {
     yield event;
+  }
+}
+
+// Helper to check if lastPage is set
+bool isSet(AppDrawerEvent? event) {
+  try {
+    return event != null;
+  } catch (_) {
+    return false;
   }
 }

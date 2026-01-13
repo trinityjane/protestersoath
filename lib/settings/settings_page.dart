@@ -11,30 +11,40 @@ class SettingsPage extends StatelessWidget {
   SettingsPage();
 
   // Drawer visibility logic can be managed via state or passed as a parameter if needed.
-  final bool showDrawer = true; // Always show drawer for now.
-
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AppDrawerBloc, AppDrawerState>(
-      builder: (context, state) {
-        return Scaffold(
-          drawer: showDrawer ? AppDrawer() : null,
-          appBar: AppBar(
-            title: Text(
-              AppLocalizations.of(context)!.settings,
-              style: TextStyle(color: Colors.white),
+    return FutureBuilder<String>(
+      future: SettingsContainer.getMenuConfig(),
+      builder: (context, snapshot) {
+        final menuConfig = snapshot.data ?? 'homeOnly';
+        final bool showDrawer = menuConfig == 'allScreens' || menuConfig == 'homeOnly';
+        final bool showBack = (menuConfig == 'homeOnly' || menuConfig == 'buttonsOnly');
+        return WillPopScope(
+          onWillPop: () async {
+            if (showBack && menuConfig != 'allScreens') {
+              Navigator.of(context).popUntil((route) => route.isFirst);
+              return false;
+            }
+            return true;
+          },
+          child: Scaffold(
+            drawer: showDrawer && menuConfig != 'buttonsOnly' ? AppDrawer() : null,
+            appBar: AppBar(
+              title: Text(
+                AppLocalizations.of(context)!.settings,
+                style: TextStyle(color: Colors.white),
+              ),
+              leading: (showBack && menuConfig != 'allScreens')
+                  ? IconButton(
+                      icon: Icon(Icons.arrow_back),
+                      onPressed: () {
+                        BlocProvider.of<AppDrawerBloc>(context).add(HomePageEvent());
+                      },
+                    )
+                  : null,
             ),
-            leading: showDrawer
-                ? null
-                : IconButton(
-                    icon: Icon(Icons.arrow_back),
-                    onPressed: () {
-                      BlocProvider.of<AppDrawerBloc>(context)
-                          .add(BackButtonEvent("SettingsPage"));
-                    },
-                  ),
+            body: SettingsContainer(),
           ),
-          body: SettingsContainer(),
         );
       },
     );

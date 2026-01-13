@@ -7,6 +7,7 @@ import 'package:protestersoath/authentication/authentication.dart';
 import 'package:protestersoath/l10n/app_localizations.dart';
 import '../navigation/app_drawer/appdrawer_state.dart';
 import 'ReasonContainer.dart';
+import '../settings/SettingsContainer.dart';
 
 class ReasonPage extends StatelessWidget {
   final bool isLogin;
@@ -16,53 +17,35 @@ class ReasonPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Use InheritedWidget or Provider for drawer state if needed, or pass as param
-    final String? effectiveDrawer = drawer;
-    if (isLogin) {
-      return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            AppLocalizations.of(context)!.thereason,
-            style: TextStyle(color: Colors.white),
-          ),
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              BlocProvider.of<AuthenticationBloc>(context).add(LoggedOut());
-            },
-          ),
-        ),
-        body: TheReason(),
-      );
-    } else {
-      return BlocBuilder<AppDrawerBloc, AppDrawerState>(
-        builder: (BuildContext context, AppDrawerState state) {
-          return Scaffold(
-            drawer: effectiveDrawer == 'all' ? AppDrawer() : null,
-            appBar: AppBar(
-              title: Text(
-                AppLocalizations.of(context)!.thereason,
-                style: TextStyle(color: Colors.white),
+    return FutureBuilder<String>(
+      future: SettingsContainer.getMenuConfig(),
+      builder: (context, snapshot) {
+        final menuConfig = snapshot.data ?? 'homeOnly';
+        final bool showDrawer = menuConfig == 'allScreens' || menuConfig == 'homeOnly';
+        final bool showBack = (menuConfig == 'homeOnly' || menuConfig == 'buttonsOnly');
+        return BlocBuilder<AppDrawerBloc, AppDrawerState>(
+          builder: (BuildContext context, AppDrawerState state) {
+            return Scaffold(
+              drawer: showDrawer && menuConfig != 'buttonsOnly' ? AppDrawer() : null,
+              appBar: AppBar(
+                title: Text(
+                  AppLocalizations.of(context)!.thereason,
+                  style: TextStyle(color: Colors.white),
+                ),
+                leading: (showBack && menuConfig != 'allScreens')
+                    ? IconButton(
+                        icon: Icon(Icons.arrow_back),
+                        onPressed: () {
+                          BlocProvider.of<AppDrawerBloc>(context).add(HomePageEvent());
+                        },
+                      )
+                    : null,
               ),
-              leading: effectiveDrawer == 'all'
-                  ? null
-                  : IconButton(
-                      icon: Icon(Icons.arrow_back),
-                      onPressed: () {
-                        final lastPage = (state is ReasonPageState) ? state.lastPage : null;
-                        if (lastPage != null) {
-                          BlocProvider.of<AppDrawerBloc>(context)
-                              .add(ReasonBackButtonEvent(lastPage));
-                        } else {
-                          Navigator.of(context).maybePop();
-                        }
-                      },
-                    ),
-            ),
-            body: TheReason(),
-          );
-        },
-      );
-    }
+              body: TheReason(),
+            );
+          },
+        );
+      },
+    );
   }
 }

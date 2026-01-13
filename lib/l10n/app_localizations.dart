@@ -379,151 +379,151 @@ abstract class AppLocalizations {
   /// No description provided for @reasonTitle.
   ///
   /// In en, this message translates to:
-  /// **'Reason for the Oath'**
+  /// **'Reasoning'**
   String get reasonTitle;
 
   /// No description provided for @reason0.
   ///
   /// In en, this message translates to:
-  /// **'Reason 0 text.'**
+  /// **'This app helps you as a protester show to outside observers that you are not participating in violence. If non-protesters see other groups being violent, they are able to say to themselves: \'The protesters took an oath to be nonviolent, the violence must not be coming from them\'. This simple idea, that protesters take an oath, will distinguish them in the minds of observers from rioters, criminals, vandals and the violent.'**
   String get reason0;
 
   /// No description provided for @reason1.
   ///
   /// In en, this message translates to:
-  /// **'Reason 1 text.'**
+  /// **'When you enter your phone number and press the \'I Commit\' button below the oath, you are taking an oath to be nonviolent. Note: Your phone will not be sent or saved anywhere other than your phone and is not accessible by any party other than yourself.'**
   String get reason1;
 
   /// No description provided for @reason2.
   ///
   /// In en, this message translates to:
-  /// **'Reason 2 text.'**
+  /// **'Your phone number will be used to create a unique picture of your commitment to nonviolence.'**
   String get reason2;
 
   /// No description provided for @reason3.
   ///
   /// In en, this message translates to:
-  /// **'Reason 3 text.'**
+  /// **'The power of protest is to reveal truth in the face of unjust power through nonviolent action.'**
   String get reason3;
 
   /// No description provided for @reason4.
   ///
   /// In en, this message translates to:
-  /// **'Reason 4 text.'**
+  /// **'Violence negates that revelation, burying the truth in a haze of fear and anger. If the audience of the protest fears you, they will not hear you. Nonviolence means peaceful civil disobedience and useful mischief against immoral laws and power.'**
   String get reason4;
 
   /// No description provided for @reason5.
   ///
   /// In en, this message translates to:
-  /// **'Reason 5 text.'**
+  /// **'People who are out of power, minorities, immigrants, the non traditional and those at the fringes of society have learned this. But we all must learn this if there is to be change.'**
   String get reason5;
 
   /// No description provided for @reason6.
   ///
   /// In en, this message translates to:
-  /// **'Reason 6 text.'**
+  /// **'We are taught to meet injustice with violence, that violence is somehow justified in that context. Violence is never justified, and further, the reacting person gives up their power when they respond with violence. The power of nonviolence is its ability to win sympathy and to clearly demonstrate the injustice of an aggressor, an oppressor, the object of the protest.'**
   String get reason6;
 
   /// No description provided for @reason7.
   ///
   /// In en, this message translates to:
-  /// **'Reason 7 text.'**
+  /// **'Please take this oath so that your voice will be heard and the real power of nonviolence activated.'**
   String get reason7;
 
   /// No description provided for @explainTitle.
   ///
   /// In en, this message translates to:
-  /// **'Explanation Title'**
+  /// **'Explanation'**
   String get explainTitle;
 
   /// No description provided for @explain1.
   ///
   /// In en, this message translates to:
-  /// **'Explanation 1 text.'**
+  /// **'Being nonviolent is the power that a protest holds, that gives it a voice for change.'**
   String get explain1;
 
   /// No description provided for @explain2.
   ///
   /// In en, this message translates to:
-  /// **'Explanation 2 text.'**
+  /// **'Protesting involves committing of acts of useful civil disobedience that is peaceful, nonviolent and non-vengeful. These acts may be inconvenient to others, but brings attention to the injustices that are being protested. Indiscriminate vandalism isn’t useful mischief, throwing things is not useful mischief. Examples of useful mischief are blocking traffic, sit-ins, disobeying immoral laws, or defacing of symbols of oppression and hate.'**
   String get explain2;
 
   /// No description provided for @explain3.
   ///
   /// In en, this message translates to:
-  /// **'Explanation 3 text.'**
+  /// **'Violence is where protest ends and riots begin. Violence gives the object of a protest an excuse to commit violent acts and to suppress the protest. Violence overshadows the reason for the protest.'**
   String get explain3;
 
   /// No description provided for @explain4.
   ///
   /// In en, this message translates to:
-  /// **'Explanation 4 text.'**
+  /// **'Vandalizing bystander property, breaking windows or spraying graffiti does not help a cause because the object of the protest will use that as an excuse to discount its message. Vandalism will be used as an excuse to respond with disproportionate force which endangers the protest. Vandalism will be seen as violence by many bystanders. One exception is vandalism of symbols of oppression.'**
   String get explain4;
 
   /// No description provided for @explain5.
   ///
   /// In en, this message translates to:
-  /// **'Explanation 5 text.'**
+  /// **'Throwing things at police, military or anyone will be seen as an act of violence and will be responded to with disproportionate force. Throwing any projectile will be seen as an act of violence even if it is non-lethal. Water bottles, rocks, eggs, fireworks, shoes and other like objects can hurt someone if they hit them in unfortunate ways. One exception is glitter or soap bubbles which can’t be construed as violent.'**
   String get explain5;
 
   /// No description provided for @explain6.
   ///
   /// In en, this message translates to:
-  /// **'Explanation 6 text.'**
+  /// **'Weapons must not be brought to a protest because it enables violence whether that weapon is used defensively or offensively. Do not bring a weapon to a protest, no guns, knives, batons or any instrument that can be used to hurt someone. A weapon is not a means of defence, it is a temptation to use violence.'**
   String get explain6;
 
   /// No description provided for @explain7.
   ///
   /// In en, this message translates to:
-  /// **'Explanation 7 text.'**
+  /// **'Stopping violence around the protest helps people stay focused on what is important- staying nonviolent. This must be done in a nonviolent way. Help each other to quell anger and respond with love so that the message of the protest will be heard.'**
   String get explain7;
 
   /// No description provided for @explain8.
   ///
   /// In en, this message translates to:
-  /// **'Explanation 8 text.'**
+  /// **'Being a witness to the protest helps to bring the protest’s message to a wider audience and gain the sympathy of potential allies. The protest will be understood if violence is met with love and by example over time.'**
   String get explain8;
 
   /// No description provided for @explain9.
   ///
   /// In en, this message translates to:
-  /// **'Explanation 9 text.'**
+  /// **'Help people who are hurt only if you are coming to help from a place of certainty, safety, knowledge of your surroundings and of the risk you are taking. Helping the hurt will keep people healthy so that they can continue to participate.'**
   String get explain9;
 
   /// No description provided for @explain10.
   ///
   /// In en, this message translates to:
-  /// **'Explanation 10 text.'**
+  /// **'By listening to the leaders of the protest, you can coordinate with protest activities and help communicate coherent and clear messages. The first responsibility of the protest and protesters is to communicate to bystanders what the problem is and what remedy is required.'**
   String get explain10;
 
   /// No description provided for @explain11.
   ///
   /// In en, this message translates to:
-  /// **'Explanation 11 text.'**
+  /// **'When the police are informed, they do not have an excuse to work against the protest. Police should come to see their duty as protecting the protester, property and bystanders. By cooperating with police, they can come to understand the motivations of the protest. Committing crimes is self serving and not the purpose of protest.'**
   String get explain11;
 
   /// No description provided for @explain12.
   ///
   /// In en, this message translates to:
-  /// **'Explanation 12 text.'**
+  /// **'Eating and sleeping before attending a protest will help to control feelings of anger. The human body is built to short circuit the brain in dangerous situations and will create the desire for violence. This short circuit becomes more sensitive as we become tired and hungry.'**
   String get explain12;
 
   /// No description provided for @explain13.
   ///
   /// In en, this message translates to:
-  /// **'Explanation 13 text.'**
+  /// **'When we become emotional it is more difficult to control ourselves. We must not respond to violence with violence, even when feeling angry or fearful. We must stand if we can, run to protect ourselves if we must, or remove ourselves if we cannot control our actions. If we feel self righteous we will feel we have an excuse for retribution. But, we should not take that path because this will hurt the cause.'**
   String get explain13;
 
   /// No description provided for @explain14.
   ///
   /// In en, this message translates to:
-  /// **'Explanation 14 text.'**
+  /// **'Finally, nighttime protests are more difficult because it is much easier to get away with violence, crime and vandalism. It is also much harder to distinguish rioter from protester. If a protest must take place at night, more coordination with the protest leaders and police will be necessary to keep the things peaceful, identify vandals and thieves and keep protesters safe.'**
   String get explain14;
 
   /// No description provided for @explain15.
   ///
   /// In en, this message translates to:
-  /// **'Explanation 15 text.'**
+  /// **'3 Jane'**
   String get explain15;
 
   /// No description provided for @verifyTitle.
@@ -538,16 +538,22 @@ abstract class AppLocalizations {
   /// **'Oath Verified!'**
   String get oathVerified;
 
+  /// No description provided for @verifyAnOath.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify An Oath'**
+  String get verifyAnOath;
+
   /// No description provided for @verify1.
   ///
   /// In en, this message translates to:
-  /// **'Verify step 1 text.'**
+  /// **'Each \'Proof of Oath\' is a unique picture contructed from your phone number.'**
   String get verify1;
 
   /// No description provided for @verify2.
   ///
   /// In en, this message translates to:
-  /// **'Verify step 2 text.'**
+  /// **'Enter someone else\'s phone number here and press \'confirm\' to see that their picture matches the \'proof of oath\' on their phone.'**
   String get verify2;
 
   /// No description provided for @privacy.
