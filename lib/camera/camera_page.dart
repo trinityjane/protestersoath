@@ -241,7 +241,7 @@ class _CameraPageState extends State<CameraPage> {
                 // Show "Still Recording" indicator when in photo mode while recording video
                 if (_isRecording && _mode == CaptureMode.photo)
                   Positioned(
-                    bottom: MediaQuery.of(context).orientation == Orientation.portrait ? 32 : 8,
+                    bottom: MediaQuery.of(context).orientation == Orientation.portrait ? 32 : 20,
                     left: 0,
                     right: 0,
                     child: Center(
