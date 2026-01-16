@@ -24,6 +24,7 @@ class _CameraPageState extends State<CameraPage> {
   bool _isSaving = false;
   Orientation? _recordingOrientation;
   double? _recordingAspectRatio;
+  Orientation? _lockedPreviewOrientation;
 
   @override
   void initState() {
@@ -88,11 +89,10 @@ class _CameraPageState extends State<CameraPage> {
   Future<void> _startVideoRecording() async {
     if (_controller == null || !_controller!.value.isInitialized || _isRecording) return;
     try {
-      // Save the orientation and aspect ratio at the start of recording
+      // Lock the preview orientation at the start of recording
       final contextOrientation = MediaQuery.of(context).orientation;
       setState(() {
-        _recordingOrientation = contextOrientation;
-        _recordingAspectRatio = _controller!.value.aspectRatio;
+        _lockedPreviewOrientation = contextOrientation;
       });
       await _controller!.startVideoRecording();
       setState(() => _isRecording = true);
@@ -107,8 +107,7 @@ class _CameraPageState extends State<CameraPage> {
       final XFile file = await _controller!.stopVideoRecording();
       setState(() {
         _isRecording = false;
-        _recordingOrientation = null;
-        _recordingAspectRatio = null;
+        _lockedPreviewOrientation = null;
       });
       await GallerySaver.saveVideo(file.path);
       _showSaveSnackbar('Video saved to Camera Roll!', true);
@@ -156,11 +155,29 @@ class _CameraPageState extends State<CameraPage> {
       ),
       body: _controller == null || !_controller!.value.isInitialized
           ? const Center(child: CircularProgressIndicator())
-          : Center(
-              child: AspectRatio(
-                aspectRatio: _controller!.value.aspectRatio,
-                child: CameraPreview(_controller!),
-              ),
+          : OrientationBuilder(
+              builder: (context, orientation) {
+                // Use locked orientation if recording, else current
+                final previewOrientation = _lockedPreviewOrientation ?? orientation;
+                final deviceSize = MediaQuery.of(context).size;
+                final isPortrait = previewOrientation == Orientation.portrait;
+                final portraitAspectRatio = deviceSize.height / deviceSize.width;
+                final landscapeAspectRatio = _controller!.value.aspectRatio;
+                final aspectRatio = isPortrait ? portraitAspectRatio : landscapeAspectRatio;
+                return Center(
+                  child: FittedBox(
+                    fit: BoxFit.cover,
+                    child: SizedBox(
+                      width: isPortrait ? deviceSize.width : deviceSize.width,
+                      height: isPortrait ? deviceSize.height : deviceSize.width / landscapeAspectRatio,
+                      child: AspectRatio(
+                        aspectRatio: aspectRatio,
+                        child: CameraPreview(_controller!),
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: Padding(
