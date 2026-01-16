@@ -50,7 +50,21 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<!-- Required for in-app camera video recording -->
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs camera access to record video.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app needs microphone access to record video with audio.</string>
+	<!-- Required for saving videos to camera roll -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs photo library access to save recorded videos.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>This app needs permission to save videos to your photo library.</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
 </dict>
 </plist>

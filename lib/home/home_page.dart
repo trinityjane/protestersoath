@@ -7,6 +7,7 @@ import 'package:protestersoath/navigation/app_drawer/appdrawer_state.dart';
 import 'package:protestersoath/l10n/app_localizations.dart';
 import 'ShapesPainter.dart';
 import '../settings/SettingsContainer.dart';
+import 'package:protestersoath/camera/camera_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -43,6 +44,20 @@ class HomePage extends StatelessWidget {
                       icon: Icon(Icons.art_track, size: 35),
                       onPressed: () => BlocProvider.of<AppDrawerBloc>(context).add(StoryPageEvent()),
                       tooltip: AppLocalizations.of(context)!.stories,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 0),
+                    child: IconButton(
+                      icon: const Icon(Icons.videocam, size: 30),
+                      tooltip: 'Camera',
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => const CameraPage(),
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ],

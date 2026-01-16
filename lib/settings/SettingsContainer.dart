@@ -13,6 +13,11 @@ class SettingsContainer extends StatefulWidget {
     return prefs.getString('storiesConfig') ?? 'installed';
   }
 
+  static Future<bool> getAutoSaveVideo() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('autoSaveVideo') ?? false;
+  }
+
   @override
   State<SettingsContainer> createState() => _SettingsContainerState();
 }
@@ -20,6 +25,7 @@ class SettingsContainer extends StatefulWidget {
 class _SettingsContainerState extends State<SettingsContainer> {
   String _menuConfig = 'homeOnly';
   String _storiesConfig = 'installed';
+  bool _autoSaveVideo = false;
 
   @override
   void initState() {
@@ -32,6 +38,7 @@ class _SettingsContainerState extends State<SettingsContainer> {
     setState(() {
       _menuConfig = prefs.getString('menuConfig') ?? 'homeOnly';
       _storiesConfig = prefs.getString('storiesConfig') ?? 'installed';
+      _autoSaveVideo = prefs.getBool('autoSaveVideo') ?? false;
     });
   }
 
@@ -43,6 +50,11 @@ class _SettingsContainerState extends State<SettingsContainer> {
   Future<void> _saveStoriesConfig(String value) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('storiesConfig', value);
+  }
+
+  Future<void> _saveAutoSaveVideo(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('autoSaveVideo', value);
   }
 
   @override
@@ -80,6 +92,20 @@ class _SettingsContainerState extends State<SettingsContainer> {
             {'label': "Stories installed with app", 'value': 'installed'},
             {'label': "Stories from RSS feed", 'value': 'rss'},
           ],
+        ),
+        Divider(),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+          child: Text('Camera Settings', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+        ),
+        SwitchListTile(
+          title: const Text('Auto-save videos to Camera Roll'),
+          subtitle: const Text('Automatically save videos when you stop recording'),
+          value: _autoSaveVideo,
+          onChanged: (value) {
+            setState(() => _autoSaveVideo = value);
+            _saveAutoSaveVideo(value);
+          },
         ),
       ],
     );

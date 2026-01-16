@@ -1,6 +1,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.protestersoath.protestersoath">
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Required for in-app camera video recording -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <!-- Optional: declare hardware features for Play Store filtering (non-required so tablets w/o camera can still install) -->
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.microphone" android:required="false" />
+
    <application
         android:label="protestersoath"
         android:icon="@mipmap/ic_launcher">
