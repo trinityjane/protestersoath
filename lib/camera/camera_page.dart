@@ -22,9 +22,7 @@ class _CameraPageState extends State<CameraPage> {
   CaptureMode _mode = CaptureMode.video;
   bool _isRecording = false;
   bool _isSaving = false;
-  Orientation? _recordingOrientation;
-  double? _recordingAspectRatio;
-  Orientation? _lockedPreviewOrientation;
+  Orientation? _lockedOrientation;
 
   @override
   void initState() {
@@ -89,11 +87,20 @@ class _CameraPageState extends State<CameraPage> {
   Future<void> _startVideoRecording() async {
     if (_controller == null || !_controller!.value.isInitialized || _isRecording) return;
     try {
-      // Lock the preview orientation at the start of recording
-      final contextOrientation = MediaQuery.of(context).orientation;
-      setState(() {
-        _lockedPreviewOrientation = contextOrientation;
-      });
+      // Lock orientation to current orientation while recording
+      final orientation = MediaQuery.of(context).orientation;
+      if (orientation == Orientation.portrait) {
+        await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+      } else {
+        await SystemChrome.setPreferredOrientations([
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.landscapeRight,
+        ]);
+      }
+      // Small delay to ensure orientation lock takes effect
+      await Future.delayed(const Duration(milliseconds: 100));
+      // Lock the orientation at the start of recording
+      _lockedOrientation = MediaQuery.of(context).orientation;
       await _controller!.startVideoRecording();
       setState(() => _isRecording = true);
     } catch (e) {
@@ -107,8 +114,14 @@ class _CameraPageState extends State<CameraPage> {
       final XFile file = await _controller!.stopVideoRecording();
       setState(() {
         _isRecording = false;
-        _lockedPreviewOrientation = null;
+        _lockedOrientation = null;
       });
+      // Restore all orientations after recording stops
+      await SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ]);
       await GallerySaver.saveVideo(file.path);
       _showSaveSnackbar('Video saved to Camera Roll!', true);
     } catch (e) {
@@ -155,25 +168,34 @@ class _CameraPageState extends State<CameraPage> {
       ),
       body: _controller == null || !_controller!.value.isInitialized
           ? const Center(child: CircularProgressIndicator())
-          : OrientationBuilder(
-              builder: (context, orientation) {
-                // Use locked orientation if recording, else current
-                final previewOrientation = _lockedPreviewOrientation ?? orientation;
-                final deviceSize = MediaQuery.of(context).size;
-                final isPortrait = previewOrientation == Orientation.portrait;
-                final portraitAspectRatio = deviceSize.height / deviceSize.width;
-                final landscapeAspectRatio = _controller!.value.aspectRatio;
-                final aspectRatio = isPortrait ? portraitAspectRatio : landscapeAspectRatio;
-                return Center(
+          : LayoutBuilder(
+              builder: (context, constraints) {
+                final previewSize = _controller!.value.previewSize;
+                if (previewSize == null) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                // Use locked orientation if recording, otherwise current
+                final orientation = _isRecording && _lockedOrientation != null
+                    ? _lockedOrientation!
+                    : MediaQuery.of(context).orientation;
+                // Camera preview size is always in landscape (width > height)
+                // In portrait mode, we swap the dimensions
+                final double previewWidth;
+                final double previewHeight;
+                if (orientation == Orientation.portrait) {
+                  previewWidth = previewSize.height;
+                  previewHeight = previewSize.width;
+                } else {
+                  previewWidth = previewSize.width;
+                  previewHeight = previewSize.height;
+                }
+                return SizedBox.expand(
                   child: FittedBox(
                     fit: BoxFit.cover,
                     child: SizedBox(
-                      width: isPortrait ? deviceSize.width : deviceSize.width,
-                      height: isPortrait ? deviceSize.height : deviceSize.width / landscapeAspectRatio,
-                      child: AspectRatio(
-                        aspectRatio: aspectRatio,
-                        child: CameraPreview(_controller!),
-                      ),
+                      width: previewWidth,
+                      height: previewHeight,
+                      child: CameraPreview(_controller!),
                     ),
                   ),
                 );
