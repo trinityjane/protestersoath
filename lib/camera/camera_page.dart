@@ -76,7 +76,11 @@ class _CameraPageState extends State<CameraPage> {
       final XFile file = await _controller!.takePicture();
       await file.saveTo(filePath);
       await GallerySaver.saveImage(filePath);
-      _showSaveSnackbar('Photo saved to Camera Roll!', true);
+      if (_isRecording) {
+        _showSaveSnackbar('Photo saved! Still recording video...', true, stillRecording: true);
+      } else {
+        _showSaveSnackbar('Photo saved to Camera Roll!', true);
+      }
     } catch (e) {
       _showSaveSnackbar('Failed to save photo', false);
     } finally {
@@ -129,21 +133,52 @@ class _CameraPageState extends State<CameraPage> {
     }
   }
 
-  void _showSaveSnackbar(String message, bool success) {
+  void _showSaveSnackbar(String message, bool success, {bool stillRecording = false}) {
+    final appBarHeight = AppBar().preferredSize.height + MediaQuery.of(context).padding.top;
+    final double marginBottom = MediaQuery.of(context).size.height - appBarHeight - (stillRecording ? 240 : 215);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Row(
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(success ? Icons.check_circle : Icons.error, color: Colors.white),
-            const SizedBox(width: 8),
-            Text(message),
+            Row(
+              children: [
+                Icon(success ? Icons.check_circle : Icons.error, color: Colors.white),
+                const SizedBox(width: 8),
+                Expanded(child: Text(message)),
+              ],
+            ),
+            if (stillRecording) ...[
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  Container(
+                    width: 10,
+                    height: 10,
+                    decoration: const BoxDecoration(
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Text(
+                    'Still Recording',
+                    style: TextStyle(
+                      color: Colors.greenAccent,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ],
         ),
         backgroundColor: success ? Colors.green : Colors.red,
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
         margin: EdgeInsets.only(
-          bottom: MediaQuery.of(context).size.height - 260,
+          bottom: marginBottom,
           left: 16,
           right: 16,
         ),
@@ -168,38 +203,80 @@ class _CameraPageState extends State<CameraPage> {
       ),
       body: _controller == null || !_controller!.value.isInitialized
           ? const Center(child: CircularProgressIndicator())
-          : LayoutBuilder(
-              builder: (context, constraints) {
-                final previewSize = _controller!.value.previewSize;
-                if (previewSize == null) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                // Use locked orientation if recording, otherwise current
-                final orientation = _isRecording && _lockedOrientation != null
-                    ? _lockedOrientation!
-                    : MediaQuery.of(context).orientation;
-                // Camera preview size is always in landscape (width > height)
-                // In portrait mode, we swap the dimensions
-                final double previewWidth;
-                final double previewHeight;
-                if (orientation == Orientation.portrait) {
-                  previewWidth = previewSize.height;
-                  previewHeight = previewSize.width;
-                } else {
-                  previewWidth = previewSize.width;
-                  previewHeight = previewSize.height;
-                }
-                return SizedBox.expand(
-                  child: FittedBox(
-                    fit: BoxFit.cover,
-                    child: SizedBox(
-                      width: previewWidth,
-                      height: previewHeight,
-                      child: CameraPreview(_controller!),
+          : Stack(
+              children: [
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final previewSize = _controller!.value.previewSize;
+                    if (previewSize == null) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    // Use locked orientation if recording, otherwise current
+                    final orientation = _isRecording && _lockedOrientation != null
+                        ? _lockedOrientation!
+                        : MediaQuery.of(context).orientation;
+                    // Camera preview size is always in landscape (width > height)
+                    // In portrait mode, we swap the dimensions
+                    final double previewWidth;
+                    final double previewHeight;
+                    if (orientation == Orientation.portrait) {
+                      previewWidth = previewSize.height;
+                      previewHeight = previewSize.width;
+                    } else {
+                      previewWidth = previewSize.width;
+                      previewHeight = previewSize.height;
+                    }
+                    return SizedBox.expand(
+                      child: FittedBox(
+                        fit: BoxFit.cover,
+                        child: SizedBox(
+                          width: previewWidth,
+                          height: previewHeight,
+                          child: CameraPreview(_controller!),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                // Show "Still Recording" indicator when in photo mode while recording video
+                if (_isRecording && _mode == CaptureMode.photo)
+                  Positioned(
+                    bottom: MediaQuery.of(context).orientation == Orientation.portrait ? 32 : 8,
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.black54,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: 12,
+                              height: 12,
+                              decoration: const BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            const Text(
+                              'Still Recording Video',
+                              style: TextStyle(
+                                color: Colors.greenAccent,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                );
-              },
+              ],
             ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: Padding(
