@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:camerawesome/camerawesome_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
@@ -18,15 +16,9 @@ class _CameraPageState extends State<CameraPage> {
   bool _isSaving = false;
   String? _lastSavedPath;
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
   Future<CaptureRequest> _mediaPathBuilder(List<Sensor> sensors, {bool isVideo = true}) async {
-    final Directory dir = await getTemporaryDirectory();
-    final Directory outDir =
-        await Directory('${dir.path}/protestersoath').create(recursive: true);
+    final dir = await getTemporaryDirectory();
+    final outDir = await Directory('${dir.path}/protestersoath').create(recursive: true);
     final String baseName =
         'protesters_oath_${DateTime.now().millisecondsSinceEpoch}';
     final String extension = isVideo ? 'mp4' : 'jpg';
