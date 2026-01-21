@@ -81,42 +81,47 @@ Widget StoryRSSCard(BuildContext context, FeedModel story, openFeed) {
               )
             : Container(),
 
-        // link to the story.
+        // Date and Photo Credit at the bottom right
         Align(
-          alignment: Alignment.centerLeft,
+          alignment: Alignment.bottomRight,
           child: Padding(
-            padding: EdgeInsets.only(top: 8, left: 16, bottom: 8),
+            padding: EdgeInsets.only(right: 16, bottom: 12, top: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Date: ' + story.date,
+                  style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.black87,
+                      fontWeight: FontWeight.w500),
+                ),
+                SizedBox(height: 2),
+                Text(
+                  'Photo: ' + story.credit,
+                  style: TextStyle(fontSize: 14),
+                ),
+              ],
+            ),
+          ),
+        ),
+        // More Information link at the bottom left
+        Align(
+          alignment: Alignment.bottomLeft,
+          child: Padding(
+            padding: EdgeInsets.only(left: 16, bottom: 12, top: 8),
             child: GestureDetector(
               onTap: () => _launchURL(story.referenceURL),
               child: Text(
                 'More Information',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 20,
                   color: Colors.blue,
                   decoration: TextDecoration.underline,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-            ),
-          ),
-        ),
-        Align(
-          alignment: Alignment.centerRight,
-          child: Padding(
-            padding: EdgeInsets.only(top: 3, bottom: 3, right: 10),
-            child: Text(
-              'Photo: ' + story.credit,
-              style: TextStyle(fontSize: 10),
-            ),
-          ),
-        ),
-        Align(
-          alignment: Alignment.centerRight,
-          child: Padding(
-            padding: EdgeInsets.only(top: 3, bottom: 20, right: 10),
-            child: Text(
-              'Date: ' + story.date,
-              style: TextStyle(fontSize: 10),
             ),
           ),
         ),
