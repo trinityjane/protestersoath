@@ -12,6 +12,7 @@ import 'package:protestersoath/protests/ProtestRSSCard.dart';
 import 'package:protestersoath/settings/SettingsContainer.dart';
 import 'package:protestersoath/stories/FeedModel.dart';
 import 'package:protestersoath/stories/StoryRSSCard.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webfeed_revised/webfeed_revised.dart';
 
@@ -34,6 +35,7 @@ class RSSReaderState extends State<RSSReader> {
   String _title = '';
   bool _isLoading = false;
   String? _errorMessage;
+  bool _compactMode = false;
 
   static final Map<String, RssFeed> _feedCache = {};
 
@@ -167,7 +169,21 @@ class RSSReaderState extends State<RSSReader> {
   void initState() {
     super.initState();
     updateTitle(widget.title);
+    _loadCompactMode();
     load();
+  }
+
+  Future<void> _loadCompactMode() async {
+    _compactMode = await SettingsContainer.getProtestsCompactMode();
+    setState(() {});
+  }
+
+  Future<void> _saveCompactMode(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('protestsCompactMode', value);
+    setState(() {
+      _compactMode = value;
+    });
   }
 
   bool isFeedEmpty() {
@@ -252,6 +268,21 @@ class RSSReaderState extends State<RSSReader> {
                 _title,
                 style: TextStyle(color: Colors.white),
               ),
+              actions: widget.which == 'Protests'
+                  ? [
+                      Row(
+                        children: [
+                          Text('Compact',
+                              style: TextStyle(color: Colors.white)),
+                          Switch(
+                            value: _compactMode,
+                            onChanged: (val) => _saveCompactMode(val),
+                            activeColor: Colors.white,
+                          ),
+                        ],
+                      ),
+                    ]
+                  : null,
               leading: showBack
                   ? IconButton(
                       icon: Icon(Icons.arrow_back),
@@ -297,44 +328,37 @@ class RSSReaderState extends State<RSSReader> {
       );
     }
 
-    // Use a FutureBuilder to get the compact mode setting
-    return FutureBuilder<bool>(
-      future: SettingsContainer.getProtestsCompactMode(),
-      builder: (context, snapshot) {
-        final bool compactMode = snapshot.data ?? false;
-        return Container(
-          color: Colors.grey,
-          child: CustomScrollView(slivers: <Widget>[
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (BuildContext context, int index) {
-                  if (widget.which == 'Stories') {
-                    final FeedModel story = listToShow[index];
-                    return Container(
-                      margin: EdgeInsets.only(bottom: 10.0),
-                      decoration: customBoxDecoration(),
-                      child: StoryRSSCard(context, story, openFeed),
-                    );
-                  } else {
-                    final FeedModel protest = listToShow[index];
-                    print(
-                        '[DEBUG] Protest: title=${protest.title}, start=${protest.start}, isUpcoming=${protest.isUpcoming}');
-                    if (!protest.isUpcoming) return Container();
-                    return Container(
-                      margin: EdgeInsets.only(bottom: 10.0),
-                      decoration: customBoxDecoration(),
-                      child: compactMode
-                          ? ProtestCompactListItem(context, protest, openFeed)
-                          : ProtestRSSCard(context, protest, openFeed),
-                    );
-                  }
-                },
-                childCount: listToShow.length,
-              ),
-            ),
-          ]),
-        );
-      },
+    return Container(
+      color: Colors.grey,
+      child: CustomScrollView(slivers: <Widget>[
+        SliverList(
+          delegate: SliverChildBuilderDelegate(
+            (BuildContext context, int index) {
+              if (widget.which == 'Stories') {
+                final FeedModel story = listToShow[index];
+                return Container(
+                  margin: EdgeInsets.only(bottom: 10.0),
+                  decoration: customBoxDecoration(),
+                  child: StoryRSSCard(context, story, openFeed),
+                );
+              } else {
+                final FeedModel protest = listToShow[index];
+                print(
+                    '[DEBUG] Protest: title=\u001b${protest.title}, start=\u001b${protest.start}, isUpcoming=\u001b${protest.isUpcoming}');
+                if (!protest.isUpcoming) return Container();
+                return Container(
+                  margin: EdgeInsets.only(bottom: 10.0),
+                  decoration: customBoxDecoration(),
+                  child: _compactMode
+                      ? ProtestCompactListItem(context, protest, openFeed)
+                      : ProtestRSSCard(context, protest, openFeed),
+                );
+              }
+            },
+            childCount: listToShow.length,
+          ),
+        ),
+      ]),
     );
   }
 

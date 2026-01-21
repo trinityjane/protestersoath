@@ -87,7 +87,8 @@ class _SettingsContainerState extends State<SettingsContainer> {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-          child: Text('Menu Configuration', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+          child: Text('Menu Configuration',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
         ),
         _buildRadioGroup(
           groupValue: _menuConfig,
@@ -96,19 +97,27 @@ class _SettingsContainerState extends State<SettingsContainer> {
             _saveMenuConfig(value);
           },
           options: const [
-            {'label': "Menu on 'Proof of Oath' screen only", 'value': 'homeOnly'},
+            {
+              'label': "Menu on 'Proof of Oath' screen only",
+              'value': 'homeOnly'
+            },
             {'label': "Menu on all screens", 'value': 'allScreens'},
-            {'label': "Buttons only on 'Proof of Oath' screen", 'value': 'buttonsOnly'},
+            {
+              'label': "Buttons only on 'Proof of Oath' screen",
+              'value': 'buttonsOnly'
+            },
           ],
         ),
         Divider(),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-          child: Text('Stories Configuration', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+          child: Text('Stories Configuration',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
         ),
         SwitchListTile(
           title: const Text('Stories from RSS feed'),
-          subtitle: const Text('Toggle on to load stories from RSS feed, off for stories installed with app'),
+          subtitle: const Text(
+              'Toggle on to load stories from RSS feed, off for stories installed with app'),
           value: _storiesConfig == 'rss',
           onChanged: (value) {
             setState(() => _storiesConfig = value ? 'rss' : 'installed');
@@ -118,11 +127,13 @@ class _SettingsContainerState extends State<SettingsContainer> {
         Divider(),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-          child: Text('Camera Settings', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+          child: Text('Camera Settings',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
         ),
         SwitchListTile(
           title: const Text('Auto-save videos to Camera Roll'),
-          subtitle: const Text('Automatically save videos when you stop recording'),
+          subtitle:
+              const Text('Automatically save videos when you stop recording'),
           value: _autoSaveVideo,
           onChanged: (value) {
             setState(() => _autoSaveVideo = value);
@@ -130,29 +141,18 @@ class _SettingsContainerState extends State<SettingsContainer> {
           },
         ),
         Divider(),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-          child: Text('Upcoming Protests Configuration', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-        ),
-        SwitchListTile(
-          title: const Text('Show protests as compact list'),
-          subtitle: const Text('Toggle between compact list and full content cards for upcoming protests'),
-          value: _protestsCompactMode,
-          onChanged: (value) {
-            setState(() => _protestsCompactMode = value);
-            _saveProtestsCompactMode(value);
-          },
-        ),
-        Divider(),
         if (kDebugMode)
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-            child: Text('Development Settings', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+            child: Text('Development Settings',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
           ),
         if (kDebugMode)
           SwitchListTile(
             title: const Text('Disable RSS Feed Caching'),
-            subtitle: const Text('Always fetch RSS feed from the network (development only)'),
+            subtitle: const Text(
+                'Always fetch RSS feed from the network (development only)'),
             value: _disableRssFeedCache,
             onChanged: (value) {
               setState(() => _disableRssFeedCache = value);

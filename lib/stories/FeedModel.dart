@@ -173,55 +173,46 @@ class FeedModel {
         this.date = metadata['date']!;
       }
 
-      // Extract location from <li>Location<ul><li>...</li></ul></li> structure (robust, safe for LinkedMap)
+      // --- Robust Location Extraction ---
       this.location = '';
       this.locationUrl = '';
-      for (final ul in ulTags) {
-        final liTags = ul.getElementsByTagName('li');
-        for (final li in liTags) {
-          // Look for a text node child with 'Location'
-          bool isLocationLi = false;
-          for (final node in li.nodes) {
-            if (node.nodeType == 3) {
-              // TEXT_NODE
-              final text = node.text?.trim().toLowerCase() ?? '';
-              if (text == 'location') {
-                isLocationLi = true;
-                break;
-              }
-            }
-          }
-          if (isLocationLi) {
-            // Find the first nested <ul> and get its first <li>
-            final nestedUls = li.getElementsByTagName('ul');
-            if (nestedUls.isNotEmpty) {
-              final nestedLis = nestedUls.first.getElementsByTagName('li');
-              if (nestedLis.isNotEmpty) {
-                final locationLi = nestedLis.first;
-                final anchors = locationLi.getElementsByTagName('a');
-                if (anchors.isNotEmpty &&
-                    anchors.first.attributes['href'] != null) {
-                  this.locationUrl = anchors.first.attributes['href']!.trim();
-                  this.location = anchors.first.text.trim();
-                } else {
-                  this.location = locationLi.text.trim();
-                }
-                break;
-              }
+      // Find the <li> that contains 'Location' as its direct text
+      Element? locationLi;
+      try {
+        locationLi = ulTags
+            .expand((ul) => ul.children)
+            .where((li) => li.localName == 'li')
+            .firstWhere(
+                (li) => li.text.trim().toLowerCase().startsWith('location'));
+      } catch (_) {
+        locationLi = null;
+      }
+      if (locationLi != null) {
+        // Find the first nested <a> in the children of the nested <ul>
+        final nestedUls = locationLi.getElementsByTagName('ul');
+        if (nestedUls.isNotEmpty) {
+          final nestedLis = nestedUls.first.getElementsByTagName('li');
+          for (final li in nestedLis) {
+            final a = li.getElementsByTagName('a');
+            if (a.isNotEmpty && a.first.attributes['href'] != null) {
+              this.locationUrl = a.first.attributes['href']!.trim();
+              this.location = a.first.text.trim();
+              break;
+            } else if (this.location.isEmpty && li.text.trim().isNotEmpty) {
+              this.location = li.text.trim();
             }
           }
         }
-        if (this.location.isNotEmpty) break;
       }
       // Fallback: scan all <a> for a Google Maps or similar location link
-      if (this.location.isEmpty || this.locationUrl.isEmpty) {
+      if (this.locationUrl.isEmpty) {
         final allAnchors = document.getElementsByTagName('a');
         for (final a in allAnchors) {
           final href = a.attributes['href'] ?? '';
           if (href.contains('google.com/maps/search') ||
               href.contains('maps.google.com')) {
             this.locationUrl = href.trim();
-            this.location = a.text.trim();
+            if (this.location.isEmpty) this.location = a.text.trim();
             break;
           }
         }
