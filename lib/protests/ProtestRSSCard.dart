@@ -142,7 +142,7 @@ Widget ProtestRSSCard(
               child: Text(
                 'Protest Information',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 20,
                   color: Colors.blue,
                   decoration: TextDecoration.underline,
                   fontWeight: FontWeight.w500,
