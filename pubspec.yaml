@@ -53,6 +53,8 @@ dependencies:
   url_launcher: ^6.2.5
   webfeed_revised: ^0.9.0
 
+  meta: any
+  http: any
 dev_dependencies:
   flutter_launcher_icons: ^0.13.1
   flutter_test:

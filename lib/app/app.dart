@@ -19,7 +19,6 @@ import '../about/about_page.dart';
 import '../navigation/app_drawer/appdrawer_state.dart';
 import '../navigation/app_drawer/appdrawer_event.dart';
 import '../oath/oath_page.dart';
-import 'package:protestersoath/l10n/app_localizations.dart';
 
 class App extends StatefulWidget {
   const App({Key? key}) : super(key: key);

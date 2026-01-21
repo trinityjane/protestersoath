@@ -1,7 +1,6 @@
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart';
 import 'package:webfeed_revised/webfeed_revised.dart';
-import 'dart:math';
 
 class FeedModel {
   String type = 'Story';
@@ -202,5 +201,15 @@ class FeedModel {
     this.isActive = true;
     this.date = item.pubDate?.toString() ?? '';
     this.end = DateTime.now().add(Duration(days: 30));
+  }
+
+  bool get isUpcoming {
+    if (start.isEmpty) return false;
+    try {
+      final startDate = DateTime.parse(start);
+      return !startDate.isBefore(DateTime.now());
+    } catch (_) {
+      return false;
+    }
   }
 }

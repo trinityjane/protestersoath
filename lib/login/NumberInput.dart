@@ -1,9 +1,7 @@
 import 'package:protestersoath/authentication/authentication_bloc.dart';
 import 'package:protestersoath/authentication/authentication_event.dart';
 import 'package:protestersoath/login/bloc/login.dart';
-import 'package:protestersoath/login/bloc/login_bloc.dart';
 import 'package:protestersoath/login/PhoneTextFormField.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:protestersoath/utils/sizing.dart';

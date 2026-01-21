@@ -9,9 +9,10 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:protestersoath/stories/FeedModel.dart';
 import 'package:protestersoath/stories/StoryRSSCard.dart';
 import 'package:protestersoath/stories/ProtestRSSCard.dart';
+import 'package:protestersoath/stories/ProtestCompactListItem.dart';
 import 'package:http/http.dart' as http;
 import 'package:webfeed_revised/webfeed_revised.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
 
 class RSSReader extends StatefulWidget {
   RSSReader({this.which = 'Stories', this.title = ''});
@@ -33,9 +34,14 @@ class RSSReaderState extends State<RSSReader> {
   bool _isLoading = false;
   String? _errorMessage;
 
-  static const String STORIES_RSS_URL = 'https://protestersoath.com/?feed=rss2';
-  static const String PROTESTS_RSS_URL =
-      'https://protestersoath.com/?feed=rss2';
+  static final Map<String, RssFeed> _feedCache = {};
+
+  // static const String STORIES_RSS_URL = 'https://protestersoath.com/?feed=rss2';
+  // static const String PROTESTS_RSS_URL =
+  //     'https://protestersoath.com/?feed=rss2';
+
+  static const String STORIES_RSS_URL = 'https://protestersoath.com/category/stories/feed/';
+  static const String PROTESTS_RSS_URL = 'https://protestersoath.com/category/protests/feed/';
 
   String get loadingMessage => 'Loading feed...';
 
@@ -86,23 +92,44 @@ class RSSReaderState extends State<RSSReader> {
         feedUrl = 'https://corsproxy.io/?${Uri.encodeComponent(feedUrl)}';
       }
 
-      final response = await http.get(
-        Uri.parse(feedUrl),
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (compatible; ProtestersOath/1.0)',
-          'Accept': 'application/rss+xml, application/xml, text/xml, */*',
-        },
-      ).timeout(
-        Duration(seconds: 30),
-      );
+      // Check if caching is disabled (dev mode only)
+      bool disableCache = false;
+      if (kDebugMode) {
+        disableCache = await SettingsContainer.getDisableRssFeedCache();
+        print('[DEBUG] Disable RSS Feed Cache: $disableCache');
+      }
 
-      if (response.statusCode == 200) {
-        final feed = RssFeed.parse(response.body);
+      RssFeed? feed;
+      if (!disableCache && _feedCache.containsKey(feedUrl)) {
+        print('[DEBUG] Loading feed from cache for $feedUrl');
+        feed = _feedCache[feedUrl];
+      } else {
+        print('[DEBUG] Fetching feed from network for $feedUrl');
+        final response = await http.get(
+          Uri.parse(feedUrl),
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (compatible; ProtestersOath/1.0)',
+            'Accept': 'application/rss+xml, application/xml, text/xml, */*',
+          },
+        ).timeout(
+          Duration(seconds: 30),
+        );
+        print('[DEBUG] Network response status: ${response.statusCode}');
+        if (response.statusCode == 200) {
+          feed = RssFeed.parse(response.body);
+          if (!disableCache) {
+            _feedCache[feedUrl] = feed;
+            print('[DEBUG] Feed cached for $feedUrl');
+          }
+        } else {
+          print('[DEBUG] Network error: ${response.statusCode} ${response.reasonPhrase}');
+          throw Exception(
+              'HTTP ${response.statusCode}: ${response.reasonPhrase}');
+        }
+      }
+      if (feed != null) {
         updateFeed(feed);
         updateTitle(widget.title);
-      } else {
-        throw Exception(
-            'HTTP ${response.statusCode}: ${response.reasonPhrase}');
       }
     } catch (e, stackTrace) {
       print('Error loading RSS feed: $e');
@@ -249,34 +276,42 @@ class RSSReaderState extends State<RSSReader> {
       );
     }
 
-    return Container(
-      color: Colors.grey,
-      child: CustomScrollView(slivers: <Widget>[
-        SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (BuildContext context, int index) {
-              if (widget.which == 'Stories') {
-                final FeedModel story = listToShow[index];
-                return Container(
-                  margin: EdgeInsets.only(bottom: 10.0),
-                  decoration: customBoxDecoration(),
-                  child: StoryRSSCard(context, story, openFeed),
-                );
-              } else {
-                final FeedModel protest = listToShow[index];
-                return protest.isActive
-                    ? Container(
-                        margin: EdgeInsets.only(bottom: 10.0),
-                        decoration: customBoxDecoration(),
-                        child: ProtestRSSCard(context, protest, openFeed),
-                      )
-                    : Container();
-              }
-            },
-            childCount: listToShow.length,
-          ),
-        ),
-      ]),
+    // Use a FutureBuilder to get the compact mode setting
+    return FutureBuilder<bool>(
+      future: SettingsContainer.getProtestsCompactMode(),
+      builder: (context, snapshot) {
+        final bool compactMode = snapshot.data ?? false;
+        return Container(
+          color: Colors.grey,
+          child: CustomScrollView(slivers: <Widget>[
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (BuildContext context, int index) {
+                  if (widget.which == 'Stories') {
+                    final FeedModel story = listToShow[index];
+                    return Container(
+                      margin: EdgeInsets.only(bottom: 10.0),
+                      decoration: customBoxDecoration(),
+                      child: StoryRSSCard(context, story, openFeed),
+                    );
+                  } else {
+                    final FeedModel protest = listToShow[index];
+                    if (!protest.isUpcoming) return Container();
+                    return Container(
+                      margin: EdgeInsets.only(bottom: 10.0),
+                      decoration: customBoxDecoration(),
+                      child: compactMode
+                          ? ProtestCompactListItem(context, protest, openFeed)
+                          : ProtestRSSCard(context, protest, openFeed),
+                    );
+                  }
+                },
+                childCount: listToShow.length,
+              ),
+            ),
+          ]),
+        );
+      },
     );
   }
 
