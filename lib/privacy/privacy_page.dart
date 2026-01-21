@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:protestersoath/authentication/authentication.dart';
 import 'package:protestersoath/l10n/app_localizations.dart';
 
-import '../navigation/app_drawer/appdrawer.dart';
+import '../navigation/app_drawer/app_drawer.dart';
 import 'PrivacyContainer.dart';
 
 class PrivacyPage extends StatelessWidget {
@@ -39,7 +39,8 @@ class PrivacyPage extends StatelessWidget {
                 style: TextStyle(color: Colors.white),
               ),
               leading: (() {
-                AppDrawerEvent? lastPage = (state is PrivacyPageState) ? state.lastPage : null;
+                AppDrawerEvent? lastPage =
+                    (state is PrivacyPageState) ? state.lastPage : null;
                 return IconButton(
                   icon: Icon(Icons.arrow_back),
                   onPressed: () {

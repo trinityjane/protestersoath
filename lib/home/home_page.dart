@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:protestersoath/navigation/app_drawer.dart';
-import 'package:protestersoath/navigation/app_drawer/appdrawer_bloc.dart';
-import 'package:protestersoath/navigation/app_drawer/appdrawer_event.dart';
-import 'package:protestersoath/navigation/app_drawer/appdrawer_state.dart';
-import 'package:protestersoath/l10n/app_localizations.dart';
-import 'ShapesPainter.dart';
-import '../settings/SettingsContainer.dart';
 import 'package:protestersoath/camera/camera_page.dart';
+import 'package:protestersoath/l10n/app_localizations.dart';
+import 'package:protestersoath/navigation/app_drawer.dart';
+import 'package:protestersoath/navigation/app_drawer/app_drawer_bloc.dart';
+import 'package:protestersoath/navigation/app_drawer/app_drawer_event.dart';
+import 'package:protestersoath/navigation/app_drawer/app_drawer_state.dart';
+
+import '../settings/SettingsContainer.dart';
+import 'ShapesPainter.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -22,7 +23,9 @@ class HomePage extends StatelessWidget {
         return BlocBuilder<AppDrawerBloc, AppDrawerState>(
           builder: (BuildContext context, AppDrawerState state) {
             return Scaffold(
-              drawer: (menuConfig == 'homeOnly' || menuConfig == 'allScreens') ? AppDrawer() : null,
+              drawer: (menuConfig == 'homeOnly' || menuConfig == 'allScreens')
+                  ? AppDrawer()
+                  : null,
               appBar: AppBar(
                 backgroundColor: Colors.grey,
                 title: Text(
@@ -34,7 +37,8 @@ class HomePage extends StatelessWidget {
                     padding: EdgeInsets.only(top: 3),
                     child: IconButton(
                       icon: Icon(Icons.announcement, size: 25),
-                      onPressed: () => BlocProvider.of<AppDrawerBloc>(context).add(ProtestPageEvent()),
+                      onPressed: () => BlocProvider.of<AppDrawerBloc>(context)
+                          .add(ProtestPageEvent()),
                       tooltip: AppLocalizations.of(context)!.protests,
                     ),
                   ),
@@ -42,7 +46,8 @@ class HomePage extends StatelessWidget {
                     padding: EdgeInsets.only(top: 0),
                     child: IconButton(
                       icon: Icon(Icons.art_track, size: 35),
-                      onPressed: () => BlocProvider.of<AppDrawerBloc>(context).add(StoryPageEvent()),
+                      onPressed: () => BlocProvider.of<AppDrawerBloc>(context)
+                          .add(StoryPageEvent()),
                       tooltip: AppLocalizations.of(context)!.stories,
                     ),
                   ),
@@ -69,7 +74,9 @@ class HomePage extends StatelessWidget {
                     child: Container(
                       height: MediaQuery.of(context).size.height,
                     ),
-                    painter: state is HomePageState ? ShapesPainter(state.token.phoneNumber) : null,
+                    painter: state is HomePageState
+                        ? ShapesPainter(state.token.phoneNumber)
+                        : null,
                   ),
                   // Always show left/right bottom buttons
                   Container(
@@ -77,15 +84,18 @@ class HomePage extends StatelessWidget {
                     child: IconButton(
                       icon: Icon(Icons.list, color: Colors.black, size: 30),
                       tooltip: AppLocalizations.of(context)!.theoath,
-                      onPressed: () => BlocProvider.of<AppDrawerBloc>(context).add(OathPageEvent()),
+                      onPressed: () => BlocProvider.of<AppDrawerBloc>(context)
+                          .add(OathPageEvent()),
                     ),
                   ),
                   Container(
                     alignment: Alignment(-.9, 0.91),
                     child: IconButton(
-                      icon: Icon(Icons.privacy_tip, color: Colors.black, size: 30),
+                      icon: Icon(Icons.privacy_tip,
+                          color: Colors.black, size: 30),
                       tooltip: AppLocalizations.of(context)!.privacy,
-                      onPressed: () => BlocProvider.of<AppDrawerBloc>(context).add(PrivacyPageEvent()),
+                      onPressed: () => BlocProvider.of<AppDrawerBloc>(context)
+                          .add(PrivacyPageEvent()),
                     ),
                   ),
                   // Show extra bottom buttons only in buttonsOnly mode
@@ -93,17 +103,21 @@ class HomePage extends StatelessWidget {
                     Container(
                       alignment: Alignment(-0.45, 0.91),
                       child: IconButton(
-                        icon: Icon(Icons.open_in_full, color: Colors.black, size: 30),
+                        icon: Icon(Icons.open_in_full,
+                            color: Colors.black, size: 30),
                         tooltip: AppLocalizations.of(context)!.verifyButton,
-                        onPressed: () => BlocProvider.of<AppDrawerBloc>(context).add(VerifyPageEvent()),
+                        onPressed: () => BlocProvider.of<AppDrawerBloc>(context)
+                            .add(VerifyPageEvent()),
                       ),
                     ),
                     Container(
                       alignment: Alignment(0.0, 0.91),
                       child: IconButton(
-                        icon: Icon(Icons.settings, color: Colors.black, size: 30),
+                        icon:
+                            Icon(Icons.settings, color: Colors.black, size: 30),
                         tooltip: AppLocalizations.of(context)!.settings,
-                        onPressed: () => BlocProvider.of<AppDrawerBloc>(context).add(SettingsPageEvent()),
+                        onPressed: () => BlocProvider.of<AppDrawerBloc>(context)
+                            .add(SettingsPageEvent()),
                       ),
                     ),
                     Container(
@@ -111,7 +125,8 @@ class HomePage extends StatelessWidget {
                       child: IconButton(
                         icon: Icon(Icons.group, color: Colors.black, size: 30),
                         tooltip: AppLocalizations.of(context)!.about,
-                        onPressed: () => BlocProvider.of<AppDrawerBloc>(context).add(AboutPageEvent()),
+                        onPressed: () => BlocProvider.of<AppDrawerBloc>(context)
+                            .add(AboutPageEvent()),
                       ),
                     ),
                   ],

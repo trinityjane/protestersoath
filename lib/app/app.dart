@@ -3,21 +3,22 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:protestersoath/authentication/authentication.dart';
 import 'package:protestersoath/home/home_page.dart';
 import 'package:protestersoath/login/LoginPage.dart';
-import 'package:protestersoath/navigation/app_drawer/appdrawer_bloc.dart';
+import 'package:protestersoath/navigation/app_drawer/app_drawer_bloc.dart';
 import 'package:protestersoath/oath/VerifyPage.dart';
 import 'package:protestersoath/oath/VerifyProofOfOathPage.dart';
 import 'package:protestersoath/privacy/privacy_page.dart';
+import 'package:protestersoath/protests/ProtestsSwitcher.dart';
+import 'package:protestersoath/protests/bloc/protests_cubit.dart';
 import 'package:protestersoath/reason/reason_page.dart';
+import 'package:protestersoath/settings/settings_page.dart';
 import 'package:protestersoath/splash/splash_page.dart';
 import 'package:protestersoath/stories/StoriesSwitcher.dart';
 import 'package:protestersoath/stories/stories_cubit.dart';
-import 'package:protestersoath/protests/ProtestsSwitcher.dart';
-import 'package:protestersoath/protests/old/protests_cubit.dart';
-import 'package:protestersoath/settings/settings_page.dart';
 import 'package:protestersoath/utils/onBackPressed.dart';
+
 import '../about/about_page.dart';
-import '../navigation/app_drawer/appdrawer_state.dart';
-import '../navigation/app_drawer/appdrawer_event.dart';
+import '../navigation/app_drawer/app_drawer_event.dart';
+import '../navigation/app_drawer/app_drawer_state.dart';
 import '../oath/oath_page.dart';
 
 class App extends StatefulWidget {

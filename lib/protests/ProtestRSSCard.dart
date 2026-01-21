@@ -105,16 +105,6 @@ Widget ProtestRSSCard(
             ),
           ),
         ),
-        // Align(
-        //   alignment: Alignment.centerRight,
-        //   child: Padding(
-        //     padding: EdgeInsets.only(top: 3, bottom: 3, right: 10),
-        //     child: Text(
-        //       'Photo: ' + protest.credit,
-        //       style: TextStyle(fontSize: 10),
-        //     ),
-        //   ),
-        // ),
         // Date of the protest at the bottom
         Align(
           alignment: Alignment.centerRight,

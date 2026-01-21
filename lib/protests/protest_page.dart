@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:protestersoath/navigation/app_drawer.dart';
-import 'package:protestersoath/navigation/app_drawer/appdrawer_bloc.dart';
-import 'package:protestersoath/navigation/app_drawer/appdrawer_event.dart';
-import 'package:protestersoath/protests/old/protests_cubit.dart';
-import 'package:protestersoath/protests/old/protests_state.dart';
 import 'package:protestersoath/l10n/app_localizations.dart';
+import 'package:protestersoath/navigation/app_drawer.dart';
+import 'package:protestersoath/navigation/app_drawer/app_drawer_bloc.dart';
+import 'package:protestersoath/navigation/app_drawer/app_drawer_event.dart';
+import 'package:protestersoath/protests/bloc/protests_cubit.dart';
+import 'package:protestersoath/protests/bloc/protests_state.dart';
 
 class ProtestPage extends StatefulWidget {
   const ProtestPage({Key? key, this.drawer}) : super(key: key);
@@ -40,7 +40,8 @@ class _ProtestPageState extends State<ProtestPage> {
                     actions: [
                       IconButton(
                         icon: const Icon(Icons.art_track, size: 40),
-                        onPressed: () => context.read<ProtestsCubit>().getNextProtest(),
+                        onPressed: () =>
+                            context.read<ProtestsCubit>().getNextProtest(),
                       ),
                     ],
                     leading: widget.drawer == 'all'

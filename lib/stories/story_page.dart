@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:protestersoath/navigation/app_drawer.dart';
-import 'package:protestersoath/navigation/app_drawer/appdrawer_bloc.dart';
-import 'package:protestersoath/navigation/app_drawer/appdrawer_event.dart';
 import 'package:protestersoath/l10n/app_localizations.dart';
+import 'package:protestersoath/navigation/app_drawer.dart';
+import 'package:protestersoath/navigation/app_drawer/app_drawer_bloc.dart';
+import 'package:protestersoath/navigation/app_drawer/app_drawer_event.dart';
+import 'package:protestersoath/settings/SettingsContainer.dart';
 import 'package:protestersoath/stories/stories_cubit.dart';
 import 'package:protestersoath/stories/stories_state.dart';
-import 'package:protestersoath/settings/SettingsContainer.dart';
 
 import 'StoryCard.dart';
 
@@ -32,7 +32,8 @@ class _StoryPageState extends State<StoryPage> {
       builder: (context, snapshot) {
         final menuConfig = snapshot.data ?? 'homeOnly';
         final bool showDrawer = menuConfig == 'allScreens';
-        final bool showBack = (menuConfig == 'homeOnly' || menuConfig == 'buttonsOnly');
+        final bool showBack =
+            (menuConfig == 'homeOnly' || menuConfig == 'buttonsOnly');
 
         return BlocBuilder<StoriesCubit, StoriesState>(
           builder: (context, state) {
@@ -61,8 +62,9 @@ class _StoryPageState extends State<StoryPage> {
                         actions: [
                           IconButton(
                             icon: Icon(Icons.art_track, size: 40),
-                            onPressed: () =>
-                                context.read<StoriesCubit>().getNextStory(context),
+                            onPressed: () => context
+                                .read<StoriesCubit>()
+                                .getNextStory(context),
                           ),
                         ],
                         leading: showBack

@@ -2,30 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:protestersoath/l10n/app_localizations.dart';
 import 'package:protestersoath/navigation/app_drawer.dart';
-import 'package:protestersoath/navigation/app_drawer/appdrawer_bloc.dart';
-import 'package:protestersoath/navigation/app_drawer/appdrawer_event.dart';
+import 'package:protestersoath/navigation/app_drawer/app_drawer_bloc.dart';
+import 'package:protestersoath/navigation/app_drawer/app_drawer_event.dart';
+
 import '../settings/SettingsContainer.dart';
 
 class AboutPage extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     double appBarHeight = AppBar().preferredSize.height;
     double height = MediaQuery.of(context).size.height - appBarHeight;
     double textHeight = height * 0.75;
-    bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    bool isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
     if (isLandscape && height > 550) {
       textHeight = 150;
     }
-    if (!isLandscape && height > 550 ) {
+    if (!isLandscape && height > 550) {
       textHeight = height * 0.5;
     }
     return FutureBuilder<String>(
       future: SettingsContainer.getMenuConfig(),
       builder: (context, snapshot) {
         final menuConfig = snapshot.data ?? 'homeOnly';
-        final bool showDrawer = menuConfig == 'allScreens' || menuConfig == 'homeOnly';
-        final bool showBack = (menuConfig == 'homeOnly' || menuConfig == 'buttonsOnly');
+        final bool showDrawer =
+            menuConfig == 'allScreens' || menuConfig == 'homeOnly';
+        final bool showBack =
+            (menuConfig == 'homeOnly' || menuConfig == 'buttonsOnly');
         return WillPopScope(
           onWillPop: () async {
             if (showBack && menuConfig != 'allScreens') {
@@ -35,7 +38,8 @@ class AboutPage extends StatelessWidget {
             return true;
           },
           child: Scaffold(
-            drawer: showDrawer && menuConfig != 'buttonsOnly' ? AppDrawer() : null,
+            drawer:
+                showDrawer && menuConfig != 'buttonsOnly' ? AppDrawer() : null,
             backgroundColor: Colors.grey,
             appBar: AppBar(
               backgroundColor: Colors.grey,
@@ -47,7 +51,8 @@ class AboutPage extends StatelessWidget {
                   ? IconButton(
                       icon: Icon(Icons.arrow_back),
                       onPressed: () {
-                        BlocProvider.of<AppDrawerBloc>(context).add(HomePageEvent());
+                        BlocProvider.of<AppDrawerBloc>(context)
+                            .add(HomePageEvent());
                       },
                     )
                   : null,
@@ -79,7 +84,8 @@ class AboutPage extends StatelessWidget {
                                 shape: BoxShape.circle,
                                 image: DecorationImage(
                                   fit: BoxFit.fill,
-                                  image: AssetImage('assets/img/trinityjane.jpg'),
+                                  image:
+                                      AssetImage('assets/img/trinityjane.jpg'),
                                 )))),
                     Padding(
                         padding: EdgeInsets.all(15.0),
@@ -88,7 +94,8 @@ class AboutPage extends StatelessWidget {
                                 shape: BoxShape.rectangle,
                                 image: DecorationImage(
                                   fit: BoxFit.fitHeight,
-                                  image: AssetImage('assets/img/logo_flutter_transparent.png'),
+                                  image: AssetImage(
+                                      'assets/img/logo_flutter_transparent.png'),
                                 )))),
                   ],
                 ),

@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../stories/FeedModel.dart';
+
+import '../../../stories/FeedModel.dart';
 import './protests_state.dart';
 
 class ProtestsCubit extends Cubit<ProtestsState> {

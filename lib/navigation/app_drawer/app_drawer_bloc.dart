@@ -1,7 +1,9 @@
 import 'dart:async';
-import 'package:protestersoath/data/Token.dart';
+
 import 'package:bloc/bloc.dart';
-import './appdrawer.dart';
+import 'package:protestersoath/data/Token.dart';
+
+import './app_drawer.dart';
 
 class AppDrawerBloc extends Bloc<AppDrawerEvent, AppDrawerState> {
   late Token token;
@@ -34,7 +36,8 @@ class AppDrawerBloc extends Bloc<AppDrawerEvent, AppDrawerState> {
       emit(ReasonPageState(lastPage));
     });
     on<PrivacyPageEvent>((event, emit) => emit(PrivacyPageState(lastPage)));
-    on<VerifyProofOfOathEvent>((event, emit) => emit(VerifyProofOfOathState(event.othersPhone)));
+    on<VerifyProofOfOathEvent>(
+        (event, emit) => emit(VerifyProofOfOathState(event.othersPhone)));
     on<BackButtonEvent>((event, emit) async {
       token = Token(uid: '', phoneNumber: '');
       emit(HomePageState(token));

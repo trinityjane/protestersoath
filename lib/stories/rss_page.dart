@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:protestersoath/navigation/app_drawer.dart';
-import 'package:protestersoath/navigation/app_drawer/appdrawer_bloc.dart';
-import 'package:protestersoath/navigation/app_drawer/appdrawer_event.dart';
+import 'package:protestersoath/navigation/app_drawer/app_drawer_bloc.dart';
+import 'package:protestersoath/navigation/app_drawer/app_drawer_event.dart';
 import 'package:protestersoath/protests/ProtestCompactListItem.dart';
 import 'package:protestersoath/protests/ProtestRSSCard.dart';
 import 'package:protestersoath/settings/SettingsContainer.dart';
@@ -317,6 +317,8 @@ class RSSReaderState extends State<RSSReader> {
                     );
                   } else {
                     final FeedModel protest = listToShow[index];
+                    print(
+                        '[DEBUG] Protest: title=${protest.title}, start=${protest.start}, isUpcoming=${protest.isUpcoming}');
                     if (!protest.isUpcoming) return Container();
                     return Container(
                       margin: EdgeInsets.only(bottom: 10.0),

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:protestersoath/home/ShapesPainter.dart';
 import 'package:protestersoath/l10n/app_localizations.dart';
-import '../navigation/app_drawer/appdrawer.dart';
+
+import '../navigation/app_drawer/app_drawer.dart';
 
 class VerifyProofOfOathPage extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AppDrawerBloc, AppDrawerState>(

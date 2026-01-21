@@ -1,12 +1,12 @@
-import 'package:protestersoath/login/PhoneTextFormField.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:protestersoath/navigation/app_drawer/appdrawer_bloc.dart';
-import 'package:protestersoath/navigation/app_drawer/appdrawer_event.dart';
+import 'package:protestersoath/l10n/app_localizations.dart';
+import 'package:protestersoath/login/PhoneTextFormField.dart';
+import 'package:protestersoath/navigation/app_drawer/app_drawer_bloc.dart';
+import 'package:protestersoath/navigation/app_drawer/app_drawer_event.dart';
 import 'package:protestersoath/utils/sizing.dart';
 import 'package:protestersoath/utils/stripCorrectPhone.dart';
 import 'package:protestersoath/utils/validatePhoneNumber.dart';
-import 'package:protestersoath/l10n/app_localizations.dart';
 
 class NumberInputVerify extends StatefulWidget {
   @override
@@ -37,7 +37,8 @@ class _NumberInputVerify extends State<NumberInputVerify> {
   Widget build(BuildContext context) {
     final double fontLabelSize = screenWidth(context) < 400 ? 13 : 15;
     return Padding(
-      padding: const EdgeInsets.only(top: 16, bottom: 1.0, left: 16.0, right: 16.0),
+      padding:
+          const EdgeInsets.only(top: 16, bottom: 1.0, left: 16.0, right: 16.0),
       child: Stack(
         children: <Widget>[
           Form(

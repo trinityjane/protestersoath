@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:protestersoath/authentication/authentication.dart';
-import 'package:protestersoath/navigation/app_drawer/appdrawer_bloc.dart';
-import 'package:protestersoath/navigation/app_drawer/appdrawer_event.dart';
 import 'package:protestersoath/l10n/app_localizations.dart';
+import 'package:protestersoath/navigation/app_drawer/app_drawer_bloc.dart';
+import 'package:protestersoath/navigation/app_drawer/app_drawer_event.dart';
 import 'package:protestersoath/oath/OathCard.dart';
 import 'package:protestersoath/utils/sizing.dart';
 
@@ -20,29 +20,28 @@ class TheOath extends StatelessWidget {
 
     return CustomScrollView(shrinkWrap: false, slivers: <Widget>[
       SliverAppBar(
-        pinned: true,
-        actions: [
-          IconButton(
-              icon: Icon(Icons.info, size: 40),
-              tooltip: AppLocalizations.of(context)!.thereason,
-              onPressed: () {
-                if (this.isLogin) {
-                  BlocProvider.of<AuthenticationBloc>(context)
-                      .add(LoginReasonPageEvent());
-                } else {
-                  BlocProvider.of<AppDrawerBloc>(context)
-                      .add(ReasonPageEvent());
-                }
-              }),
-        ],
-        // expandedHeight: appBarHeight,
-        flexibleSpace: FlexibleSpaceBar(
-          titlePadding: EdgeInsets.only(left:12, bottom:10),
-          centerTitle: false,
-          title: Text(AppLocalizations.of(context)!.loginTitle),
-        ),
-        leading: Container()
-      ),
+          pinned: true,
+          actions: [
+            IconButton(
+                icon: Icon(Icons.info, size: 40),
+                tooltip: AppLocalizations.of(context)!.thereason,
+                onPressed: () {
+                  if (this.isLogin) {
+                    BlocProvider.of<AuthenticationBloc>(context)
+                        .add(LoginReasonPageEvent());
+                  } else {
+                    BlocProvider.of<AppDrawerBloc>(context)
+                        .add(ReasonPageEvent());
+                  }
+                }),
+          ],
+          // expandedHeight: appBarHeight,
+          flexibleSpace: FlexibleSpaceBar(
+            titlePadding: EdgeInsets.only(left: 12, bottom: 10),
+            centerTitle: false,
+            title: Text(AppLocalizations.of(context)!.loginTitle),
+          ),
+          leading: Container()),
       TheOathGrid(isLogin, this.viewportConstraints)
     ]);
   }
@@ -98,7 +97,8 @@ class TheOathGrid extends StatelessWidget {
           return Container(
             alignment: Alignment.centerLeft,
             color: Colors.grey[300 + index % 2 * 100],
-            child: (viewportHeight != height && height-viewportHeight > 150) //< 600)
+            child: (viewportHeight != height &&
+                    height - viewportHeight > 150) //< 600)
                 ? OathCard('SHORT_POINT_0$index', isLogin, index, true)
                 : OathCard('POINT_0$index', isLogin, index, false),
           );
