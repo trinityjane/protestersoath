@@ -139,10 +139,6 @@ class FeedModel {
         caption = figcaptions.first.text.trim();
       }
 
-      if (caption.isEmpty) {
-        print('Caption is empty, using default');
-      }
-
       // Extract body from paragraph tags
       String body = _extractBody(document);
       if (body.isEmpty) {
@@ -163,7 +159,6 @@ class FeedModel {
         // Fallback to enclosure/media/default
         this.imageURL = _extractImageUrl(item, document);
       }
-      print('[DEBUG] Parsed imageURL: ' + this.imageURL);
 
       // Determine type based on start date (Protest vs Story)
       this.type = this.start.isNotEmpty ? 'Protest' : 'Story';
@@ -181,7 +176,6 @@ class FeedModel {
       for (final li in allLis) {
         final inner = (li.innerHtml.trim().toLowerCase());
         if (inner.startsWith('location')) {
-          print('[DEBUG] Found Location <li>: ' + li.outerHtml);
           // Look for nested <ul> inside this <li>
           final nestedUls = li.getElementsByTagName('ul');
           if (nestedUls.isNotEmpty) {
@@ -192,15 +186,10 @@ class FeedModel {
                   anchors.first.attributes['href'] != null) {
                 this.locationUrl = anchors.first.attributes['href']!.trim();
                 this.location = anchors.first.text.trim();
-                print('[DEBUG] Set locationUrl: ' +
-                    this.locationUrl +
-                    ', location: ' +
-                    this.location);
                 break;
               } else if (this.location.isEmpty &&
                   locationLi.text.trim().isNotEmpty) {
                 this.location = locationLi.text.trim();
-                print('[DEBUG] Set location (no anchor): ' + this.location);
               }
             }
           }
@@ -216,10 +205,6 @@ class FeedModel {
               href.contains('maps.google.com')) {
             this.locationUrl = href.trim();
             if (this.location.isEmpty) this.location = a.text.trim();
-            print('[DEBUG] Fallback locationUrl: ' +
-                this.locationUrl +
-                ', location: ' +
-                this.location);
             break;
           }
         }
@@ -231,7 +216,6 @@ class FeedModel {
         final locMatch = locRegExp.firstMatch(figText);
         if (locMatch != null) {
           this.location = locMatch.group(1)?.trim() ?? '';
-          print('[DEBUG] Fallback location from figcaption: ' + this.location);
         }
       }
     } catch (e) {
@@ -305,7 +289,6 @@ class FeedModel {
     }
 
     // Default fallback image
-    print('No image found, using default');
     return 'assets/img/protester.png';
   }
 

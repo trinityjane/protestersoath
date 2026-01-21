@@ -35,8 +35,6 @@ Widget ProtestRSSCard(
     return imageUrl;
   }
 
-  print('[DEBUG] Building ProtestRSSCard for: ${protest.title}');
-
   return Card(
     clipBehavior: Clip.antiAlias,
     color: Colors.grey[400],
@@ -51,7 +49,7 @@ Widget ProtestRSSCard(
                   child: CircularProgressIndicator(),
                 ),
                 errorWidget: (context, url, error) {
-                  print('Image load error for $url: $error');
+                  print('Error loading image from $url: $error');
                   return Image.asset(
                     'assets/img/protester.png',
                     fit: BoxFit.cover,

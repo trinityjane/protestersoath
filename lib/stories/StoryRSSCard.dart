@@ -46,7 +46,6 @@ Widget StoryRSSCard(BuildContext context, FeedModel story, openFeed) {
                   child: CircularProgressIndicator(),
                 ),
                 errorWidget: (context, url, error) {
-                  print('Image load error for $url: $error');
                   return Image.asset(
                     'assets/img/protester.png',
                     fit: BoxFit.cover,

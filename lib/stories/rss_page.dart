@@ -38,11 +38,6 @@ class RSSReaderState extends State<RSSReader> {
   bool _compactMode = false;
 
   static final Map<String, RssFeed> _feedCache = {};
-
-  // static const String STORIES_RSS_URL = 'https://protestersoath.com/?feed=rss2';
-  // static const String PROTESTS_RSS_URL =
-  //     'https://protestersoath.com/?feed=rss2';
-
   static const String STORIES_RSS_URL =
       'https://protestersoath.com/category/stories/feed/';
   static const String PROTESTS_RSS_URL =
@@ -90,8 +85,6 @@ class RSSReaderState extends State<RSSReader> {
 
     // Always use the value from the settings page, regardless of debug mode
     bool disableCache = await SettingsContainer.getDisableRssFeedCache();
-    print('[DEBUG] Disable RSS Feed Cache (final): $disableCache');
-
     try {
       String feedUrl =
           widget.which == 'Stories' ? STORIES_RSS_URL : PROTESTS_RSS_URL;
@@ -108,16 +101,13 @@ class RSSReaderState extends State<RSSReader> {
           } else {
             feedUrl += '?cb=$now';
           }
-          print('[DEBUG] Cache-busting param added: $feedUrl');
         }
       }
 
       RssFeed? feed;
       if (!disableCache && _feedCache.containsKey(feedUrl)) {
-        print('[DEBUG] Loading feed from cache for $feedUrl');
         feed = _feedCache[feedUrl];
       } else {
-        print('[DEBUG] Fetching feed from network for $feedUrl');
         final response = await http.get(
           Uri.parse(feedUrl),
           headers: {
@@ -130,19 +120,14 @@ class RSSReaderState extends State<RSSReader> {
         ).timeout(
           Duration(seconds: 30),
         );
-        print('[DEBUG] Network response status: \\${response.statusCode}');
-        print(
-            '[DEBUG] Raw response body (first 500 chars): \\${response.body.substring(0, response.body.length > 500 ? 500 : response.body.length)}');
         if (response.statusCode == 200) {
           feed = RssFeed.parse(response.body);
-          print('[DEBUG] Parsed feed items: \\${feed.items?.length ?? 0}');
           if (!disableCache) {
             _feedCache[feedUrl] = feed;
-            print('[DEBUG] Feed cached for $feedUrl');
           }
         } else {
           print(
-              '[DEBUG] Network error: \\${response.statusCode} \\${response.reasonPhrase}');
+              'Error with the network: \\${response.statusCode} \\${response.reasonPhrase}');
           throw Exception(
               'HTTP \\${response.statusCode}: \\${response.reasonPhrase}');
         }
@@ -340,8 +325,6 @@ class RSSReaderState extends State<RSSReader> {
                 );
               } else {
                 final FeedModel protest = listToShow[index];
-                print(
-                    '[DEBUG] Protest: title=\u001b${protest.title}, start=\u001b${protest.start}, isUpcoming=\u001b${protest.isUpcoming}');
                 if (!protest.isUpcoming) return Container();
                 return Container(
                   margin: EdgeInsets.only(bottom: 10.0),

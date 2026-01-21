@@ -26,11 +26,6 @@ class _ProtestPageState extends State<ProtestPage> {
         } else if (state is ErrorState) {
           return const Center(child: Icon(Icons.close));
         } else if (state is LoadedState) {
-          print(
-              '[DEBUG] LoadedState: protests count = ${state.protests.length}');
-          for (final protest in state.protests) {
-            print('[DEBUG] Protest title: ${protest.title}');
-          }
           return Scaffold(
             drawer: widget.drawer == 'all' ? const AppDrawer() : null,
             body: Container(
