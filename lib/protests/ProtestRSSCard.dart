@@ -110,10 +110,26 @@ Widget ProtestRSSCard(
                   style: TextStyle(fontSize: 15),
                 ),
                 if (protest.location.isNotEmpty)
-                  Text(
-                    protest.location,
-                    style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic),
-                  ),
+                  protest.locationUrl != null && protest.locationUrl.isNotEmpty
+                      ? GestureDetector(
+                          onTap: () => _launchURL(protest.locationUrl),
+                          child: Text(
+                            protest.location,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontStyle: FontStyle.italic,
+                              color: Colors.blue,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        )
+                      : Text(
+                          protest.location,
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
               ],
             ),
           ),
