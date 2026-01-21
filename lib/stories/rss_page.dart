@@ -274,7 +274,7 @@ class RSSReaderState extends State<RSSReader> {
                           Switch(
                             value: _compactMode,
                             onChanged: (val) => _saveCompactMode(val),
-                            activeColor: Colors.white,
+                            activeThumbColor: Colors.white,
                           ),
                         ],
                       ),

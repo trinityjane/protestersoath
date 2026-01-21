@@ -110,7 +110,7 @@ Widget ProtestRSSCard(
                   style: TextStyle(fontSize: 15),
                 ),
                 if (protest.location.isNotEmpty)
-                  protest.locationUrl != null && protest.locationUrl.isNotEmpty
+                  protest.locationUrl.isNotEmpty
                       ? GestureDetector(
                           onTap: () => _launchURL(protest.locationUrl),
                           child: Text(
