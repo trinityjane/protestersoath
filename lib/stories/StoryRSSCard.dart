@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:flutter_html/flutter_html.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:protestersoath/stories/FeedModel.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:protestersoath/l10n/app_localizations.dart';
+import 'package:protestersoath/stories/FeedModel.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 Widget StoryRSSCard(BuildContext context, FeedModel story, openFeed) {
   void _showErrorSnackBar() {
@@ -59,12 +59,12 @@ Widget StoryRSSCard(BuildContext context, FeedModel story, openFeed) {
               ),
         // Title and Summary
         ListTile(
-                leading: Icon(Icons.arrow_drop_down_circle),
-                title: Text(story.title, style: TextStyle(fontSize: 20)),
-                subtitle: Html(data: story.summary),
-                isThreeLine: false,
-                onTap: () => openFeed(story.postURL),
-              ),
+          leading: Icon(Icons.arrow_drop_down_circle),
+          title: Text(story.title, style: TextStyle(fontSize: 20)),
+          subtitle: Html(data: story.summary),
+          isThreeLine: false,
+          onTap: () => openFeed(story.postURL),
+        ),
 
         // The story
         (story.body != '')
@@ -76,21 +76,31 @@ Widget StoryRSSCard(BuildContext context, FeedModel story, openFeed) {
                     : Text(
                         story.body,
                         style: TextStyle(
-                            fontSize: 15, color: const Color.fromRGBO(0, 0, 0, 0.8)),
+                            fontSize: 15,
+                            color: const Color.fromRGBO(0, 0, 0, 0.8)),
                       ),
               )
             : Container(),
 
         // link to the story.
         Align(
-            alignment: Alignment.centerRight,
-            child: Padding(
-              padding: EdgeInsets.only(top: 3, bottom: 3, right: 10),
-              child: GestureDetector(
-                child: Text(story.referenceURL, style: TextStyle(fontSize: 10, color: Colors.blue, decoration: TextDecoration.underline)),
-                onTap: () => _launchURL(story.referenceURL),
+          alignment: Alignment.centerLeft,
+          child: Padding(
+            padding: EdgeInsets.only(top: 8, left: 16, bottom: 8),
+            child: GestureDetector(
+              onTap: () => _launchURL(story.referenceURL),
+              child: Text(
+                'More Information',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.blue,
+                  decoration: TextDecoration.underline,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-            )),
+            ),
+          ),
+        ),
         Align(
           alignment: Alignment.centerRight,
           child: Padding(

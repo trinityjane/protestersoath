@@ -1,18 +1,19 @@
 import 'dart:async';
+
+import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart' as http;
 import 'package:protestersoath/navigation/app_drawer.dart';
-import 'package:protestersoath/navigation/app_drawer/appdrawer_event.dart';
 import 'package:protestersoath/navigation/app_drawer/appdrawer_bloc.dart';
+import 'package:protestersoath/navigation/app_drawer/appdrawer_event.dart';
+import 'package:protestersoath/protests/ProtestCompactListItem.dart';
+import 'package:protestersoath/protests/ProtestRSSCard.dart';
 import 'package:protestersoath/settings/SettingsContainer.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:protestersoath/stories/FeedModel.dart';
 import 'package:protestersoath/stories/StoryRSSCard.dart';
-import 'package:protestersoath/stories/ProtestRSSCard.dart';
-import 'package:protestersoath/stories/ProtestCompactListItem.dart';
-import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 import 'package:webfeed_revised/webfeed_revised.dart';
-import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
 
 class RSSReader extends StatefulWidget {
   RSSReader({this.which = 'Stories', this.title = ''});
@@ -40,8 +41,10 @@ class RSSReaderState extends State<RSSReader> {
   // static const String PROTESTS_RSS_URL =
   //     'https://protestersoath.com/?feed=rss2';
 
-  static const String STORIES_RSS_URL = 'https://protestersoath.com/category/stories/feed/';
-  static const String PROTESTS_RSS_URL = 'https://protestersoath.com/category/protests/feed/';
+  static const String STORIES_RSS_URL =
+      'https://protestersoath.com/category/stories/feed/';
+  static const String PROTESTS_RSS_URL =
+      'https://protestersoath.com/category/protests/feed/';
 
   String get loadingMessage => 'Loading feed...';
 
@@ -99,6 +102,17 @@ class RSSReaderState extends State<RSSReader> {
         print('[DEBUG] Disable RSS Feed Cache: $disableCache');
       }
 
+      // Add cache-busting param if caching is disabled
+      if (disableCache) {
+        final now = DateTime.now().millisecondsSinceEpoch;
+        if (feedUrl.contains('?')) {
+          feedUrl += '&cb=$now';
+        } else {
+          feedUrl += '?cb=$now';
+        }
+        print('[DEBUG] Cache-busting param added: $feedUrl');
+      }
+
       RssFeed? feed;
       if (!disableCache && _feedCache.containsKey(feedUrl)) {
         print('[DEBUG] Loading feed from cache for $feedUrl');
@@ -110,21 +124,28 @@ class RSSReaderState extends State<RSSReader> {
           headers: {
             'User-Agent': 'Mozilla/5.0 (compatible; ProtestersOath/1.0)',
             'Accept': 'application/rss+xml, application/xml, text/xml, */*',
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache',
+            'Expires': '0',
           },
         ).timeout(
           Duration(seconds: 30),
         );
-        print('[DEBUG] Network response status: ${response.statusCode}');
+        print('[DEBUG] Network response status: \\${response.statusCode}');
+        print(
+            '[DEBUG] Raw response body (first 500 chars): \\${response.body.substring(0, response.body.length > 500 ? 500 : response.body.length)}');
         if (response.statusCode == 200) {
           feed = RssFeed.parse(response.body);
+          print('[DEBUG] Parsed feed items: \\${feed.items?.length ?? 0}');
           if (!disableCache) {
             _feedCache[feedUrl] = feed;
             print('[DEBUG] Feed cached for $feedUrl');
           }
         } else {
-          print('[DEBUG] Network error: ${response.statusCode} ${response.reasonPhrase}');
+          print(
+              '[DEBUG] Network error: \\${response.statusCode} \\${response.reasonPhrase}');
           throw Exception(
-              'HTTP ${response.statusCode}: ${response.reasonPhrase}');
+              'HTTP \\${response.statusCode}: \\${response.reasonPhrase}');
         }
       }
       if (feed != null) {

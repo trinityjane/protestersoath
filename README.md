@@ -11,7 +11,7 @@
 6. *I will listen to the advice and direction of protest leaders and report problems with violence and crime I see.*
 7. *I will eat and sleep beforehand so that I can control my emotions.*
 8. *I will recognize when I am emotionally out of control and remove myself from situations to calm down.*
-9. *I will not protest at night during a riot or a curfew that has been ordered to quell violence.*
+9. *I will not protest during a riot.*
 
 </td>
 <td width="40%">

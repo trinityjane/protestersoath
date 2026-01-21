@@ -6,8 +6,7 @@ import 'package:protestersoath/l10n/app_localizations.dart';
 import 'package:protestersoath/stories/FeedModel.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-Widget ProtestRSSCard(
-    BuildContext context, FeedModel protest, Function(String) openFeed) {
+Widget ProtestRSSCard(BuildContext context, FeedModel protest, openFeed) {
   void _showErrorSnackBar() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -25,9 +24,10 @@ Widget ProtestRSSCard(
     }
   }
 
+  // Use CORS proxy for web
   String getImageUrl(String imageUrl) {
     if (kIsWeb && !imageUrl.startsWith('assets')) {
-      return 'https://corsproxy.io/?${Uri.encodeComponent(imageUrl)}';
+      return 'https://corsproxy.io/?${Uri.encodeComponent(imageUrl)}';
     }
     return imageUrl;
   }
@@ -57,75 +57,63 @@ Widget ProtestRSSCard(
                   'Accept': 'image/webp,image/apng,image/*,*/*;q=0.8',
                 },
               ),
+        // ...existing code...
         ListTile(
-          leading: Icon(Icons.campaign),
-          title: Text(
-            protest.title,
-            style: TextStyle(
-              fontSize: 20,
-              decoration: TextDecoration.underline,
-              color: Colors.black,
-            ),
-          ),
-          // subtitle: Html(data: protest.postURL),
+          leading: Icon(Icons.arrow_drop_down_circle),
+          title: Text(protest.title, style: TextStyle(fontSize: 22)),
+          // make this the date of the protest:
+          subtitle: Text(protest.start, style: TextStyle(fontSize: 18)),
           isThreeLine: false,
           onTap: () => openFeed(protest.postURL),
         ),
-        // Description --> Body
-        (protest.body != '')
+        // The story
+        (protest.postURL != '')
             ? Padding(
                 padding: const EdgeInsets.only(
                     left: 10, right: 10, top: 0, bottom: 5),
                 child: protest.isHTML
-                    ? Html(data: protest.body)
-                    : Text(
-                        protest.body,
+                    ? Html(data: protest.postURL)
+                    : Text(protest.postURL,
                         style: TextStyle(
                             fontSize: 15,
-                            color: const Color.fromRGBO(0, 0, 0, 0.8)),
-                      ),
+                            color: const Color.fromRGBO(0, 0, 0, 0.8))),
               )
             : Container(),
-        // Protest Information --> referenceURL
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Padding(
-            padding: const EdgeInsets.only(top: 8, left: 16, bottom: 8),
-            child: GestureDetector(
-              onTap: () => _launchURL(protest.referenceURL),
-              child: Text(
-                'Protest Information',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.blue,
-                  decoration: TextDecoration.underline,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-          ),
-        ),
+        // Credits
+        // link to the story.
+        // Align(
+        //     alignment: Alignment.centerRight,
+        //     child: Padding(
+        //       padding: EdgeInsets.only(top: 3, bottom: 3, right: 10),
+        //       child: GestureDetector(
+        //         child: Text(protest.referenceURL,
+        //             style: TextStyle(
+        //                 decoration: TextDecoration.underline,
+        //                 fontSize: 20,
+        //                 color: Colors.blue)),
+        //         onTap: () => _launchURL(protest.referenceURL),
+        //       ),
+        //     )),
         // Align(
         //   alignment: Alignment.centerRight,
         //   child: Padding(
         //     padding: EdgeInsets.only(top: 3, bottom: 3, right: 10),
         //     child: Text(
-        //       'Photo: ' + protest.credit,
+        //       'Photo Credit: ' + protest.credit,
         //       style: TextStyle(fontSize: 10),
         //     ),
         //   ),
         // ),
-        // Date of the protest at the bottom
-        Align(
-          alignment: Alignment.centerRight,
-          child: Padding(
-            padding: EdgeInsets.only(top: 3, bottom: 20, right: 10),
-            child: Text(
-              'Date: ' + protest.date,
-              style: TextStyle(fontSize: 15),
-            ),
-          ),
-        ),
+        // Align(
+        //   alignment: Alignment.centerRight,
+        //   child: Padding(
+        //     padding: EdgeInsets.only(top: 3, bottom: 20, right: 10),
+        //     child: Text(
+        //       'Date: ' + protest.date,
+        //       style: TextStyle(fontSize: 10),
+        //     ),
+        //   ),
+        // ),
       ],
     ),
   );
