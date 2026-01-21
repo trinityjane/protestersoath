@@ -25,7 +25,13 @@ class SettingsContainer extends StatefulWidget {
 
   static Future<bool> getDisableRssFeedCache() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('disableRssFeedCache') ?? false;
+    // Default to true in debug mode, false otherwise
+    bool defaultValue = false;
+    assert(() {
+      defaultValue = true;
+      return true;
+    }());
+    return prefs.getBool('disableRssFeedCache') ?? defaultValue;
   }
 
   @override
@@ -47,12 +53,18 @@ class _SettingsContainerState extends State<SettingsContainer> {
 
   Future<void> _loadPrefs() async {
     final prefs = await SharedPreferences.getInstance();
+    bool defaultDisableCache = false;
+    assert(() {
+      defaultDisableCache = true;
+      return true;
+    }());
     setState(() {
       _menuConfig = prefs.getString('menuConfig') ?? 'homeOnly';
       _storiesConfig = prefs.getString('storiesConfig') ?? 'installed';
       _autoSaveVideo = prefs.getBool('autoSaveVideo') ?? false;
       _protestsCompactMode = prefs.getBool('protestsCompactMode') ?? false;
-      _disableRssFeedCache = prefs.getBool('disableRssFeedCache') ?? false;
+      _disableRssFeedCache =
+          prefs.getBool('disableRssFeedCache') ?? defaultDisableCache;
     });
   }
 

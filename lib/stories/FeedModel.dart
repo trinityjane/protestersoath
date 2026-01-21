@@ -176,32 +176,35 @@ class FeedModel {
       // --- Robust Location Extraction ---
       this.location = '';
       this.locationUrl = '';
-      // Find the <li> that contains 'Location' as its direct text
-      Element? locationLi;
-      try {
-        locationLi = ulTags
-            .expand((ul) => ul.children)
-            .where((li) => li.localName == 'li')
-            .firstWhere(
-                (li) => li.text.trim().toLowerCase().startsWith('location'));
-      } catch (_) {
-        locationLi = null;
-      }
-      if (locationLi != null) {
-        // Find the first nested <a> in the children of the nested <ul>
-        final nestedUls = locationLi.getElementsByTagName('ul');
-        if (nestedUls.isNotEmpty) {
-          final nestedLis = nestedUls.first.getElementsByTagName('li');
-          for (final li in nestedLis) {
-            final a = li.getElementsByTagName('a');
-            if (a.isNotEmpty && a.first.attributes['href'] != null) {
-              this.locationUrl = a.first.attributes['href']!.trim();
-              this.location = a.first.text.trim();
-              break;
-            } else if (this.location.isEmpty && li.text.trim().isNotEmpty) {
-              this.location = li.text.trim();
+      // Iterate all <li> elements to find the one whose innerHtml starts with 'location'
+      final allLis = document.getElementsByTagName('li');
+      for (final li in allLis) {
+        final inner = (li.innerHtml.trim().toLowerCase());
+        if (inner.startsWith('location')) {
+          print('[DEBUG] Found Location <li>: ' + li.outerHtml);
+          // Look for nested <ul> inside this <li>
+          final nestedUls = li.getElementsByTagName('ul');
+          if (nestedUls.isNotEmpty) {
+            final nestedLis = nestedUls.first.getElementsByTagName('li');
+            for (final locationLi in nestedLis) {
+              final anchors = locationLi.getElementsByTagName('a');
+              if (anchors.isNotEmpty &&
+                  anchors.first.attributes['href'] != null) {
+                this.locationUrl = anchors.first.attributes['href']!.trim();
+                this.location = anchors.first.text.trim();
+                print('[DEBUG] Set locationUrl: ' +
+                    this.locationUrl +
+                    ', location: ' +
+                    this.location);
+                break;
+              } else if (this.location.isEmpty &&
+                  locationLi.text.trim().isNotEmpty) {
+                this.location = locationLi.text.trim();
+                print('[DEBUG] Set location (no anchor): ' + this.location);
+              }
             }
           }
+          break; // Found the Location section, no need to continue
         }
       }
       // Fallback: scan all <a> for a Google Maps or similar location link
@@ -213,6 +216,10 @@ class FeedModel {
               href.contains('maps.google.com')) {
             this.locationUrl = href.trim();
             if (this.location.isEmpty) this.location = a.text.trim();
+            print('[DEBUG] Fallback locationUrl: ' +
+                this.locationUrl +
+                ', location: ' +
+                this.location);
             break;
           }
         }
@@ -224,6 +231,7 @@ class FeedModel {
         final locMatch = locRegExp.firstMatch(figText);
         if (locMatch != null) {
           this.location = locMatch.group(1)?.trim() ?? '';
+          print('[DEBUG] Fallback location from figcaption: ' + this.location);
         }
       }
     } catch (e) {

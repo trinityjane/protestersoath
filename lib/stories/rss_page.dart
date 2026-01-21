@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
@@ -88,12 +88,9 @@ class RSSReaderState extends State<RSSReader> {
 
     updateTitle(loadingMessage);
 
-    // Declare disableCache at the top so it is always in scope
-    bool disableCache = false;
-    if (kDebugMode) {
-      disableCache = await SettingsContainer.getDisableRssFeedCache();
-      print('[DEBUG] Disable RSS Feed Cache: $disableCache');
-    }
+    // Always use the value from the settings page, regardless of debug mode
+    bool disableCache = await SettingsContainer.getDisableRssFeedCache();
+    print('[DEBUG] Disable RSS Feed Cache (final): $disableCache');
 
     try {
       String feedUrl =
