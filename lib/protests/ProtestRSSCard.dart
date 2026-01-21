@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:protestersoath/l10n/app_localizations.dart';
-import 'package:protestersoath/stories/FeedModel.dart';
+import 'package:protestersoath/protests/bloc/FeedModel.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 Widget ProtestRSSCard(

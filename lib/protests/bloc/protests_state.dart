@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../../stories/FeedModel.dart';
+import 'FeedModel.dart';
 
 abstract class ProtestsState extends Equatable {}
 

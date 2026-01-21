@@ -13,7 +13,7 @@ import 'package:protestersoath/reason/reason_page.dart';
 import 'package:protestersoath/settings/settings_page.dart';
 import 'package:protestersoath/splash/splash_page.dart';
 import 'package:protestersoath/stories/StoriesSwitcher.dart';
-import 'package:protestersoath/stories/stories_cubit.dart';
+import 'package:protestersoath/stories/bloc/stories_cubit.dart';
 import 'package:protestersoath/utils/onBackPressed.dart';
 
 import '../about/about_page.dart';

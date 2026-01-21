@@ -1,8 +1,8 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:protestersoath/l10n/app_localizations.dart';
 
-import 'FeedModel.dart';
+import 'StoryModel.dart';
 import 'stories_state.dart';
 
 class StoriesCubit extends Cubit<StoriesState> {
@@ -93,7 +93,7 @@ class StoriesCubit extends Cubit<StoriesState> {
           postURL = '';
           referenceURL = '';
       }
-      final story = FeedModel(
+      final story = StoryModel(
         date: date,
         title: title,
         summary: summary,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:protestersoath/stories/FeedModel.dart';
+import 'package:protestersoath/protests/bloc/FeedModel.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 Widget ProtestCompactListItem(

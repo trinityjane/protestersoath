@@ -1,7 +1,7 @@
-import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart';
+import 'package:html/parser.dart' show parse;
 
-class FeedModel {
+class StoryModel {
   final String type = 'Story';
   String date;
   String title;
@@ -13,7 +13,7 @@ class FeedModel {
   String postURL;
   bool isHTML;
 
-  FeedModel({
+  StoryModel({
     this.date = '',
     this.title = '',
     this.summary = '',
@@ -25,7 +25,7 @@ class FeedModel {
     this.isHTML = false,
   });
 
-  FeedModel.fromMap(Map<String, dynamic> item)
+  StoryModel.fromMap(Map<String, dynamic> item)
       : date = '',
         title = '',
         summary = '',
@@ -71,7 +71,9 @@ class FeedModel {
       if (document.getElementsByTagName("p").isNotEmpty) {
         List<Element> bodyHtml = document.getElementsByTagName("p");
         Iterable<String> bodyMap = bodyHtml.map((element) => element.innerHtml);
-        body = bodyMap.join('<p>') != '' ? '<p>' + bodyMap.join('</p><p>') + '</p>' : '';
+        body = bodyMap.join('<p>') != ''
+            ? '<p>' + bodyMap.join('</p><p>') + '</p>'
+            : '';
       }
 
       this.date = date;
@@ -82,7 +84,9 @@ class FeedModel {
       // Defensive: handle images from both content map and fallback
       if (images.isNotEmpty && images[0] is String && images[0].isNotEmpty) {
         this.imageURL = images[0];
-      } else if (content is Map<String, dynamic> && content['images'] is List && content['images'].isNotEmpty) {
+      } else if (content is Map<String, dynamic> &&
+          content['images'] is List &&
+          content['images'].isNotEmpty) {
         this.imageURL = content['images'][0];
       } else {
         this.imageURL = 'assets/img/protester.png';

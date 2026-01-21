@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../stories/FeedModel.dart';
 import './protests_state.dart';
+import 'FeedModel.dart';
 
 class ProtestsCubit extends Cubit<ProtestsState> {
   ProtestsCubit() : super(InitialState()) {
