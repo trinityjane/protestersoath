@@ -86,31 +86,31 @@ class RSSReaderState extends State<RSSReader> {
 
     updateTitle(loadingMessage);
 
+    // Declare disableCache at the top so it is always in scope
+    bool disableCache = false;
+    if (kDebugMode) {
+      disableCache = await SettingsContainer.getDisableRssFeedCache();
+      print('[DEBUG] Disable RSS Feed Cache: $disableCache');
+    }
+
     try {
       String feedUrl =
           widget.which == 'Stories' ? STORIES_RSS_URL : PROTESTS_RSS_URL;
 
-      // For web, use a CORS proxy
+      // For web, use a CORS proxy (no encoding, no cache-busting param)
       if (kIsWeb) {
-        feedUrl = 'https://corsproxy.io/?${Uri.encodeComponent(feedUrl)}';
-      }
-
-      // Check if caching is disabled (dev mode only)
-      bool disableCache = false;
-      if (kDebugMode) {
-        disableCache = await SettingsContainer.getDisableRssFeedCache();
-        print('[DEBUG] Disable RSS Feed Cache: $disableCache');
-      }
-
-      // Add cache-busting param if caching is disabled
-      if (disableCache) {
-        final now = DateTime.now().millisecondsSinceEpoch;
-        if (feedUrl.contains('?')) {
-          feedUrl += '&cb=$now';
-        } else {
-          feedUrl += '?cb=$now';
+        feedUrl = 'https://corsproxy.io/?' + feedUrl;
+      } else {
+        // Only add cache-busting param for mobile if needed
+        if (disableCache) {
+          final now = DateTime.now().millisecondsSinceEpoch;
+          if (feedUrl.contains('?')) {
+            feedUrl += '&cb=$now';
+          } else {
+            feedUrl += '?cb=$now';
+          }
+          print('[DEBUG] Cache-busting param added: $feedUrl');
         }
-        print('[DEBUG] Cache-busting param added: $feedUrl');
       }
 
       RssFeed? feed;

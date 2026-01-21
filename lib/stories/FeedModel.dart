@@ -1,5 +1,6 @@
-import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart';
+import 'package:html/parser.dart' show parse;
+import 'package:intl/intl.dart';
 import 'package:webfeed_revised/webfeed_revised.dart';
 
 class FeedModel {
@@ -14,8 +15,11 @@ class FeedModel {
   String postURL = '';
   bool isHTML = false;
   String start = '';
+  String time = '';
   DateTime end = DateTime.now();
   bool isActive = false;
+  String location = '';
+  String locationUrl = '';
 
   FeedModel({
     this.date = '',
@@ -28,6 +32,7 @@ class FeedModel {
     this.postURL = '',
     this.isHTML = false,
     this.start = '',
+    this.time = '',
     DateTime? end,
     this.isActive = false,
   }) : end = end ?? DateTime.now();
@@ -64,12 +69,67 @@ class FeedModel {
       this.credit = metadata['credit'] ?? '';
       this.referenceURL = metadata['url']?.trim() ?? this.postURL;
       this.start = metadata['start'] ?? '';
+      // Use start for date only
+      this._parsedStartDate = this.start;
+      // Parse time from HTML content
+      this.time = '';
+      // Try to find <li>Time<ul><li>...</li></ul></li> structure
+      final ulTags = document.getElementsByTagName('ul');
+      for (final ul in ulTags) {
+        final liTags = ul.getElementsByTagName('li');
+        for (final li in liTags) {
+          if (li.text.trim().toLowerCase() == 'time') {
+            // Look for nested <ul> inside this <li>
+            final nestedUls = li.getElementsByTagName('ul');
+            if (nestedUls.isNotEmpty) {
+              final nestedLis = nestedUls.first.getElementsByTagName('li');
+              if (nestedLis.isNotEmpty) {
+                this.time = nestedLis.first.text.trim();
+                break;
+              }
+            } else {
+              // Also check for a direct child <ul> (not just nested)
+              final directUl = li.querySelector('ul');
+              if (directUl != null) {
+                final directLis = directUl.getElementsByTagName('li');
+                if (directLis.isNotEmpty) {
+                  this.time = directLis.first.text.trim();
+                  break;
+                }
+              }
+            }
+          }
+        }
+        if (this.time.isNotEmpty) break;
+      }
+      // Fallback: scan all <li> for a time-like string if the above fails
+      if (this.time.isEmpty) {
+        final allLis = document.getElementsByTagName('li');
+        final timeRegExp = RegExp(r'\b\d{1,2}(:\d{2})?\s*[APMapm]{2}\b');
+        for (final li in allLis) {
+          final match = timeRegExp.firstMatch(li.text);
+          if (match != null) {
+            this.time = match.group(0)!;
+            break;
+          }
+        }
+      }
+      // Fallback: try to find time in figcaption (e.g., 4:30 PM)
+      if (this.time.isEmpty) {
+        final figcaptions = document.getElementsByTagName('figcaption');
+        if (figcaptions.isNotEmpty) {
+          final timeRegExp = RegExp(r'(\d{1,2}(:\d{2})?\s*[APMapm]{2})');
+          final match = timeRegExp.firstMatch(figcaptions.first.text);
+          if (match != null) {
+            this.time = match.group(1)!;
+          }
+        }
+      }
 
       // Parse end date and determine if active
       final endDateStr = metadata['end'] ?? '';
       this.end = _parseEndDate(endDateStr);
       this.isActive = DateTime.now().isBefore(this.end);
-
 
       // Extract caption from figcaption
       String caption = '';
@@ -92,8 +152,18 @@ class FeedModel {
       this.summary = caption.isNotEmpty ? caption : 'Link for more information';
       this.isHTML = body.contains('<');
 
-      // Extract image URL from RSS 2.0 enclosure or HTML img tag
-      this.imageURL = _extractImageUrl(item, document);
+      // Use the first <img> in the HTML for the image
+      final imgTags = document.getElementsByTagName('img');
+      if (imgTags.isNotEmpty) {
+        final src = imgTags.first.attributes['src'];
+        if (src != null && src.isNotEmpty) {
+          this.imageURL = Uri.encodeFull(src.trim());
+        }
+      } else {
+        // Fallback to enclosure/media/default
+        this.imageURL = _extractImageUrl(item, document);
+      }
+      print('[DEBUG] Parsed imageURL: ' + this.imageURL);
 
       // Determine type based on start date (Protest vs Story)
       this.type = this.start.isNotEmpty ? 'Protest' : 'Story';
@@ -101,7 +171,71 @@ class FeedModel {
       // Override date if custom date is provided
       if (metadata['date']?.isNotEmpty ?? false) {
         this.date = metadata['date']!;
-      }} catch (e) {
+      }
+
+      // Extract location from <li>Location<ul><li>...</li></ul></li> structure (robust, safe for LinkedMap)
+      this.location = '';
+      this.locationUrl = '';
+      for (final ul in ulTags) {
+        final liTags = ul.getElementsByTagName('li');
+        for (final li in liTags) {
+          // Look for a text node child with 'Location'
+          bool isLocationLi = false;
+          for (final node in li.nodes) {
+            if (node.nodeType == 3) {
+              // TEXT_NODE
+              final text = node.text?.trim().toLowerCase() ?? '';
+              if (text == 'location') {
+                isLocationLi = true;
+                break;
+              }
+            }
+          }
+          if (isLocationLi) {
+            // Find the first nested <ul> and get its first <li>
+            final nestedUls = li.getElementsByTagName('ul');
+            if (nestedUls.isNotEmpty) {
+              final nestedLis = nestedUls.first.getElementsByTagName('li');
+              if (nestedLis.isNotEmpty) {
+                final locationLi = nestedLis.first;
+                final anchors = locationLi.getElementsByTagName('a');
+                if (anchors.isNotEmpty &&
+                    anchors.first.attributes['href'] != null) {
+                  this.locationUrl = anchors.first.attributes['href']!.trim();
+                  this.location = anchors.first.text.trim();
+                } else {
+                  this.location = locationLi.text.trim();
+                }
+                break;
+              }
+            }
+          }
+        }
+        if (this.location.isNotEmpty) break;
+      }
+      // Fallback: scan all <a> for a Google Maps or similar location link
+      if (this.location.isEmpty || this.locationUrl.isEmpty) {
+        final allAnchors = document.getElementsByTagName('a');
+        for (final a in allAnchors) {
+          final href = a.attributes['href'] ?? '';
+          if (href.contains('google.com/maps/search') ||
+              href.contains('maps.google.com')) {
+            this.locationUrl = href.trim();
+            this.location = a.text.trim();
+            break;
+          }
+        }
+      }
+      // Fallback: extract location from figcaption (look for 📍...)
+      if (this.location.isEmpty && figcaptions.isNotEmpty) {
+        final figText = figcaptions.first.text;
+        final locRegExp = RegExp(r'📍([^📝🔗👥]*)');
+        final locMatch = locRegExp.firstMatch(figText);
+        if (locMatch != null) {
+          this.location = locMatch.group(1)?.trim() ?? '';
+        }
+      }
+    } catch (e) {
       print('Error parsing RSS 2.0 feed item: $e');
       _setDefaults(item);
     }
@@ -180,9 +314,10 @@ class FeedModel {
     if (endDateStr.isEmpty) {
       return DateTime.now().add(Duration(days: 30));
     }
-
     try {
-      return DateTime.parse(endDateStr);
+      // Try RSS format: "Wednesday, April 15, 2026"
+      final dateFormat = DateFormat('EEEE, MMMM d, yyyy');
+      return dateFormat.parse(endDateStr);
     } catch (e) {
       print('Error parsing end date "$endDateStr": $e');
       return DateTime.now().add(Duration(days: 30));
@@ -203,12 +338,18 @@ class FeedModel {
     this.end = DateTime.now().add(Duration(days: 30));
   }
 
+  // Store the parsed date part for isUpcoming
+  String _parsedStartDate = '';
+
   bool get isUpcoming {
-    if (start.isEmpty) return false;
+    if (_parsedStartDate.isEmpty) return false;
     try {
-      final startDate = DateTime.parse(start);
+      // Example: "Saturday, February 14, 2026"
+      final dateFormat = DateFormat('EEEE, MMMM d, yyyy');
+      final startDate = dateFormat.parse(_parsedStartDate);
       return !startDate.isBefore(DateTime.now());
-    } catch (_) {
+    } catch (e) {
+      print('Error parsing start date "$_parsedStartDate": $e');
       return false;
     }
   }

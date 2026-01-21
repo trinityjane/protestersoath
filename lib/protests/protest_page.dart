@@ -4,6 +4,7 @@ import 'package:protestersoath/l10n/app_localizations.dart';
 import 'package:protestersoath/navigation/app_drawer.dart';
 import 'package:protestersoath/navigation/app_drawer/app_drawer_bloc.dart';
 import 'package:protestersoath/navigation/app_drawer/app_drawer_event.dart';
+import 'package:protestersoath/protests/ProtestRSSCard.dart';
 import 'package:protestersoath/protests/bloc/protests_cubit.dart';
 import 'package:protestersoath/protests/bloc/protests_state.dart';
 
@@ -25,6 +26,11 @@ class _ProtestPageState extends State<ProtestPage> {
         } else if (state is ErrorState) {
           return const Center(child: Icon(Icons.close));
         } else if (state is LoadedState) {
+          print(
+              '[DEBUG] LoadedState: protests count = ${state.protests.length}');
+          for (final protest in state.protests) {
+            print('[DEBUG] Protest title: ${protest.title}');
+          }
           return Scaffold(
             drawer: widget.drawer == 'all' ? const AppDrawer() : null,
             body: Container(
@@ -56,10 +62,10 @@ class _ProtestPageState extends State<ProtestPage> {
                   ),
                   SliverList(
                     delegate: SliverChildListDelegate(
-                      [
-                        // TODO: Add ProtestRSSCard widgets here as needed, e.g.:
-                        // ProtestRSSCard(context, state.protest, ...),
-                      ],
+                      state.protests
+                          .map((protest) =>
+                              ProtestRSSCard(context, protest, (url) => {}))
+                          .toList(),
                     ),
                   ),
                 ],

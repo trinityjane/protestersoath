@@ -27,10 +27,15 @@ Widget ProtestRSSCard(
 
   String getImageUrl(String imageUrl) {
     if (kIsWeb && !imageUrl.startsWith('assets')) {
-      return 'https://corsproxy.io/?${Uri.encodeComponent(imageUrl)}';
+      // Only add proxy if not already proxied
+      if (!imageUrl.startsWith('https://corsproxy.io/?')) {
+        return 'https://corsproxy.io/?' + imageUrl;
+      }
     }
     return imageUrl;
   }
+
+  print('[DEBUG] Building ProtestRSSCard for: ${protest.title}');
 
   return Card(
     clipBehavior: Clip.antiAlias,
@@ -86,7 +91,34 @@ Widget ProtestRSSCard(
                       ),
               )
             : Container(),
-        // Protest Information --> referenceURL
+        // Date, time, and location of the protest at the bottom
+        Align(
+          alignment: Alignment.centerRight,
+          child: Padding(
+            padding: EdgeInsets.only(top: 3, right: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  'Date: ' + protest.date,
+                  style: TextStyle(fontSize: 15),
+                ),
+                Text(
+                  protest.time.isNotEmpty
+                      ? 'Time ' + protest.time
+                      : 'Time Unknown',
+                  style: TextStyle(fontSize: 15),
+                ),
+                if (protest.location.isNotEmpty)
+                  Text(
+                    protest.location,
+                    style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic),
+                  ),
+              ],
+            ),
+          ),
+        ),
+        // Protest Information --> referenceURL (moved to bottom)
         Align(
           alignment: Alignment.centerLeft,
           child: Padding(
@@ -102,17 +134,6 @@ Widget ProtestRSSCard(
                   fontWeight: FontWeight.w500,
                 ),
               ),
-            ),
-          ),
-        ),
-        // Date of the protest at the bottom
-        Align(
-          alignment: Alignment.centerRight,
-          child: Padding(
-            padding: EdgeInsets.only(top: 3, bottom: 20, right: 10),
-            child: Text(
-              'Date: ' + protest.date,
-              style: TextStyle(fontSize: 15),
             ),
           ),
         ),

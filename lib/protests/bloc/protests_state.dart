@@ -15,12 +15,12 @@ class LoadingState extends ProtestsState {
 }
 
 class LoadedState extends ProtestsState {
-  LoadedState(this.protest);
+  LoadedState(this.protests);
 
-  final FeedModel protest;
+  final List<FeedModel> protests;
 
   @override
-  List<Object> get props => [protest];
+  List<Object> get props => [protests];
 }
 
 class ErrorState extends ProtestsState {
