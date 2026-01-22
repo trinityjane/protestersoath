@@ -16,6 +16,8 @@ class CameraPage extends StatefulWidget {
 
 enum CaptureMode { photo, video }
 
+enum _CameraInitState { loading, ready, permissionDenied, error }
+
 class _CameraPageState extends State<CameraPage> {
   List<CameraDescription> _cameras = [];
   CameraController? _controller;
@@ -24,7 +26,10 @@ class _CameraPageState extends State<CameraPage> {
   bool _isRecording = false;
   bool _isSaving = false;
   Orientation? _lockedOrientation;
-  bool _cameraPermissionDenied = false;
+  _CameraInitState _cameraInitState = _CameraInitState.loading;
+  String? _cameraErrorMessage;
+  bool _permissionPermanentlyDenied = false;
+  bool _dialogShown = false;
 
   @override
   void initState() {
@@ -38,17 +43,58 @@ class _CameraPageState extends State<CameraPage> {
   }
 
   Future<void> _initCamera() async {
-    // Dispose previous controller if any
+    setState(() {
+      _cameraInitState = _CameraInitState.loading;
+      _cameraErrorMessage = null;
+      _permissionPermanentlyDenied = false;
+    });
     await _controller?.dispose();
     _controller = null;
-    _cameras = await availableCameras();
-    if (_cameras.isNotEmpty) {
-      await _onNewCameraSelected(_cameras[_selectedCameraIdx]);
+    try {
+      _cameras = await availableCameras();
+      debugPrint(
+          '[CameraPage] _initCamera: found [32m${_cameras.length}[0m cameras');
+      if (_cameras.isNotEmpty) {
+        await _onNewCameraSelected(_cameras[_selectedCameraIdx]);
+      } else {
+        debugPrint('[CameraPage] _initCamera: No cameras found');
+        setState(() {
+          _cameraInitState = _CameraInitState.error;
+          _cameraErrorMessage = 'No cameras found on this device.';
+        });
+      }
+    } on CameraException catch (e) {
+      debugPrint('[CameraPage] _initCamera: CameraException: $e');
+      bool isPermissionDenied = false;
+      final codeStr = e.code.toString().toLowerCase();
+      if (codeStr.contains('permissiondenied') ||
+          codeStr.contains('notallowed')) {
+        isPermissionDenied = true;
+      } else if ((e.description?.toLowerCase() ?? '').contains('permission')) {
+        isPermissionDenied = true;
+      }
+      if (isPermissionDenied) {
+        setState(() {
+          _cameraInitState = _CameraInitState.permissionDenied;
+          _cameraErrorMessage = e.description ?? 'Camera permission denied.';
+          _permissionPermanentlyDenied = true;
+        });
+      } else {
+        setState(() {
+          _cameraInitState = _CameraInitState.error;
+          _cameraErrorMessage = e.description ?? 'Camera error.';
+        });
+      }
+    } catch (e) {
+      debugPrint('[CameraPage] _initCamera: Exception: $e');
+      setState(() {
+        _cameraInitState = _CameraInitState.error;
+        _cameraErrorMessage = 'Error initializing camera: $e';
+      });
     }
   }
 
   Future<void> _onNewCameraSelected(CameraDescription cameraDescription) async {
-    // Dispose previous controller if any
     await _controller?.dispose();
     _controller = null;
     final controller = CameraController(
@@ -58,31 +104,76 @@ class _CameraPageState extends State<CameraPage> {
     );
     try {
       await controller.initialize();
+      debugPrint('[CameraPage] _onNewCameraSelected: controller initialized');
       if (mounted) {
         setState(() {
           _controller = controller;
-          _cameraPermissionDenied = false;
+          _cameraInitState = _CameraInitState.ready;
+          debugPrint('[CameraPage] _onNewCameraSelected: set ready');
         });
       }
     } on CameraException catch (e) {
       await controller.dispose();
+      debugPrint(
+          '[CameraPage] CameraException caught: type=${e.code.runtimeType}, code=${e.code}, message=${e.description}');
+      bool isPermissionDenied = false;
+      final codeStr = e.code.toString().toLowerCase();
+      if (codeStr.contains('permissiondenied') ||
+          codeStr.contains('notallowed')) {
+        isPermissionDenied = true;
+      } else if ((e.description?.toLowerCase() ?? '').contains('permission')) {
+        isPermissionDenied = true;
+      }
+      debugPrint(
+          '[CameraPage] CameraException: isPermissionDenied=$isPermissionDenied');
       if (mounted) {
         setState(() {
           _controller = null;
-          _cameraPermissionDenied = true;
+          if (isPermissionDenied) {
+            _cameraInitState = _CameraInitState.permissionDenied;
+            _permissionPermanentlyDenied = true;
+            debugPrint(
+                '[CameraPage] _onNewCameraSelected: set permissionDenied (CameraException)');
+          } else {
+            _cameraInitState = _CameraInitState.error;
+            _cameraErrorMessage = e.description ?? 'Camera error.';
+            debugPrint(
+                '[CameraPage] _onNewCameraSelected: set error (CameraException)');
+          }
         });
-        _showPermissionDialog();
       }
     } catch (e) {
       await controller.dispose();
+      // Web-specific: CameraWebException with CameraErrorCode.permissionDenied
+      bool isPermissionDenied = false;
+      String errorType = e.runtimeType.toString();
+      debugPrint('[CameraPage] Generic catch: errorType=$errorType, error=$e');
+      try {
+        // Try to access code property (for CameraWebException)
+        final code = (e as dynamic).code?.toString()?.toLowerCase();
+        debugPrint('[CameraPage] Web catch: code=$code');
+        if (code != null && code.contains('permissiondenied')) {
+          isPermissionDenied = true;
+        }
+      } catch (err) {
+        debugPrint('[CameraPage] Web catch: error accessing code: $err');
+      }
+      debugPrint(
+          '[CameraPage] Web catch: isPermissionDenied=$isPermissionDenied');
       if (mounted) {
         setState(() {
           _controller = null;
+          if (isPermissionDenied) {
+            _cameraInitState = _CameraInitState.permissionDenied;
+            _permissionPermanentlyDenied = true;
+            debugPrint(
+                '[CameraPage] _onNewCameraSelected: set permissionDenied (web catch)');
+          } else {
+            _cameraInitState = _CameraInitState.error;
+            _cameraErrorMessage = 'Camera error: $e';
+            debugPrint('[CameraPage] _onNewCameraSelected: set error (catch)');
+          }
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Camera error: $e')),
-        );
-        Navigator.of(context).pop();
       }
     }
   }
@@ -90,53 +181,23 @@ class _CameraPageState extends State<CameraPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Always reset permission denied and attempt to initialize camera
-    setState(() {
-      _cameraPermissionDenied = false;
-    });
-    _initCamera();
+    debugPrint(
+        '[CameraPage] didChangeDependencies: _cameraInitState=$_cameraInitState, _dialogShown=$_dialogShown');
+    if (_cameraInitState == _CameraInitState.permissionDenied &&
+        !_dialogShown) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        debugPrint(
+            '[CameraPage] didChangeDependencies: Showing permission denied dialog');
+        _showPermissionDeniedDialog();
+      });
+    }
   }
 
-  void _showPermissionDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Camera Permission Required'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                  'Camera access is required. Please enable camera permission in your device or browser settings and try again.'),
-              SizedBox(height: 12),
-              Text(
-                  'If you do not see a permission prompt, you may need to reload the page or app after changing permissions.'),
-            ],
-          ),
-          actions: [
-            TextButton(
-              child: Text('Try Again'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                setState(() {
-                  _cameraPermissionDenied = false;
-                });
-                _initCamera();
-              },
-            ),
-            TextButton(
-              child: Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
+  @override
+  void didUpdateWidget(covariant CameraPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _dialogShown = false;
+    debugPrint('[CameraPage] didUpdateWidget: _dialogShown reset to false');
   }
 
   @override
@@ -146,7 +207,112 @@ class _CameraPageState extends State<CameraPage> {
     ]);
     _controller?.dispose();
     _controller = null;
+    _dialogShown = false;
+    debugPrint('[CameraPage] dispose: _dialogShown reset to false');
     super.dispose();
+  }
+
+  void _showPermissionDeniedDialog() {
+    debugPrint(
+        '[CameraPage] _showPermissionDeniedDialog called. _dialogShown=$_dialogShown');
+    if (_dialogShown) return;
+    _dialogShown = true;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Camera Permission Required'),
+          content: Text(
+            'Camera access is required. Please enable camera permission in your device or browser settings and reload the app.',
+          ),
+          actions: [
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).maybePop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildPermissionDeniedUI() {
+    // Show a gray rounded rectangle with instructions and an OK button
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.grey[900],
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 8,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
+        constraints: const BoxConstraints(maxWidth: 340),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.lock_outline, color: Colors.white70, size: 48),
+            const SizedBox(height: 16),
+            const Text(
+              'Camera Permission Required',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              'Camera access is required. Please enable camera permission in your device or browser settings and reload the app.',
+              style: TextStyle(color: Colors.white70, fontSize: 16),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.grey[800],
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+                onPressed: () {
+                  Navigator.of(context).maybePop();
+                },
+                child: const Text('OK', style: TextStyle(fontSize: 18)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorUI() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.error, color: Colors.red, size: 64),
+          SizedBox(height: 16),
+          Text(_cameraErrorMessage ?? 'Camera error.',
+              style: TextStyle(color: Colors.white)),
+        ],
+      ),
+    );
   }
 
   Future<void> _takePhoto() async {
@@ -289,6 +455,108 @@ class _CameraPageState extends State<CameraPage> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint(
+        '[CameraPage] build: _cameraInitState=$_cameraInitState, _dialogShown=$_dialogShown');
+    if (_cameraInitState == _CameraInitState.permissionDenied &&
+        !_dialogShown) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        debugPrint('[CameraPage] build: Showing permission denied dialog');
+        _showPermissionDeniedDialog();
+      });
+    }
+    Widget bodyWidget;
+    switch (_cameraInitState) {
+      case _CameraInitState.loading:
+        bodyWidget = const Center(child: CircularProgressIndicator());
+        break;
+      case _CameraInitState.permissionDenied:
+        bodyWidget = _buildPermissionDeniedUI();
+        break;
+      case _CameraInitState.error:
+        bodyWidget = _buildErrorUI();
+        break;
+      case _CameraInitState.ready:
+        bodyWidget = (_controller == null || !_controller!.value.isInitialized)
+            ? const Center(child: CircularProgressIndicator())
+            : Stack(
+                children: [
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final previewSize = _controller!.value.previewSize;
+                      if (previewSize == null) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      final orientation =
+                          _isRecording && _lockedOrientation != null
+                              ? _lockedOrientation!
+                              : MediaQuery.of(context).orientation;
+                      final double previewWidth;
+                      final double previewHeight;
+                      if (orientation == Orientation.portrait) {
+                        previewWidth = previewSize.height;
+                        previewHeight = previewSize.width;
+                      } else {
+                        previewWidth = previewSize.width;
+                        previewHeight = previewSize.height;
+                      }
+                      return SizedBox.expand(
+                        child: FittedBox(
+                          fit: BoxFit.cover,
+                          child: SizedBox(
+                            width: previewWidth,
+                            height: previewHeight,
+                            child: CameraPreview(_controller!),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  // Show "Still Recording" indicator when in photo mode while recording video
+                  if (_isRecording && _mode == CaptureMode.photo)
+                    Positioned(
+                      bottom: MediaQuery.of(context).orientation ==
+                              Orientation.portrait
+                          ? 32
+                          : 20,
+                      left: 0,
+                      right: 0,
+                      child: Center(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: Colors.black54,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 12,
+                                height: 12,
+                                decoration: const BoxDecoration(
+                                  color: Colors.red,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              const Text(
+                                'Still Recording Video',
+                                style: TextStyle(
+                                  color: Colors.greenAccent,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              );
+        break;
+    }
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -296,110 +564,10 @@ class _CameraPageState extends State<CameraPage> {
         foregroundColor: Colors.white,
         title: const Text('Camera'),
       ),
-      body: _cameraPermissionDenied
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.videocam_off, color: Colors.red, size: 64),
-                  SizedBox(height: 16),
-                  Text('Camera permission denied.',
-                      style: TextStyle(color: Colors.white)),
-                  SizedBox(height: 16),
-                  ElevatedButton(
-                    child: Text('Try Again'),
-                    onPressed: _initCamera,
-                  ),
-                ],
-              ),
-            )
-          : (_controller == null || !_controller!.value.isInitialized
-              ? const Center(child: CircularProgressIndicator())
-              : Stack(
-                  children: [
-                    LayoutBuilder(
-                      builder: (context, constraints) {
-                        final previewSize = _controller!.value.previewSize;
-                        if (previewSize == null) {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        }
-                        // Use locked orientation if recording, otherwise current
-                        final orientation =
-                            _isRecording && _lockedOrientation != null
-                                ? _lockedOrientation!
-                                : MediaQuery.of(context).orientation;
-                        // Camera preview size is always in landscape (width > height)
-                        // In portrait mode, we swap the dimensions
-                        final double previewWidth;
-                        final double previewHeight;
-                        if (orientation == Orientation.portrait) {
-                          previewWidth = previewSize.height;
-                          previewHeight = previewSize.width;
-                        } else {
-                          previewWidth = previewSize.width;
-                          previewHeight = previewSize.height;
-                        }
-                        return SizedBox.expand(
-                          child: FittedBox(
-                            fit: BoxFit.cover,
-                            child: SizedBox(
-                              width: previewWidth,
-                              height: previewHeight,
-                              child: CameraPreview(_controller!),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                    // Show "Still Recording" indicator when in photo mode while recording video
-                    if (_isRecording && _mode == CaptureMode.photo)
-                      Positioned(
-                        bottom: MediaQuery.of(context).orientation ==
-                                Orientation.portrait
-                            ? 32
-                            : 20,
-                        left: 0,
-                        right: 0,
-                        child: Center(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
-                            decoration: BoxDecoration(
-                              color: Colors.black54,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Container(
-                                  width: 12,
-                                  height: 12,
-                                  decoration: const BoxDecoration(
-                                    color: Colors.red,
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                const Text(
-                                  'Still Recording Video',
-                                  style: TextStyle(
-                                    color: Colors.greenAccent,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
-                )),
+      body: bodyWidget,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: _cameraPermissionDenied
-          ? null
-          : Padding(
+      floatingActionButton: _cameraInitState == _CameraInitState.ready
+          ? Padding(
               padding: const EdgeInsets.only(bottom: 32.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -479,7 +647,8 @@ class _CameraPageState extends State<CameraPage> {
                   ),
                 ],
               ),
-            ),
+            )
+          : null,
     );
   }
 }
