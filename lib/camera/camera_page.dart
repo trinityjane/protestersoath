@@ -1,10 +1,11 @@
 import 'dart:io';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:gallery_saver/gallery_saver.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as p;
 import 'package:flutter/services.dart';
+import 'package:gallery_saver/gallery_saver.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 
 class CameraPage extends StatefulWidget {
   const CameraPage({super.key});
@@ -23,6 +24,7 @@ class _CameraPageState extends State<CameraPage> {
   bool _isRecording = false;
   bool _isSaving = false;
   Orientation? _lockedOrientation;
+  bool _cameraPermissionDenied = false;
 
   @override
   void initState() {
@@ -36,26 +38,105 @@ class _CameraPageState extends State<CameraPage> {
   }
 
   Future<void> _initCamera() async {
+    // Dispose previous controller if any
+    await _controller?.dispose();
+    _controller = null;
     _cameras = await availableCameras();
     if (_cameras.isNotEmpty) {
-      _onNewCameraSelected(_cameras[_selectedCameraIdx]);
+      await _onNewCameraSelected(_cameras[_selectedCameraIdx]);
     }
   }
 
   Future<void> _onNewCameraSelected(CameraDescription cameraDescription) async {
-    final oldController = _controller;
-    _controller = CameraController(
+    // Dispose previous controller if any
+    await _controller?.dispose();
+    _controller = null;
+    final controller = CameraController(
       cameraDescription,
       ResolutionPreset.high,
       enableAudio: true,
     );
-    await oldController?.dispose();
     try {
-      await _controller!.initialize();
-      if (mounted) setState(() {});
+      await controller.initialize();
+      if (mounted) {
+        setState(() {
+          _controller = controller;
+          _cameraPermissionDenied = false;
+        });
+      }
+    } on CameraException catch (e) {
+      await controller.dispose();
+      if (mounted) {
+        setState(() {
+          _controller = null;
+          _cameraPermissionDenied = true;
+        });
+        _showPermissionDialog();
+      }
     } catch (e) {
-      debugPrint('Camera error: $e');
+      await controller.dispose();
+      if (mounted) {
+        setState(() {
+          _controller = null;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Camera error: $e')),
+        );
+        Navigator.of(context).pop();
+      }
     }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Always reset permission denied and attempt to initialize camera
+    setState(() {
+      _cameraPermissionDenied = false;
+    });
+    _initCamera();
+  }
+
+  void _showPermissionDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Camera Permission Required'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                  'Camera access is required. Please enable camera permission in your device or browser settings and try again.'),
+              SizedBox(height: 12),
+              Text(
+                  'If you do not see a permission prompt, you may need to reload the page or app after changing permissions.'),
+            ],
+          ),
+          actions: [
+            TextButton(
+              child: Text('Try Again'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                setState(() {
+                  _cameraPermissionDenied = false;
+                });
+                _initCamera();
+              },
+            ),
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -64,20 +145,24 @@ class _CameraPageState extends State<CameraPage> {
       DeviceOrientation.portraitUp,
     ]);
     _controller?.dispose();
+    _controller = null;
     super.dispose();
   }
 
   Future<void> _takePhoto() async {
-    if (_controller == null || !_controller!.value.isInitialized || _isSaving) return;
+    if (_controller == null || !_controller!.value.isInitialized || _isSaving)
+      return;
     try {
       setState(() => _isSaving = true);
       final Directory extDir = await getTemporaryDirectory();
-      final String filePath = p.join(extDir.path, 'photo_${DateTime.now().millisecondsSinceEpoch}.jpg');
+      final String filePath = p.join(
+          extDir.path, 'photo_${DateTime.now().millisecondsSinceEpoch}.jpg');
       final XFile file = await _controller!.takePicture();
       await file.saveTo(filePath);
       await GallerySaver.saveImage(filePath);
       if (_isRecording) {
-        _showSaveSnackbar('Photo saved! Still recording video...', true, stillRecording: true);
+        _showSaveSnackbar('Photo saved! Still recording video...', true,
+            stillRecording: true);
       } else {
         _showSaveSnackbar('Photo saved to Camera Roll!', true);
       }
@@ -89,12 +174,15 @@ class _CameraPageState extends State<CameraPage> {
   }
 
   Future<void> _startVideoRecording() async {
-    if (_controller == null || !_controller!.value.isInitialized || _isRecording) return;
+    if (_controller == null ||
+        !_controller!.value.isInitialized ||
+        _isRecording) return;
     try {
       // Lock orientation to current orientation while recording
       final orientation = MediaQuery.of(context).orientation;
       if (orientation == Orientation.portrait) {
-        await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+        await SystemChrome.setPreferredOrientations(
+            [DeviceOrientation.portraitUp]);
       } else {
         await SystemChrome.setPreferredOrientations([
           DeviceOrientation.landscapeLeft,
@@ -113,7 +201,9 @@ class _CameraPageState extends State<CameraPage> {
   }
 
   Future<void> _stopVideoRecording() async {
-    if (_controller == null || !_controller!.value.isInitialized || !_isRecording) return;
+    if (_controller == null ||
+        !_controller!.value.isInitialized ||
+        !_isRecording) return;
     try {
       final XFile file = await _controller!.stopVideoRecording();
       setState(() {
@@ -133,9 +223,13 @@ class _CameraPageState extends State<CameraPage> {
     }
   }
 
-  void _showSaveSnackbar(String message, bool success, {bool stillRecording = false}) {
-    final appBarHeight = AppBar().preferredSize.height + MediaQuery.of(context).padding.top;
-    final double marginBottom = MediaQuery.of(context).size.height - appBarHeight - (stillRecording ? 240 : 215);
+  void _showSaveSnackbar(String message, bool success,
+      {bool stillRecording = false}) {
+    final appBarHeight =
+        AppBar().preferredSize.height + MediaQuery.of(context).padding.top;
+    final double marginBottom = MediaQuery.of(context).size.height -
+        appBarHeight -
+        (stillRecording ? 240 : 215);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Column(
@@ -144,7 +238,8 @@ class _CameraPageState extends State<CameraPage> {
           children: [
             Row(
               children: [
-                Icon(success ? Icons.check_circle : Icons.error, color: Colors.white),
+                Icon(success ? Icons.check_circle : Icons.error,
+                    color: Colors.white),
                 const SizedBox(width: 8),
                 Expanded(child: Text(message)),
               ],
@@ -201,160 +296,190 @@ class _CameraPageState extends State<CameraPage> {
         foregroundColor: Colors.white,
         title: const Text('Camera'),
       ),
-      body: _controller == null || !_controller!.value.isInitialized
-          ? const Center(child: CircularProgressIndicator())
-          : Stack(
-              children: [
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    final previewSize = _controller!.value.previewSize;
-                    if (previewSize == null) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    // Use locked orientation if recording, otherwise current
-                    final orientation = _isRecording && _lockedOrientation != null
-                        ? _lockedOrientation!
-                        : MediaQuery.of(context).orientation;
-                    // Camera preview size is always in landscape (width > height)
-                    // In portrait mode, we swap the dimensions
-                    final double previewWidth;
-                    final double previewHeight;
-                    if (orientation == Orientation.portrait) {
-                      previewWidth = previewSize.height;
-                      previewHeight = previewSize.width;
-                    } else {
-                      previewWidth = previewSize.width;
-                      previewHeight = previewSize.height;
-                    }
-                    return SizedBox.expand(
-                      child: FittedBox(
-                        fit: BoxFit.cover,
-                        child: SizedBox(
-                          width: previewWidth,
-                          height: previewHeight,
-                          child: CameraPreview(_controller!),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                // Show "Still Recording" indicator when in photo mode while recording video
-                if (_isRecording && _mode == CaptureMode.photo)
-                  Positioned(
-                    bottom: MediaQuery.of(context).orientation == Orientation.portrait ? 32 : 20,
-                    left: 0,
-                    right: 0,
-                    child: Center(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: Colors.black54,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              width: 12,
-                              height: 12,
-                              decoration: const BoxDecoration(
-                                color: Colors.red,
-                                shape: BoxShape.circle,
-                              ),
+      body: _cameraPermissionDenied
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.videocam_off, color: Colors.red, size: 64),
+                  SizedBox(height: 16),
+                  Text('Camera permission denied.',
+                      style: TextStyle(color: Colors.white)),
+                  SizedBox(height: 16),
+                  ElevatedButton(
+                    child: Text('Try Again'),
+                    onPressed: _initCamera,
+                  ),
+                ],
+              ),
+            )
+          : (_controller == null || !_controller!.value.isInitialized
+              ? const Center(child: CircularProgressIndicator())
+              : Stack(
+                  children: [
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        final previewSize = _controller!.value.previewSize;
+                        if (previewSize == null) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+                        // Use locked orientation if recording, otherwise current
+                        final orientation =
+                            _isRecording && _lockedOrientation != null
+                                ? _lockedOrientation!
+                                : MediaQuery.of(context).orientation;
+                        // Camera preview size is always in landscape (width > height)
+                        // In portrait mode, we swap the dimensions
+                        final double previewWidth;
+                        final double previewHeight;
+                        if (orientation == Orientation.portrait) {
+                          previewWidth = previewSize.height;
+                          previewHeight = previewSize.width;
+                        } else {
+                          previewWidth = previewSize.width;
+                          previewHeight = previewSize.height;
+                        }
+                        return SizedBox.expand(
+                          child: FittedBox(
+                            fit: BoxFit.cover,
+                            child: SizedBox(
+                              width: previewWidth,
+                              height: previewHeight,
+                              child: CameraPreview(_controller!),
                             ),
-                            const SizedBox(width: 8),
-                            const Text(
-                              'Still Recording Video',
-                              style: TextStyle(
-                                color: Colors.greenAccent,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                          ),
+                        );
+                      },
                     ),
-                  ),
-              ],
-            ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 32.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.cameraswitch, color: Colors.white, size: 36),
-              onPressed: _switchCamera,
-            ),
-            const SizedBox(width: 32),
-            GestureDetector(
-              onTap: _isSaving
-                  ? null
-                  : _mode == CaptureMode.photo
-                      ? _takePhoto
-                      : _isRecording
-                          ? _stopVideoRecording
-                          : _startVideoRecording,
-              child: Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  color: _isRecording ? Colors.red : Colors.white,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: _isRecording ? Colors.redAccent : Colors.white,
-                    width: 4,
-                  ),
-                ),
-                child: _isSaving
-                    ? const Center(
-                        child: SizedBox(
-                          width: 30,
-                          height: 30,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 3,
-                            color: Colors.black54,
+                    // Show "Still Recording" indicator when in photo mode while recording video
+                    if (_isRecording && _mode == CaptureMode.photo)
+                      Positioned(
+                        bottom: MediaQuery.of(context).orientation ==
+                                Orientation.portrait
+                            ? 32
+                            : 20,
+                        left: 0,
+                        right: 0,
+                        child: Center(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: Colors.black54,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: 12,
+                                  height: 12,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                const Text(
+                                  'Still Recording Video',
+                                  style: TextStyle(
+                                    color: Colors.greenAccent,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      )
-                    : _mode == CaptureMode.video && _isRecording
-                        ? const Icon(Icons.stop, color: Colors.white, size: 40)
+                      ),
+                  ],
+                )),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: _cameraPermissionDenied
+          ? null
+          : Padding(
+              padding: const EdgeInsets.only(bottom: 32.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.cameraswitch,
+                        color: Colors.white, size: 36),
+                    onPressed: _switchCamera,
+                  ),
+                  const SizedBox(width: 32),
+                  GestureDetector(
+                    onTap: _isSaving
+                        ? null
                         : _mode == CaptureMode.photo
-                            ? const Icon(Icons.camera_alt, color: Colors.black, size: 40)
-                            : const Icon(Icons.videocam, color: Colors.red, size: 40),
+                            ? _takePhoto
+                            : _isRecording
+                                ? _stopVideoRecording
+                                : _startVideoRecording,
+                    child: Container(
+                      width: 80,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        color: _isRecording ? Colors.red : Colors.white,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: _isRecording ? Colors.redAccent : Colors.white,
+                          width: 4,
+                        ),
+                      ),
+                      child: _isSaving
+                          ? const Center(
+                              child: SizedBox(
+                                width: 30,
+                                height: 30,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 3,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                            )
+                          : _mode == CaptureMode.video && _isRecording
+                              ? const Icon(Icons.stop,
+                                  color: Colors.white, size: 40)
+                              : _mode == CaptureMode.photo
+                                  ? const Icon(Icons.camera_alt,
+                                      color: Colors.black, size: 40)
+                                  : const Icon(Icons.videocam,
+                                      color: Colors.red, size: 40),
+                    ),
+                  ),
+                  const SizedBox(width: 32),
+                  ToggleButtons(
+                    borderRadius: BorderRadius.circular(24),
+                    selectedColor: Colors.white,
+                    fillColor: Colors.black45,
+                    color: Colors.white70,
+                    isSelected: [
+                      _mode == CaptureMode.photo,
+                      _mode == CaptureMode.video,
+                    ],
+                    onPressed: (idx) {
+                      setState(() {
+                        _mode =
+                            idx == 0 ? CaptureMode.photo : CaptureMode.video;
+                      });
+                    },
+                    children: const [
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: Icon(Icons.camera_alt),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: Icon(Icons.videocam),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-            const SizedBox(width: 32),
-            ToggleButtons(
-              borderRadius: BorderRadius.circular(24),
-              selectedColor: Colors.white,
-              fillColor: Colors.black45,
-              color: Colors.white70,
-              isSelected: [
-                _mode == CaptureMode.photo,
-                _mode == CaptureMode.video,
-              ],
-              onPressed: (idx) {
-                setState(() {
-                  _mode = idx == 0 ? CaptureMode.photo : CaptureMode.video;
-                });
-              },
-              children: const [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: Icon(Icons.camera_alt),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: Icon(Icons.videocam),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

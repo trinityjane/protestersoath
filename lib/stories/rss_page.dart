@@ -265,12 +265,23 @@ class RSSReaderState extends State<RSSReader> {
                       ),
                     ]
                   : null,
-              leading: showBack
+              leading: (showBack && menuConfig != 'allScreens')
                   ? IconButton(
                       icon: Icon(Icons.arrow_back),
-                      onPressed: () {
+                      onPressed: () async {
+                        if (menuConfig != 'buttonsOnly' &&
+                            menuConfig != 'allScreens') {
+                          final prefs = await SharedPreferences.getInstance();
+                          final menuBackOpensDrawer =
+                              prefs.getBool('menuBackOpensDrawer') ?? false;
+                          if (menuBackOpensDrawer) {
+                            await prefs.setBool('openDrawerOnHome', true);
+                          }
+                        }
                         BlocProvider.of<AppDrawerBloc>(context)
                             .add(HomePageEvent());
+                        Navigator.of(context)
+                            .popUntil((route) => route.isFirst);
                       },
                     )
                   : null,

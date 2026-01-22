@@ -6,15 +6,52 @@ import 'package:protestersoath/navigation/app_drawer.dart';
 import 'package:protestersoath/navigation/app_drawer/app_drawer_bloc.dart';
 import 'package:protestersoath/navigation/app_drawer/app_drawer_event.dart';
 import 'package:protestersoath/navigation/app_drawer/app_drawer_state.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../settings/SettingsContainer.dart';
 import 'ShapesPainter.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  bool _drawerOpenedThisBuild = false;
+
+  @override
+  void didUpdateWidget(HomePage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _drawerOpenedThisBuild = false; // Reset flag on rebuild
+  }
+
+  @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!_drawerOpenedThisBuild &&
+          ModalRoute.of(context)?.isCurrent == true) {
+        final prefs = await SharedPreferences.getInstance();
+        final shouldOpenDrawer = prefs.getBool('openDrawerOnHome') ?? false;
+        debugPrint(
+            '[Drawer Debug] shouldOpenDrawer: $shouldOpenDrawer, isCurrent: ${ModalRoute.of(context)?.isCurrent}');
+        if (shouldOpenDrawer) {
+          prefs.setBool('openDrawerOnHome', false);
+          if (_scaffoldKey.currentState != null &&
+              _scaffoldKey.currentState!.hasDrawer) {
+            debugPrint('[Drawer Debug] Opening drawer...');
+            _scaffoldKey.currentState!.openDrawer();
+            setState(() {
+              _drawerOpenedThisBuild = true;
+            });
+          } else {
+            debugPrint('[Drawer Debug] Scaffold not ready or has no drawer');
+          }
+        }
+      }
+    });
     return FutureBuilder<String>(
       future: SettingsContainer.getMenuConfig(),
       builder: (context, snapshot) {
@@ -23,6 +60,7 @@ class HomePage extends StatelessWidget {
         return BlocBuilder<AppDrawerBloc, AppDrawerState>(
           builder: (BuildContext context, AppDrawerState state) {
             return Scaffold(
+              key: _scaffoldKey,
               drawer: (menuConfig == 'homeOnly' || menuConfig == 'allScreens')
                   ? AppDrawer()
                   : null,

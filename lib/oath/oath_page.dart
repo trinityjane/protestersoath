@@ -5,6 +5,7 @@ import 'package:protestersoath/navigation/app_drawer.dart';
 import 'package:protestersoath/navigation/app_drawer/app_drawer_bloc.dart';
 import 'package:protestersoath/navigation/app_drawer/app_drawer_event.dart';
 import 'package:protestersoath/oath/OathContainer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../settings/SettingsContainer.dart';
 
@@ -21,11 +22,16 @@ class OathPage extends StatelessWidget {
             (menuConfig == 'homeOnly' || menuConfig == 'buttonsOnly');
         return WillPopScope(
           onWillPop: () async {
-            if (showBack && menuConfig != 'allScreens') {
-              Navigator.of(context).popUntil((route) => route.isFirst);
-              return false;
+            if (menuConfig != 'buttonsOnly' && menuConfig != 'allScreens') {
+              final prefs = await SharedPreferences.getInstance();
+              final menuBackOpensDrawer =
+                  prefs.getBool('menuBackOpensDrawer') ?? false;
+              if (menuBackOpensDrawer) {
+                await prefs.setBool('openDrawerOnHome', true);
+              }
             }
-            return true;
+            Navigator.of(context).popUntil((route) => route.isFirst);
+            return false;
           },
           child: Scaffold(
             drawer:
@@ -39,9 +45,20 @@ class OathPage extends StatelessWidget {
               leading: (showBack && menuConfig != 'allScreens')
                   ? IconButton(
                       icon: Icon(Icons.arrow_back),
-                      onPressed: () {
+                      onPressed: () async {
+                        if (menuConfig != 'buttonsOnly' &&
+                            menuConfig != 'allScreens') {
+                          final prefs = await SharedPreferences.getInstance();
+                          final menuBackOpensDrawer =
+                              prefs.getBool('menuBackOpensDrawer') ?? false;
+                          if (menuBackOpensDrawer) {
+                            await prefs.setBool('openDrawerOnHome', true);
+                          }
+                        }
                         BlocProvider.of<AppDrawerBloc>(context)
                             .add(HomePageEvent());
+                        Navigator.of(context)
+                            .popUntil((route) => route.isFirst);
                       },
                     )
                   : null,

@@ -34,6 +34,11 @@ class SettingsContainer extends StatefulWidget {
     return prefs.getBool('disableRssFeedCache') ?? defaultValue;
   }
 
+  static Future<bool> getMenuBackOpensDrawer() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('menuBackOpensDrawer') ?? false;
+  }
+
   @override
   State<SettingsContainer> createState() => _SettingsContainerState();
 }
@@ -44,6 +49,7 @@ class _SettingsContainerState extends State<SettingsContainer> {
   bool _autoSaveVideo = false;
   bool _protestsCompactMode = false;
   bool _disableRssFeedCache = false;
+  bool _menuBackOpensDrawer = false;
 
   @override
   void initState() {
@@ -65,6 +71,7 @@ class _SettingsContainerState extends State<SettingsContainer> {
       _protestsCompactMode = prefs.getBool('protestsCompactMode') ?? false;
       _disableRssFeedCache =
           prefs.getBool('disableRssFeedCache') ?? defaultDisableCache;
+      _menuBackOpensDrawer = prefs.getBool('menuBackOpensDrawer') ?? false;
     });
   }
 
@@ -93,6 +100,11 @@ class _SettingsContainerState extends State<SettingsContainer> {
     await prefs.setBool('disableRssFeedCache', value);
   }
 
+  Future<void> _saveMenuBackOpensDrawer(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('menuBackOpensDrawer', value);
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -119,6 +131,16 @@ class _SettingsContainerState extends State<SettingsContainer> {
               'value': 'buttonsOnly'
             },
           ],
+        ),
+        SwitchListTile(
+          title: const Text("Back button opens menu on home"),
+          subtitle: const Text(
+              "When enabled, pressing back navigates to home with the menu open."),
+          value: _menuBackOpensDrawer,
+          onChanged: (value) {
+            setState(() => _menuBackOpensDrawer = value);
+            _saveMenuBackOpensDrawer(value);
+          },
         ),
         Divider(),
         Padding(

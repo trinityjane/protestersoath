@@ -7,6 +7,7 @@ import 'package:protestersoath/navigation/app_drawer/app_drawer_event.dart';
 import 'package:protestersoath/settings/SettingsContainer.dart';
 import 'package:protestersoath/stories/bloc/stories_cubit.dart';
 import 'package:protestersoath/stories/bloc/stories_state.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'StoryCard.dart';
 
@@ -70,9 +71,23 @@ class _StoryPageState extends State<StoryPage> {
                         leading: showBack
                             ? IconButton(
                                 icon: Icon(Icons.arrow_back),
-                                onPressed: () {
+                                onPressed: () async {
+                                  if (menuConfig != 'buttonsOnly' &&
+                                      menuConfig != 'allScreens') {
+                                    final prefs =
+                                        await SharedPreferences.getInstance();
+                                    final menuBackOpensDrawer =
+                                        prefs.getBool('menuBackOpensDrawer') ??
+                                            false;
+                                    if (menuBackOpensDrawer) {
+                                      await prefs.setBool(
+                                          'openDrawerOnHome', true);
+                                    }
+                                  }
                                   BlocProvider.of<AppDrawerBloc>(context)
                                       .add(HomePageEvent());
+                                  Navigator.of(context)
+                                      .popUntil((route) => route.isFirst);
                                 },
                               )
                             : null,

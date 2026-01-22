@@ -7,6 +7,7 @@ import 'package:protestersoath/navigation/app_drawer/app_drawer_event.dart';
 import 'package:protestersoath/protests/ProtestRSSCard.dart';
 import 'package:protestersoath/protests/bloc/protests_cubit.dart';
 import 'package:protestersoath/protests/bloc/protests_state.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProtestPage extends StatefulWidget {
   const ProtestPage({Key? key, this.drawer}) : super(key: key);
@@ -49,9 +50,22 @@ class _ProtestPageState extends State<ProtestPage> {
                         ? null
                         : IconButton(
                             icon: const Icon(Icons.arrow_back),
-                            onPressed: () {
+                            onPressed: () async {
+                              if (menuConfig != 'buttonsOnly' &&
+                                  menuConfig != 'allScreens') {
+                                final prefs =
+                                    await SharedPreferences.getInstance();
+                                final menuBackOpensDrawer =
+                                    prefs.getBool('menuBackOpensDrawer') ??
+                                        false;
+                                if (menuBackOpensDrawer) {
+                                  await prefs.setBool('openDrawerOnHome', true);
+                                }
+                              }
                               BlocProvider.of<AppDrawerBloc>(context)
-                                  .add(const BackButtonEvent("ProtestPage"));
+                                  .add(HomePageEvent());
+                              Navigator.of(context)
+                                  .popUntil((route) => route.isFirst);
                             },
                           ),
                   ),
