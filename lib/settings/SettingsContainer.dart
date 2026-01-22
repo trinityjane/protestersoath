@@ -10,12 +10,12 @@ class SettingsContainer extends StatefulWidget {
 
   static Future<String> getStoriesConfig() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('storiesConfig') ?? 'installed';
+    return prefs.getString('storiesConfig') ?? 'rss'; // default to RSS
   }
 
   static Future<bool> getAutoSaveVideo() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('autoSaveVideo') ?? false;
+    return prefs.getBool('autoSaveVideo') ?? true; // default to true
   }
 
   static Future<bool> getProtestsCompactMode() async {
@@ -36,7 +36,7 @@ class SettingsContainer extends StatefulWidget {
 
   static Future<bool> getMenuBackOpensDrawer() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('menuBackOpensDrawer') ?? false;
+    return prefs.getBool('menuBackOpensDrawer') ?? false; // default to false
   }
 
   @override
@@ -45,11 +45,11 @@ class SettingsContainer extends StatefulWidget {
 
 class _SettingsContainerState extends State<SettingsContainer> {
   String _menuConfig = 'homeOnly';
-  String _storiesConfig = 'installed';
-  bool _autoSaveVideo = false;
+  String _storiesConfig = 'rss'; // default to RSS
+  bool _autoSaveVideo = true; // default to true
   bool _protestsCompactMode = false;
   bool _disableRssFeedCache = false;
-  bool _menuBackOpensDrawer = false;
+  bool _menuBackOpensDrawer = false; // default to false
 
   @override
   void initState() {
@@ -66,12 +66,15 @@ class _SettingsContainerState extends State<SettingsContainer> {
     }());
     setState(() {
       _menuConfig = prefs.getString('menuConfig') ?? 'homeOnly';
-      _storiesConfig = prefs.getString('storiesConfig') ?? 'installed';
-      _autoSaveVideo = prefs.getBool('autoSaveVideo') ?? false;
+      _storiesConfig =
+          prefs.getString('storiesConfig') ?? 'rss'; // default to RSS
+      _autoSaveVideo =
+          prefs.getBool('autoSaveVideo') ?? true; // default to true
       _protestsCompactMode = prefs.getBool('protestsCompactMode') ?? false;
       _disableRssFeedCache =
           prefs.getBool('disableRssFeedCache') ?? defaultDisableCache;
-      _menuBackOpensDrawer = prefs.getBool('menuBackOpensDrawer') ?? false;
+      _menuBackOpensDrawer =
+          prefs.getBool('menuBackOpensDrawer') ?? false; // default to false
     });
   }
 
