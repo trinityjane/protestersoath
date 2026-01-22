@@ -24,16 +24,19 @@ class AppDrawerBloc extends Bloc<AppDrawerEvent, AppDrawerState> {
     });
     on<AboutPageEvent>((event, emit) => emit(AboutPageState()));
     on<SettingsPageEvent>((event, emit) => emit(SettingsPageState()));
-    on<StoryPageEvent>((event, emit) => emit(StoryPageState()));
-    on<ProtestPageEvent>((event, emit) => emit(ProtestPageState()));
+    on<StoryPageEvent>(
+        (event, emit) => emit(StoryPageState(fromButton: event.fromButton)));
+    on<ProtestPageEvent>(
+        (event, emit) => emit(ProtestPageState(fromButton: event.fromButton)));
     on<VerifyPageEvent>((event, emit) => emit(VerifyPageState()));
-    on<OathPageEvent>((event, emit) => emit(OathPageState()));
+    on<OathPageEvent>(
+        (event, emit) => emit(OathPageState(fromButton: event.fromButton)));
     on<ReasonPageEvent>((event, emit) {
       // If lastPage is not set, default to HomePageEvent
       if (!isSet(lastPage)) {
         lastPage = HomePageEvent();
       }
-      emit(ReasonPageState(lastPage));
+      emit(ReasonPageState(event.fromButton));
     });
     on<PrivacyPageEvent>((event, emit) => emit(PrivacyPageState(lastPage)));
     on<VerifyProofOfOathEvent>(

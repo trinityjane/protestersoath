@@ -76,7 +76,7 @@ class _HomePageState extends State<HomePage> {
                     child: IconButton(
                       icon: Icon(Icons.announcement, size: 25),
                       onPressed: () => BlocProvider.of<AppDrawerBloc>(context)
-                          .add(ProtestPageEvent()),
+                          .add(ProtestPageEvent(fromButton: true)),
                       tooltip: AppLocalizations.of(context)!.protests,
                     ),
                   ),
@@ -85,7 +85,7 @@ class _HomePageState extends State<HomePage> {
                     child: IconButton(
                       icon: Icon(Icons.art_track, size: 35),
                       onPressed: () => BlocProvider.of<AppDrawerBloc>(context)
-                          .add(StoryPageEvent()),
+                          .add(StoryPageEvent(fromButton: true)),
                       tooltip: AppLocalizations.of(context)!.stories,
                     ),
                   ),
@@ -123,7 +123,7 @@ class _HomePageState extends State<HomePage> {
                       icon: Icon(Icons.list, color: Colors.black, size: 30),
                       tooltip: AppLocalizations.of(context)!.theoath,
                       onPressed: () => BlocProvider.of<AppDrawerBloc>(context)
-                          .add(OathPageEvent()),
+                          .add(OathPageEvent(fromButton: true)),
                     ),
                   ),
                   Container(

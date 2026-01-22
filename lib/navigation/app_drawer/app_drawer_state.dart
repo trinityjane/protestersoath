@@ -25,13 +25,17 @@ class AboutPageState extends AppDrawerState {
 }
 
 class StoryPageState extends AppDrawerState {
+  final bool fromButton;
+  StoryPageState({this.fromButton = false});
   @override
-  List<Object> get props => [];
+  List<Object> get props => [fromButton];
 }
 
 class ProtestPageState extends AppDrawerState {
+  final bool fromButton;
+  ProtestPageState({this.fromButton = false});
   @override
-  List<Object> get props => [];
+  List<Object> get props => [fromButton];
 }
 
 class VerifyPageState extends AppDrawerState {
@@ -40,10 +44,10 @@ class VerifyPageState extends AppDrawerState {
 }
 
 class ReasonPageState extends AppDrawerState {
-  final AppDrawerEvent lastPage;
-  ReasonPageState(this.lastPage);
+  final bool fromButton;
+  ReasonPageState(this.fromButton);
   @override
-  List<Object> get props => [lastPage];
+  List<Object> get props => [fromButton];
 }
 
 class PrivacyPageState extends AppDrawerState {
@@ -54,8 +58,10 @@ class PrivacyPageState extends AppDrawerState {
 }
 
 class OathPageState extends AppDrawerState {
+  final bool fromButton;
+  OathPageState({this.fromButton = false});
   @override
-  List<Object> get props => [];
+  List<Object> get props => [fromButton];
 }
 
 class SettingsPageState extends AppDrawerState {

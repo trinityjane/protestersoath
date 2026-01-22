@@ -12,9 +12,11 @@ import 'ReasonContainer.dart';
 
 class ReasonPage extends StatelessWidget {
   final bool isLogin;
+  final bool fromButton;
   final String? drawer;
 
-  ReasonPage(this.isLogin, {Key? key, this.drawer}) : super(key: key);
+  ReasonPage(this.isLogin, {this.fromButton = false, Key? key, this.drawer})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +24,8 @@ class ReasonPage extends StatelessWidget {
       future: SettingsContainer.getMenuConfig(),
       builder: (context, snapshot) {
         final menuConfig = snapshot.data ?? 'homeOnly';
-        final bool showDrawer =
-            menuConfig == 'allScreens' || menuConfig == 'homeOnly';
-        final bool showBack =
-            (menuConfig == 'homeOnly' || menuConfig == 'buttonsOnly');
+        final bool showDrawer = menuConfig == 'allScreens' && !fromButton;
+        final bool showBack = menuConfig == 'allScreens' && fromButton;
         return BlocBuilder<AppDrawerBloc, AppDrawerState>(
           builder: (BuildContext context, AppDrawerState state) {
             return Scaffold(
@@ -38,7 +38,7 @@ class ReasonPage extends StatelessWidget {
                   AppLocalizations.of(context)!.thereason,
                   style: TextStyle(color: Colors.white),
                 ),
-                leading: (showBack && menuConfig != 'allScreens')
+                leading: showBack
                     ? IconButton(
                         icon: Icon(Icons.arrow_back),
                         onPressed: () async {

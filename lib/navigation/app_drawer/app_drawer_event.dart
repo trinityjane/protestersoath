@@ -39,35 +39,39 @@ class SettingsPageEvent extends AppDrawerEvent {
 }
 
 class StoryPageEvent extends AppDrawerEvent {
-  const StoryPageEvent() : super();
+  final bool fromButton;
+  const StoryPageEvent({this.fromButton = false}) : super();
   @override
   String toString() => 'StoryPage';
   @override
-  List<Object> get props => [];
+  List<Object> get props => [fromButton];
 }
 
 class ProtestPageEvent extends AppDrawerEvent {
-  const ProtestPageEvent() : super();
+  final bool fromButton;
+  const ProtestPageEvent({this.fromButton = false}) : super();
   @override
   String toString() => 'ProtestPage';
   @override
-  List<Object> get props => [];
+  List<Object> get props => [fromButton];
 }
 
 class OathPageEvent extends AppDrawerEvent {
-  const OathPageEvent() : super();
+  final bool fromButton;
+  const OathPageEvent({this.fromButton = false}) : super();
   @override
   String toString() => 'OathPage';
   @override
-  List<Object> get props => [];
+  List<Object> get props => [fromButton];
 }
 
 class ReasonPageEvent extends AppDrawerEvent {
-  const ReasonPageEvent() : super();
+  final bool fromButton;
+  const ReasonPageEvent({this.fromButton = false}) : super();
   @override
   String toString() => 'ReasonPage';
   @override
-  List<Object> get props => [];
+  List<Object> get props => [fromButton];
 }
 
 class VerifyPageEvent extends AppDrawerEvent {

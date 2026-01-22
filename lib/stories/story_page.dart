@@ -12,6 +12,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'StoryCard.dart';
 
 class StoryPage extends StatefulWidget {
+  final bool fromButton;
+  StoryPage({this.fromButton = false});
   @override
   _StoryPageState createState() => _StoryPageState();
 }
@@ -32,9 +34,9 @@ class _StoryPageState extends State<StoryPage> {
       future: SettingsContainer.getMenuConfig(),
       builder: (context, snapshot) {
         final menuConfig = snapshot.data ?? 'homeOnly';
-        final bool showDrawer = menuConfig == 'allScreens';
-        final bool showBack =
-            (menuConfig == 'homeOnly' || menuConfig == 'buttonsOnly');
+        final bool showDrawer =
+            menuConfig == 'allScreens' && !widget.fromButton;
+        final bool showBack = menuConfig == 'allScreens' && widget.fromButton;
 
         return BlocBuilder<StoriesCubit, StoriesState>(
           builder: (context, state) {

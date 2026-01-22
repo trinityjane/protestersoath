@@ -10,6 +10,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../settings/SettingsContainer.dart';
 
 class OathPage extends StatelessWidget {
+  final bool fromButton;
+  const OathPage({Key? key, this.fromButton = false}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<String>(
@@ -17,9 +20,11 @@ class OathPage extends StatelessWidget {
       builder: (context, snapshot) {
         final menuConfig = snapshot.data ?? 'homeOnly';
         final bool showDrawer =
-            menuConfig == 'allScreens' || menuConfig == 'homeOnly';
+            (menuConfig == 'allScreens' || menuConfig == 'homeOnly') &&
+                !fromButton;
         final bool showBack =
-            (menuConfig == 'homeOnly' || menuConfig == 'buttonsOnly');
+            (menuConfig == 'homeOnly' || menuConfig == 'buttonsOnly') ||
+                (menuConfig == 'allScreens' && fromButton);
         return WillPopScope(
           onWillPop: () async {
             if (menuConfig != 'buttonsOnly' && menuConfig != 'allScreens') {
@@ -42,7 +47,7 @@ class OathPage extends StatelessWidget {
                 AppLocalizations.of(context)!.theoath,
                 style: TextStyle(color: Colors.white),
               ),
-              leading: (showBack && menuConfig != 'allScreens')
+              leading: showBack
                   ? IconButton(
                       icon: Icon(Icons.arrow_back),
                       onPressed: () async {

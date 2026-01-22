@@ -95,17 +95,17 @@ class _AppViewState extends State<AppView> {
             } else if (state is StoryPageState) {
               return BlocProvider<StoriesCubit>(
                 create: (context) => StoriesCubit(),
-                child: StoriesSwitcher(),
+                child: StoriesSwitcher(fromButton: state.fromButton),
               );
             } else if (state is ProtestPageState) {
               return BlocProvider<ProtestsCubit>(
                 create: (context) => ProtestsCubit(),
-                child: ProtestsSwitcher(),
+                child: ProtestsSwitcher(fromButton: state.fromButton),
               );
             } else if (state is OathPageState) {
-              return OathPage();
+              return OathPage(fromButton: state.fromButton);
             } else if (state is ReasonPageState) {
-              return ReasonPage(false);
+              return ReasonPage(false, fromButton: state.fromButton);
             } else if (state is PrivacyPageState) {
               return PrivacyPage(false);
             } else if (state is VerifyPageState) {

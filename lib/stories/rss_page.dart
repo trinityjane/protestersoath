@@ -17,10 +17,11 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:webfeed_revised/webfeed_revised.dart';
 
 class RSSReader extends StatefulWidget {
-  RSSReader({this.which = 'Stories', this.title = ''});
+  RSSReader({this.which = 'Stories', this.title = '', this.fromButton = false});
 
   final String which;
   final String title;
+  final bool fromButton;
 
   @override
   RSSReaderState createState() => RSSReaderState();
@@ -50,12 +51,14 @@ class RSSReaderState extends State<RSSReader> {
   String get feedOpenErrorMessage => 'Feed open error.';
 
   void updateTitle(String title) {
+    if (!mounted) return;
     setState(() {
       _title = title;
     });
   }
 
   void updateFeed(RssFeed feed) {
+    if (!mounted) return;
     setState(() {
       _cards =
           feed.items?.map((item) => FeedModel.fromRSSFeed(item)).toList() ?? [];
@@ -76,6 +79,7 @@ class RSSReaderState extends State<RSSReader> {
   }
 
   Future<void> load() async {
+    if (!mounted) return;
     setState(() {
       _isLoading = true;
       _errorMessage = null;
@@ -136,9 +140,19 @@ class RSSReaderState extends State<RSSReader> {
         updateFeed(feed);
         updateTitle(widget.title);
       }
+    } on TimeoutException catch (e) {
+      print('Timeout loading RSS feed: $e');
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+        _errorMessage =
+            'Feed loading timed out. Please check your connection and try again.';
+      });
+      updateTitle(feedLoadErrorMessage);
     } catch (e, stackTrace) {
       print('Error loading RSS feed: $e');
       print('Stack trace: $stackTrace');
+      if (!mounted) return;
       setState(() {
         _isLoading = false;
         _errorMessage = 'Failed to load feed: $e';
@@ -157,12 +171,14 @@ class RSSReaderState extends State<RSSReader> {
 
   Future<void> _loadCompactMode() async {
     _compactMode = await SettingsContainer.getProtestsCompactMode();
+    if (!mounted) return;
     setState(() {});
   }
 
   Future<void> _saveCompactMode(bool value) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('protestsCompactMode', value);
+    if (!mounted) return;
     setState(() {
       _compactMode = value;
     });
@@ -238,7 +254,8 @@ class RSSReaderState extends State<RSSReader> {
         final menuConfig = snapshot.data ?? 'homeOnly';
         final bool showDrawer = menuConfig == 'allScreens';
         final bool showBack =
-            (menuConfig == 'homeOnly' || menuConfig == 'buttonsOnly');
+            (menuConfig == 'homeOnly' || menuConfig == 'buttonsOnly') ||
+                widget.fromButton;
 
         return SafeArea(
           child: Scaffold(
@@ -265,7 +282,8 @@ class RSSReaderState extends State<RSSReader> {
                       ),
                     ]
                   : null,
-              leading: (showBack && menuConfig != 'allScreens')
+              leading: (showBack && menuConfig != 'allScreens') ||
+                      widget.fromButton
                   ? IconButton(
                       icon: Icon(Icons.arrow_back),
                       onPressed: () async {
