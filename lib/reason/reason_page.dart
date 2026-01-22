@@ -25,7 +25,8 @@ class ReasonPage extends StatelessWidget {
       builder: (context, snapshot) {
         final menuConfig = snapshot.data ?? 'homeOnly';
         final bool showDrawer = menuConfig == 'allScreens' && !fromButton;
-        final bool showBack = menuConfig == 'allScreens' && fromButton;
+        final bool showBack =
+            fromButton || (menuConfig == 'homeOnly' && !fromButton);
         return BlocBuilder<AppDrawerBloc, AppDrawerState>(
           builder: (BuildContext context, AppDrawerState state) {
             return Scaffold(

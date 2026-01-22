@@ -36,7 +36,8 @@ class _StoryPageState extends State<StoryPage> {
         final menuConfig = snapshot.data ?? 'homeOnly';
         final bool showDrawer =
             menuConfig == 'allScreens' && !widget.fromButton;
-        final bool showBack = menuConfig == 'allScreens' && widget.fromButton;
+        final bool showBack = widget.fromButton ||
+            (menuConfig == 'homeOnly' && !widget.fromButton);
 
         return BlocBuilder<StoriesCubit, StoriesState>(
           builder: (context, state) {
