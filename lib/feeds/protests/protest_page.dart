@@ -4,9 +4,9 @@ import 'package:protestersoath/l10n/app_localizations.dart';
 import 'package:protestersoath/navigation/app_drawer.dart';
 import 'package:protestersoath/navigation/app_drawer/app_drawer_bloc.dart';
 import 'package:protestersoath/navigation/app_drawer/app_drawer_state.dart';
-import 'package:protestersoath/protests/ProtestRSSCard.dart';
-import 'package:protestersoath/protests/bloc/protests_cubit.dart';
-import 'package:protestersoath/protests/bloc/protests_state.dart'
+import 'package:protestersoath/feeds/protests/ProtestRSSCard.dart';
+import 'package:protestersoath/feeds/protests/bloc/protests_cubit.dart';
+import 'package:protestersoath/feeds/protests/bloc/protests_state.dart'
     as protests_states;
 import 'package:shared_preferences/shared_preferences.dart';
 

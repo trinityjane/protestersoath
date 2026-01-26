@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
+import 'package:protestersoath/feeds/feed_page.dart';
+import 'package:protestersoath/feeds/stories/story_page.dart';
 import 'package:protestersoath/l10n/app_localizations.dart';
 import 'package:protestersoath/settings/SettingsContainer.dart';
-import 'package:protestersoath/stories/rss_page.dart';
-import 'package:protestersoath/stories/story_page.dart';
 
 class StoriesSwitcher extends StatelessWidget {
   final bool fromButton;

@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import './StoryModel.dart';
+import '../../FeedModel.dart';
 
 abstract class StoriesState extends Equatable {}
 
@@ -17,7 +17,7 @@ class LoadingState extends StoriesState {
 class LoadedState extends StoriesState {
   LoadedState(this.story);
 
-  final StoryModel story;
+  final FeedModel story;
 
   @override
   List<Object> get props => [story];

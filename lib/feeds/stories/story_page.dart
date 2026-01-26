@@ -5,8 +5,8 @@ import 'package:protestersoath/navigation/app_drawer.dart';
 import 'package:protestersoath/navigation/app_drawer/app_drawer_bloc.dart';
 import 'package:protestersoath/navigation/app_drawer/app_drawer_event.dart';
 import 'package:protestersoath/settings/SettingsContainer.dart';
-import 'package:protestersoath/stories/bloc/stories_cubit.dart';
-import 'package:protestersoath/stories/bloc/stories_state.dart';
+import 'package:protestersoath/feeds/stories/bloc/stories_cubit.dart';
+import 'package:protestersoath/feeds/stories/bloc/stories_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'StoryCard.dart';

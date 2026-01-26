@@ -2,11 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:protestersoath/feeds/FeedModel.dart';
 import 'package:protestersoath/l10n/app_localizations.dart';
-import 'package:protestersoath/stories/bloc/StoryModel.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-Widget StoryCard(BuildContext context, StoryModel story) {
+Widget StoryRSSCard(BuildContext context, FeedModel story, openFeed) {
   void _showErrorSnackBar() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -57,49 +57,19 @@ Widget StoryCard(BuildContext context, StoryModel story) {
                 },
               ),
         // Title and Summary
-        (story.summary == '')
-            ? ListTile(
-                leading: Icon(Icons.arrow_drop_down_circle),
-                title:
-                    // Text(story.title),
-                    Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(story.title, style: TextStyle(fontSize: 20)),
-                    Align(
-                        alignment: Alignment.bottomRight,
-                        child:
-                            Text(story.date, style: TextStyle(fontSize: 14))),
-                  ],
-                ),
-                isThreeLine: false,
-              )
-            : ListTile(
-                leading: Icon(Icons.arrow_drop_down_circle),
-                title:
-                    // Text(story.title),
-                    Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(story.title, style: TextStyle(fontSize: 20)),
-                    Align(
-                        alignment: Alignment.bottomRight,
-                        child:
-                            Text(story.credit, style: TextStyle(fontSize: 14))),
-                  ],
-                ),
-                subtitle: Text(
-                  story.summary,
-                  style: TextStyle(
-                      fontSize: 14, color: const Color.fromRGBO(0, 0, 0, 0.8)),
-                ),
-                isThreeLine: true,
-              ),
+        ListTile(
+          leading: Icon(Icons.arrow_drop_down_circle),
+          title: Text(story.title, style: TextStyle(fontSize: 20)),
+          subtitle: Html(data: story.summary),
+          isThreeLine: false,
+          onTap: () => openFeed(story.postURL),
+        ),
+
         // The story
         (story.body != '')
             ? Padding(
                 padding: const EdgeInsets.only(
-                    left: 20, right: 10, top: 0, bottom: 5),
+                    left: 10, right: 10, top: 0, bottom: 5),
                 child: story.isHTML
                     ? Html(data: story.body)
                     : Text(
@@ -128,6 +98,10 @@ Widget StoryCard(BuildContext context, StoryModel story) {
                       fontWeight: FontWeight.w500),
                 ),
                 SizedBox(height: 2),
+                Text(
+                  'Photo: ' + story.credit,
+                  style: TextStyle(fontSize: 14),
+                ),
               ],
             ),
           ),
